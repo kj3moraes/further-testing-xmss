@@ -15,6 +15,16 @@ the provided implementation achieves the necessary security level and is thereby
 RFC 8391.
 In the following we briefly describe system requirements, the API of the delivered code, parameters for the use case of IOHK, and security considerations.
 
+Also see [documentation.pdf](./documentation.pdf). 
+
+## Contents
+1. [System Requirements](#system-requirements)
+2. [API](#api)
+   1. [XMSS API](#functions-for-single-tree-xmss)
+   2. [XMSSMT API](#functions-for-xmssmt)
+3. [Parameters](#parameters-for-iohk-use-case)
+4. [Security Considerations](#security-considerations)
+
 ## System Requirements 
 The provided software was developed and tested on different Linux distributions, including Ubuntu
 19.10 and Arch Linux using gcc 9.2.1. It comes with a Makefile which compiles some examples in
@@ -37,21 +47,25 @@ space needs to be allocated for keys and signed messages. The type is defined in
 #### `xmss_str_to_oid`
 This function takes an XMSS parameter string and maps it to a so-called OID, i.e., a compact
 32-bit integer ID that can be efficiently stored and passed around: The function is defined in the
-header file params.h as follows:
+header file [params.h](./params.h) as follows:
 
-`int xmss_str_to_oid(uint32_t *oid, const char *s);`
+```c 
+int xmss_str_to_oid(uint32_t *oid, const char *s);
+```
 
 The function takes the following arguments:
 - `uint32_t *oid`: pointer to the location the computed OID (of type `uint32_t`) is written to.
-- `const char *s`: XMSS parameter string, for example `"XMSS-SHA2_10_256"`. For a list of supported parameter strings see the implementation of xmss_str_to_oid in the file params.c.
+- `const char *s`: XMSS parameter string, for example `"XMSS-SHA2_10_256"`. For a list of supported parameter strings see the implementation of xmss_str_to_oid in the file [params.c](./params.c).
 
 The function returns `0` on success or `-1` if an invalid parameter string is provided.
 
 #### `xmss_parse_oid`
 This function takes an OID as input and computes the corresponding parameters in a result of
-type xmss_params. The function is defined in the header file params.h as follows:
+type `xmss_params`. The function is defined in the header file [params.h](./param.h) as follows:
 
-`int xmss_parse_oid(xmss_params *params, const uint32_t oid);`
+```c
+int xmss_parse_oid(xmss_params *params, const uint32_t oid);
+```
 
 The function takes the following arguments:
  - `xmss_params *params`: Pointer to the variable that the parameters are written to.
@@ -65,7 +79,9 @@ The function returns `0` on success or `-1` if an invalid OID is provided.
 This function takes as input an OID and computes an XMSS keypair. The function is defined in
 the header file [xmss.h](./xmss.h) as follows:
 
-`int xmss_keypair(unsigned char *pk, unsigned char *sk, const uint32_t oid);`
+```c 
+int xmss_keypair(unsigned char *pk, unsigned char *sk, const uint32_t oid);
+```
 
 The function takes the following arguments:
  - `unsigned char *pk`: Pointer to the location that the public key is written to. The caller needs to
@@ -87,9 +103,11 @@ provided).
 This function receives as input a message and a secret key and computes a signed message and
 updates the secret key. The function is defined in the header file [xmss.h](./xmss.h) as follows:
 
-`int xmss_sign(unsigned char *sk,
-unsigned char *sm, unsigned long long *smlen,
-const unsigned char *m, unsigned long long mlen);`
+```c 
+int xmss_sign(unsigned char *sk,
+              unsigned char *sm, unsigned long long *smlen,
+              const unsigned char *m, unsigned long long mlen);
+```
 
 The function takes the following arguments:
 
@@ -115,9 +133,11 @@ This function receives as input a signed message and verifies the signature. If 
 successful the message is written to an output buffer. The function is defined in the header file
 [xmss.h](./xmss.h) as follows:
 
-`int xmss_sign_open(unsigned char *m, unsigned long long *mlen,
-const unsigned char *sm, unsigned long long smlen,
-const unsigned char *pk);` 
+```c
+int xmss_sign_open(unsigned char *m, unsigned long long *mlen,
+                   const unsigned char *sm, unsigned long long smlen,
+                   const unsigned char *pk);
+``` 
 
 The function takes the following arguments:
 
@@ -141,7 +161,9 @@ This function takes an XMSSMT parameter string and maps it to a so-called OID, i
 32-bit integer ID that can be efficiently stored and passed around: The function is defined in the
 header file [params.h](./params.h) as follows:
 
-`int xmssmt_str_to_oid(uint32_t *oid, const char *s);`
+```c
+int xmssmt_str_to_oid(uint32_t *oid, const char *s);
+```
 
 The function takes the following arguments:
  - `uint32_t *oid`: pointer to the location the computed OID (of type `uint32_t`) is written to.
@@ -155,7 +177,9 @@ The function returns `0` on success or `-1` if an invalid parameter string is pr
 This function takes an OID as input and computes the corresponding parameters in a result of
 type `xmss_params`. The function is defined in the header file [params.h](./params.h)  as follows:
 
-`int xmssmt_parse_oid(xmss_params *params, const uint32_t oid);`
+```c
+int xmssmt_parse_oid(xmss_params *params, const uint32_t oid);
+```
 
 The function takes the following arguments:
 
@@ -169,7 +193,9 @@ The function returns `0` on success or `-1` if an invalid OID is provided.
 This function takes as input an OID and computes an XMSSMT keypair. The function is defined
 in the header file [xmss.h](./xmss.h) as follows:
 
-`int xmssmt_keypair(unsigned char *pk, unsigned char *sk, const uint32_t oid);`
+```c
+int xmssmt_keypair(unsigned char *pk, unsigned char *sk, const uint32_t oid);
+```
 
 The function takes the following arguments:
 
@@ -191,9 +217,11 @@ provided).
 This function receives as input a message and a secret key and computes a signed message and
 updates the secret key. The function is defined in the header file [xmss.h](./xmss.h) as follows:
 
-`int xmssmt_sign(unsigned char *sk,
-unsigned char *sm, unsigned long long *smlen,
-const unsigned char *m, unsigned long long mlen);`
+```c
+int xmssmt_sign(unsigned char *sk,
+                unsigned char *sm, unsigned long long *smlen,
+                const unsigned char *m, unsigned long long mlen);
+```
 
 The function takes the following arguments:
  - `unsigned char *sk`: Pointer to the location that the secret key is read from and written to.
@@ -218,9 +246,11 @@ This function receives as input a signed message and verifies the signature. If 
 successful the message is written to an output buffer. The function is defined in the header file
 [xmss.h](./xmss.h) as follows:
 
-`int xmssmt_sign_open(unsigned char *m, unsigned long long *mlen,
-const unsigned char *sm, unsigned long long smlen,
-const unsigned char *pk);` 
+```c
+int xmssmt_sign_open(unsigned char *m, unsigned long long *mlen,
+                     const unsigned char *sm, unsigned long long smlen,
+                     const unsigned char *pk);
+```
 
 The function takes the following arguments:
  - `unsigned char *m`: Pointer to the location that the message will be written to if verification is
@@ -253,6 +283,7 @@ This sets the variables params (which can be used to retrieve all relevant infor
 allocating space for keys and signed messages) and oid, which can be passed to `xmss_keypair` or
 `xmssmt_keypair` to generate a key pair. 
 
+##  Security considerations
 The delivered software uses the following forward-secure pseudo-random number generator to
 derive a forward-secure version of XMSS:
 
@@ -261,7 +292,7 @@ OUT_i = hash(ROOT||SEED_i||OTS_ADDR||0)
 SEED_{i+1} = hash(ROOT||SEED_i||OTS_ADDR||1)
 ```
 
-This is the forward secure PRG construction from the original XMSS paper [BDH11] with multitarget protection added. Using an n-bit hash function and n-bit seeds, this function achieves n-bit
+This is the forward secure PRG construction from the original XMSS paper [BDH11](#references) with multitarget protection added. Using an n-bit hash function and n-bit seeds, this function achieves n-bit
 security.
 
 It must be noted that all security considerations of RFC 8391 apply. Especially the warning
@@ -294,7 +325,7 @@ key states can be implemented is system dependent and beyond the scope of this d
 
 ## References 
 
-[BDH11] Johannes Buchmann, Erik Dahmen, and Andreas H¨ulsing. XMSS - a practical forward
+[BDH11] Johannes Buchmann, Erik Dahmen, and Andreas Hülsing. XMSS - a practical forward
 secure signature scheme based on minimal security assumptions. In Bo-Yin Yang, editor,
 Post-Quantum Cryptography, volume 7071 of LNCS, pages 117–129. Springer Berlin
 Heidelberg, 2011.
