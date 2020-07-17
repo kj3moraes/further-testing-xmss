@@ -6,13 +6,13 @@ This software was developed in collaboration with and supported by [IOHK](https:
 It is based on the [XMSS](https://tools.ietf.org/html/rfc8391) [reference implementation](https://github.com/XMSS/xmss-reference).
 
 ## Introduction
-XMSS is a stateful hash-based signature scheme described in RFC 8391. The supplied archive
+XMSS is a stateful hash-based signature scheme described in [RFC 8391](https://tools.ietf.org/html/rfc8391). The supplied archive
 contains an implementation of a forward-secure version of XMSS. This forward-secure version is
 based on the original XMSS reference implementation. The difference is limited to the way the
-one-time signature keys are computed. RFC 8391 only limits the used methods for this task to
+one-time signature keys are computed. [RFC 8391](https://tools.ietf.org/html/rfc8391) only limits the used methods for this task to
 methods that achieve the same security level as the rest of the construction. The method used in
 the provided implementation achieves the necessary security level and is thereby compliant with
-RFC 8391.
+[RFC 8391](https://tools.ietf.org/html/rfc8391).
 In the following we briefly describe system requirements, the API of the delivered code, parameters for the use case of IOHK, and security considerations.
 
 Also see [documentation.pdf](./documentation.pdf). 
@@ -295,7 +295,7 @@ SEED_{i+1} = hash(ROOT||SEED_i||OTS_ADDR||1)
 This is the forward secure PRG construction from the original XMSS paper [BDH11](#references) with multitarget protection added. Using an n-bit hash function and n-bit seeds, this function achieves n-bit
 security.
 
-It must be noted that all security considerations of RFC 8391 apply. Especially the warning
+It must be noted that all security considerations of [RFC 8391](https://tools.ietf.org/html/rfc8391) apply. Especially the warning
 about the stateful nature of the system:
 
 ```
