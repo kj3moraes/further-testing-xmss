@@ -1,0 +1,10 @@
+*.o
+*.d
+*.pub
+*.prv
+*.sig
+vgcore.*
+build*
+/.vscode*
+keys*
+*.log
