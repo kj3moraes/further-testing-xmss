@@ -713,6 +713,7 @@ int xmss_core_sign(const xmss_params *params,
 
     // Extract index
     unsigned long idx = ((unsigned long)sk[0] << 24) | ((unsigned long)sk[1] << 16) | ((unsigned long)sk[2] << 8) | sk[3];
+    printf("The index before we increment while signing is : %ld", idx);
 
     // Check if we can still sign with this sk, return -2 if not:
     if (idx >= ((1U << params->tree_height) - 1)) 
@@ -743,9 +744,9 @@ int xmss_core_sign(const xmss_params *params,
     sk[2] = ((idx + 1) >> 8) & 255;
     sk[3] = (idx + 1) & 255;
 
-    // Secret key for this non-forward-secure version is now updated.
-    // A production implementation should consider using a file handle instead,
-    //  and write the updated secret key at this point!
+    /* Secret key for this non-forward-secure version is now updated.
+       A production implementation should consider using a file handle instead,
+       and write the updated secret key at this point! */
 
     secret_key->oqs_save_updated_sk_key(secret_key);
 

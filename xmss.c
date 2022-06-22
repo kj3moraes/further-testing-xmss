@@ -35,12 +35,7 @@ int xmss_sign(OQS_SECRET_KEY *sk,
               const unsigned char *m, unsigned long long mlen)
 {
     xmss_params params;
-    uint32_t oid = 0;
-    unsigned int i;
-
-    for (i = 0; i < XMSS_OID_LEN; i++) {
-        oid |= sk->secret_key[XMSS_OID_LEN - i - 1] << (i * 8);
-    }
+    uint32_t oid = sk->oid;
     if (xmss_parse_oid(&params, oid)) {
         return -1;
     }

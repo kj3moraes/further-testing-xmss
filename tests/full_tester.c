@@ -40,7 +40,7 @@ int do_nothing_save(OQS_SECRET_KEY *sk) {
 
 int sk_file_write(OQS_SECRET_KEY *sk) {
 
-    unsigned char filename[MAX_LENGTH_FILENAME] = "./keys/mine_xmss20_sha256.prv";
+    unsigned char filename[MAX_LENGTH_FILENAME] = "./keys/sink_xmss20_sha256.prv";
 
     #ifdef CUSTOM_NAME
     printf("\nEnter the filename that you want written to>");
@@ -57,7 +57,7 @@ int sk_file_write(OQS_SECRET_KEY *sk) {
                         ((unsigned long)sk->secret_key[XMSS_OID_LEN + 3]);
 
     #ifdef DEBUGGING
-    printf("The index currently is : %ld\n", idx);
+    printf("The index (after the increment) is : %ld\n", idx);
     #endif
 
     FILE *printer = fopen(filename, "w+");
@@ -75,7 +75,7 @@ int sk_file_write(OQS_SECRET_KEY *sk) {
         }
 
         #ifdef DEBUGGING
-        printf("Byte being put: %02x\n", sk->secret_key[i]);
+        // printf("Byte being put: %02x\n", sk->secret_key[i]);
         #endif
     }
     fclose(printer);
@@ -86,7 +86,7 @@ int sk_file_write(OQS_SECRET_KEY *sk) {
 /** =========================================================================== */
 
 
-int test_case(const char *name, int xmssmt){
+int test_case(const char *name, int xmssmt) {
     xmss_params params;
     uint32_t oid;
     int ret = 0;
@@ -122,7 +122,9 @@ int test_case(const char *name, int xmssmt){
     unsigned char *mout = (unsigned char*)malloc(params.sig_bytes + XMSS_MLEN);
     unsigned long long smlen, mlen;
     unsigned char filename[MAX_LENGTH_FILENAME];
+
     randombytes(m, XMSS_MLEN);
+    printf("\nmsg="); hexdump(m, XMSS_MLEN);
 
     printf("sk_bytes=%llu + oid\n", params.sk_bytes);
 
@@ -206,10 +208,9 @@ int test_case(const char *name, int xmssmt){
     if (decision == 0) return -1;   
     #endif
 
-
     printf("Testing %d %s signatures.. \n", NUM_TESTS, name);
     for (i = 0; i < NUM_TESTS; i++) {
-        printf("  - iteration #%d:\n", i);
+        printf("\n\n=========  - iteration #%d: ==============\n", i);
 
         /* ========================== SIGNING ================================= */
 
@@ -240,8 +241,7 @@ int test_case(const char *name, int xmssmt){
 
         printf("sm="); hexdump(sm, smlen);
         #ifdef DEBUGGING
-        printf("\nmsg="); hexdump(m, XMSS_MLEN);
-        printf("\nsk="); hexdump(sk->secret_key, sk->length_secret_key);
+        printf("\nnew_sk="); hexdump(sk->secret_key, sk->length_secret_key);
         #endif
 
         /* ===================== SIGNATURE LENGTH CHECK ======================= */
@@ -287,7 +287,7 @@ int test_case(const char *name, int xmssmt){
             printf("    output message as expected.\n");
         }
 
-        if(ret) return ret;
+        // if(ret) return ret;
     }
 
     OQS_SECRET_KEY_free(sk);
