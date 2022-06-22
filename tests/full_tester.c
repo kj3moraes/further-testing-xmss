@@ -105,7 +105,7 @@ int test_case(const char *name, int xmssmt){
         // Changing the .pub extension to .prv
         filename[strlen(filename) - 2] = 'r'; filename[strlen(filename) - 1] = 'v';
         FILE *prv_key = fopen(filename, "w+");
-        for (unsigned int i = 0; i < sk; i++) {
+        for (unsigned int i = 0; i < XMSS_OID_LEN + params.sk_bytes; i++) {
             fputc(sk[i], prv_key);
         }
         fclose(prv_key);
