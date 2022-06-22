@@ -694,10 +694,12 @@ int xmss_core_keypair(const xmss_params *params,
  *
  */
 int xmss_core_sign(const xmss_params *params,
-                   unsigned char *sk,
+                   OQS_SECRET_KEY *secret_key,
                    unsigned char *sm, unsigned long long *smlen,
                    const unsigned char *m, unsigned long long mlen)
 {
+    unsigned char *sk = secret_key->secret_key + XMSS_OID_LEN;
+
     const unsigned char *pub_root = sk + params->index_bytes + 2*params->n;
 
     uint16_t i = 0;
@@ -706,6 +708,9 @@ int xmss_core_sign(const xmss_params *params,
     treehash_inst treehash[params->tree_height - params->bds_k];
     state.treehash = treehash;
     
+    // Lock the secret key object until all our read / write operations on it are complete.
+    secret_key->lock_key(secret_key);
+
     // Extract index
     unsigned long idx = ((unsigned long)sk[0] << 24) | ((unsigned long)sk[1] << 16) | ((unsigned long)sk[2] << 8) | sk[3];
 
@@ -728,14 +733,26 @@ int xmss_core_sign(const xmss_params *params,
     unsigned char idx_bytes_32[32];
     ull_to_bytes(idx_bytes_32, 32, idx);
 
+     /** ===============================================================================
+     * This is where the key update procedure takes place, this is the only change that
+     * is made in XMSS. The counter is incremented. */
+
     // Update SK
     sk[0] = ((idx + 1) >> 24) & 255;
     sk[1] = ((idx + 1) >> 16) & 255;
     sk[2] = ((idx + 1) >> 8) & 255;
     sk[3] = (idx + 1) & 255;
+
     // Secret key for this non-forward-secure version is now updated.
     // A production implementation should consider using a file handle instead,
     //  and write the updated secret key at this point!
+
+    secret_key->oqs_save_updated_sk_key(secret_key);
+
+    secret_key->release_key(secret_key);
+
+    /** =============================================================================== */
+
 
     // Init working params
     unsigned char R[params->n];
@@ -943,10 +960,13 @@ int xmssmt_core_keypair(const xmss_params *params,
  *
  */
 int xmssmt_core_sign(const xmss_params *params,
-                     unsigned char *sk,
+                     OQS_SECRET_KEY *secret_key,
                      unsigned char *sm, unsigned long long *smlen,
                      const unsigned char *m, unsigned long long mlen)
 {
+
+    unsigned char *sk = secret_key->secret_key + XMSS_OID_LEN;
+
     #ifdef FORWARD_SECURE
     const unsigned char *pub_root = sk + params->index_bytes + (1 + params->d)*params->n;
     unsigned char *next_seeds = sk + params->index_bytes + (3 + params->d)*params->n;

@@ -25,4 +25,5 @@ OQS_SECRET_KEY *OQS_SECRET_KEY_new(const char *method_name) {
 
 void OQS_SECRET_KEY_free(OQS_SECRET_KEY *sk) {
     free(sk->secret_key);
+    free(sk);
 }

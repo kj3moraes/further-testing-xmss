@@ -1,13 +1,14 @@
 #include <stdint.h>
 
 #include "params.h"
+#include "secret_key.h"
 #include "xmss_core.h"
 
 /* This file provides wrapper functions that take keys that include OIDs to
 identify the parameter set to be used. After setting the parameters accordingly
 it falls back to the regular XMSS core functions. */
 
-int xmss_keypair(unsigned char *pk, unsigned char *sk, const uint32_t oid)
+int xmss_keypair(unsigned char *pk, OQS_SECRET_KEY *sk, const uint32_t oid)
 {
     xmss_params params;
     unsigned int i;
@@ -20,12 +21,16 @@ int xmss_keypair(unsigned char *pk, unsigned char *sk, const uint32_t oid)
         /* For an implementation that uses runtime parameters, it is crucial
         that the OID is part of the secret key as well;
         i.e. not just for interoperability, but also for internal use. */
-        sk[XMSS_OID_LEN - i - 1] = (oid >> (8 * i)) & 0xFF;
+        sk->secret_key[XMSS_OID_LEN - i - 1] = (oid >> (8 * i)) & 0xFF;
     }
-    return xmss_core_keypair(&params, pk + XMSS_OID_LEN, sk + XMSS_OID_LEN);
+    int ret = xmss_core_keypair(&params, pk + XMSS_OID_LEN, sk->secret_key + XMSS_OID_LEN);
+
+    // perform the max key field addition to the secret key byte array here.
+
+    return ret;
 }
 
-int xmss_sign(unsigned char *sk,
+int xmss_sign(OQS_SECRET_KEY *sk,
               unsigned char *sm, unsigned long long *smlen,
               const unsigned char *m, unsigned long long mlen)
 {
@@ -34,12 +39,12 @@ int xmss_sign(unsigned char *sk,
     unsigned int i;
 
     for (i = 0; i < XMSS_OID_LEN; i++) {
-        oid |= sk[XMSS_OID_LEN - i - 1] << (i * 8);
+        oid |= sk->secret_key[XMSS_OID_LEN - i - 1] << (i * 8);
     }
     if (xmss_parse_oid(&params, oid)) {
         return -1;
     }
-    return xmss_core_sign(&params, sk + XMSS_OID_LEN, sm, smlen, m, mlen);
+    return xmss_core_sign(&params, sk, sm, smlen, m, mlen);
 }
 
 int xmss_sign_open(unsigned char *m, unsigned long long *mlen,
@@ -59,7 +64,7 @@ int xmss_sign_open(unsigned char *m, unsigned long long *mlen,
     return xmss_core_sign_open(&params, m, mlen, sm, smlen, pk + XMSS_OID_LEN);
 }
 
-int xmssmt_keypair(unsigned char *pk, unsigned char *sk, const uint32_t oid)
+int xmssmt_keypair(unsigned char *pk, OQS_SECRET_KEY *sk, const uint32_t oid)
 {
     xmss_params params;
     unsigned int i;
@@ -69,12 +74,12 @@ int xmssmt_keypair(unsigned char *pk, unsigned char *sk, const uint32_t oid)
     }
     for (i = 0; i < XMSS_OID_LEN; i++) {
         pk[XMSS_OID_LEN - i - 1] = (oid >> (8 * i)) & 0xFF;
-        sk[XMSS_OID_LEN - i - 1] = (oid >> (8 * i)) & 0xFF;
+        sk->secret_key[XMSS_OID_LEN - i - 1] = (oid >> (8 * i)) & 0xFF;
     }
-    return xmssmt_core_keypair(&params, pk + XMSS_OID_LEN, sk + XMSS_OID_LEN);
+    return xmssmt_core_keypair(&params, pk + XMSS_OID_LEN, sk->secret_key + XMSS_OID_LEN);
 }
 
-int xmssmt_sign(unsigned char *sk,
+int xmssmt_sign(OQS_SECRET_KEY *sk,
                 unsigned char *sm, unsigned long long *smlen,
                 const unsigned char *m, unsigned long long mlen)
 {
@@ -83,12 +88,12 @@ int xmssmt_sign(unsigned char *sk,
     unsigned int i;
 
     for (i = 0; i < XMSS_OID_LEN; i++) {
-        oid |= sk[XMSS_OID_LEN - i - 1] << (i * 8);
+        oid |= sk->secret_key[XMSS_OID_LEN - i - 1] << (i * 8);
     }
     if (xmssmt_parse_oid(&params, oid)) {
         return -1;
     }
-    return xmssmt_core_sign(&params, sk + XMSS_OID_LEN, sm, smlen, m, mlen);
+    return xmssmt_core_sign(&params, sk, sm, smlen, m, mlen);
 }
 
 int xmssmt_sign_open(unsigned char *m, unsigned long long *mlen,

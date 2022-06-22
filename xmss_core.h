@@ -2,6 +2,7 @@
 #define XMSS_CORE_H
 
 #include "params.h"
+#include "secret_key.h"
 
 /**
  * Given a set of parameters, this function returns the size of the secret key.
@@ -25,7 +26,7 @@ int xmss_core_keypair(const xmss_params *params,
  * message and an updated secret key.
  */
 int xmss_core_sign(const xmss_params *params,
-                   unsigned char *sk,
+                   OQS_SECRET_KEY *secret_key,
                    unsigned char *sm, unsigned long long *smlen,
                    const unsigned char *m, unsigned long long mlen);
 
@@ -51,7 +52,7 @@ int xmssmt_core_keypair(const xmss_params *params,
  * message and an updated secret key.
  */
 int xmssmt_core_sign(const xmss_params *params,
-                     unsigned char *sk,
+                     OQS_SECRET_KEY *secret_key,
                      unsigned char *sm, unsigned long long *smlen,
                      const unsigned char *m, unsigned long long mlen);
 

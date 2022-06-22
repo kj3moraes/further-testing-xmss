@@ -6,6 +6,7 @@
 #include "../xmss.h"
 #include "../params.h"
 #include "../randombytes.h"
+#include "../secret_key.h"
 
 #define XMSS_IMPLEMENTATION "XMSS-SHA2_20_256"
 #define XMSS_MLEN 32
@@ -25,15 +26,15 @@ void prepend(char* s, const char* t) {
 
 /** =========== FUNCTIONS THAT GET ASSIGNED TO THE POINTERS IN THE OBJECT ===== */
 
-int lock_sk_key(void) {
+int lock_sk_key(OQS_SECRET_KEY *sk) {
     return 0;
 }
 
-int release_sk_key(void) {
+int release_sk_key(OQS_SECRET_KEY *sk) {
     return 0;
 }
 
-int do_nothing_save(void) {
+int do_nothing_save(OQS_SECRET_KEY *sk) {
     return 0;
 }
 
@@ -64,7 +65,14 @@ int test_case(const char *name, int xmssmt){
     }
 
     unsigned char pk[XMSS_OID_LEN + params.pk_bytes];
-    unsigned char sk[XMSS_OID_LEN + params.sk_bytes];
+    // unsigned char sk[XMSS_OID_LEN + params.sk_bytes];
+    
+    // Defining the secret key
+    OQS_SECRET_KEY *sk = OQS_SECRET_KEY_new(name);
+    sk->lock_key = lock_sk_key;
+    sk->release_key = release_sk_key;
+    sk->oqs_save_updated_sk_key = do_nothing_save;
+
     unsigned char *m = (unsigned char*)malloc(XMSS_MLEN);
     unsigned char *sm = (unsigned char*)malloc(params.sig_bytes + XMSS_MLEN);
     unsigned char *mout = (unsigned char*)malloc(params.sig_bytes + XMSS_MLEN);
@@ -105,8 +113,8 @@ int test_case(const char *name, int xmssmt){
         // Changing the .pub extension to .prv
         filename[strlen(filename) - 2] = 'r'; filename[strlen(filename) - 1] = 'v';
         FILE *prv_key = fopen(filename, "w+");
-        for (unsigned int i = 0; i < XMSS_OID_LEN + params.sk_bytes; i++) {
-            fputc(sk[i], prv_key);
+        for (unsigned int i = 0; i < sk->length_secret_key; i++) {
+            fputc(sk->secret_key[i], prv_key);
         }
         fclose(prv_key);
 
@@ -132,11 +140,11 @@ int test_case(const char *name, int xmssmt){
         printf("Reading in the secret key := \n");
         FILE *prv_key = fopen(filename, "rb");
         if (prv_key == NULL) return -1;
-        for (unsigned int i = 0; i < params.sk_bytes + XMSS_OID_LEN; i++) {
-            sk[i] = fgetc(prv_key);
+        for (unsigned int i = 0; i < sk->length_secret_key; i++) {
+            sk->secret_key[i] = fgetc(prv_key);
 
             #ifdef DEBUGGING
-            printf("%02x", sk[i]);
+            printf("%02x", sk->secret_key[i]);
             #endif
         }
         fclose(prv_key);
@@ -146,8 +154,8 @@ int test_case(const char *name, int xmssmt){
 
     // Print out the public key, secret key as part of the debugging process
     #ifdef DEBUGGING
-    printf("pk="); hexdump(pk, sizeof pk);
-    printf("sk="); hexdump(sk, sizeof sk);
+    printf("pk="); hexdump(pk, sizeof pk); printf("\n");
+    printf("sk="); hexdump(sk->secret_key, sk->length_secret_key); printf("\n");
     #endif
     printf("Testing %d %s signatures.. \n", NUM_TESTS, name);
 
@@ -233,6 +241,7 @@ int test_case(const char *name, int xmssmt){
         if(ret) return ret;
     }
 
+    OQS_SECRET_KEY_free(sk);
     free(m);
     free(sm);
     free(mout);
