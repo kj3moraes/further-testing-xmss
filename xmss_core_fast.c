@@ -748,10 +748,6 @@ int xmss_core_sign(const xmss_params *params,
        A production implementation should consider using a file handle instead,
        and write the updated secret key at this point! */
 
-    secret_key->oqs_save_updated_sk_key(secret_key);
-
-    secret_key->release_key(secret_key);
-
     /** =============================================================================== */
 
 
@@ -840,6 +836,10 @@ int xmss_core_sign(const xmss_params *params,
     #endif
     /* Write the updated BDS state back into sk. */
     xmss_serialize_state(params, sk, &state);
+
+    secret_key->oqs_save_updated_sk_key(secret_key);
+
+    secret_key->release_key(secret_key);
 
     return 0;
 }
@@ -1002,6 +1002,8 @@ int xmssmt_core_sign(const xmss_params *params,
     xmssmt_deserialize_state(params, states, &wots_sigs, sk);
 
     // Extract SK
+    secret_key->lock_key(secret_key);
+
     unsigned long long idx = 0;
     for (i = 0; i < params->index_bytes; i++) {
         idx |= ((unsigned long long)sk[i]) << 8*(params->index_bytes - 1 - i);
@@ -1020,13 +1022,20 @@ int xmssmt_core_sign(const xmss_params *params,
     memcpy(pub_seed, sk+params->index_bytes+3*params->n, params->n);
     #endif
 
+    /** ===============================================================================
+     * This is where the key update procedure takes place, this is the only change that
+     * is made in XMSS. The counter is incremented. */
+
     // Update SK
     for (i = 0; i < params->index_bytes; i++) {
         sk[i] = ((idx + 1) >> 8*(params->index_bytes - 1 - i)) & 255;
     }
-    // Secret key for this non-forward-secure version is now updated.
-    // A production implementation should consider using a file handle instead,
-    //  and write the updated secret key at this point!
+    /* Secret key for this non-forward-secure version is now updated.
+       A production implementation should consider using a file handle instead,
+       and write the updated secret key at this point! */
+
+    /** =============================================================================== */
+
 
     // ---------------------------------
     // Message Hashing
@@ -1216,6 +1225,10 @@ int xmssmt_core_sign(const xmss_params *params,
 
     #endif
     xmssmt_serialize_state(params, sk, states);
+
+    secret_key->oqs_save_updated_sk_key(secret_key);
+
+    secret_key->release_key(secret_key);
 
     return 0;
 }
