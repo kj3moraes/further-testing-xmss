@@ -134,23 +134,28 @@ int test_case(const char *name, int xmssmt){
         if (prv_key == NULL) return -1;
         for (unsigned int i = 0; i < params.sk_bytes + XMSS_OID_LEN; i++) {
             sk[i] = fgetc(prv_key);
+
+            #ifdef DEBUGGING
             printf("%02x", sk[i]);
+            #endif
         }
         fclose(prv_key);
         printf("\n");
 
     }
 
-
+    // Print out the public key, secret key as part of the debugging process
+    #ifdef DEBUGGING
     printf("pk="); hexdump(pk, sizeof pk);
     printf("sk="); hexdump(sk, sizeof sk);
+    #endif
     printf("Testing %d %s signatures.. \n", NUM_TESTS, name);
+
 
     for (i = 0; i < NUM_TESTS; i++) {
         printf("  - iteration #%d:\n", i);
 
         /* ========================== SIGNING ================================= */
-
 
         if(xmssmt){
             ret = xmssmt_sign(sk, sm, &smlen, m, XMSS_MLEN);
@@ -179,9 +184,11 @@ int test_case(const char *name, int xmssmt){
         }
 
         printf("sm="); hexdump(sm, smlen);
+        #ifdef DEBUGGING
+        printf("msg="); hexdump(m, XMSS_MLEN);
+        #endif
 
-
-        /* ===================== PRELIMINARY CHECKS ========================== */
+        /* ===================== SIGNATURE LENGTH CHECK======================== */
    
 
         if (smlen != params.sig_bytes + XMSS_MLEN) {
