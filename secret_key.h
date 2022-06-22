@@ -1,5 +1,6 @@
 #ifndef __SECRET_KEY_H__
 #define __SECRET_KEY_H__
+
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdint.h>

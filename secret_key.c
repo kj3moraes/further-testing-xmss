@@ -20,7 +20,7 @@ OQS_SECRET_KEY *OQS_SECRET_KEY_new(const char *method_name) {
     sk->length_secret_key = par.sk_bytes;
 
     // Initialize the key with length_secret_key amount of bytes.
-    sk->secret_key = malloc(sk->length_secret_key * sizeof(uint8_t));
+    sk->secret_key = (uint8_t *)malloc(sk->length_secret_key * sizeof(uint8_t));
 }
 
 void OQS_SECRET_KEY_free(OQS_SECRET_KEY *sk) {
