@@ -1,5 +1,8 @@
 *.o
 *.d
+*.in
+*.out
+*.msg
 *.pub
 *.prv
 *.sig
@@ -8,3 +11,4 @@ build*
 /.vscode*
 keys*
 *.log
+/build*
