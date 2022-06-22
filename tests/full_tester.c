@@ -160,7 +160,6 @@ int test_case(const char *name, int xmssmt){
         if(xmssmt){
             ret = xmssmt_sign(sk, sm, &smlen, m, XMSS_MLEN);
             if(i >= ((1ULL << params.full_height)-1)) {
-                printf("here\n");
                 if(ret != -2) {
                     printf("Error detecting running out of OTS keys\n");
                 }
@@ -188,7 +187,7 @@ int test_case(const char *name, int xmssmt){
         printf("msg="); hexdump(m, XMSS_MLEN);
         #endif
 
-        /* ===================== SIGNATURE LENGTH CHECK======================== */
+        /* ===================== SIGNATURE LENGTH CHECK ======================= */
    
 
         if (smlen != params.sig_bytes + XMSS_MLEN) {
