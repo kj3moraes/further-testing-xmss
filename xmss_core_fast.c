@@ -715,9 +715,21 @@ int xmss_core_sign(const xmss_params *params,
     unsigned long idx = ((unsigned long)sk[0] << 24) | ((unsigned long)sk[1] << 16) | ((unsigned long)sk[2] << 8) | sk[3];
     printf("The index before we increment while signing is : %ld", idx);
 
-    // Check if we can still sign with this sk, return -2 if not:
-    if (idx >= ((1U << params->tree_height) - 1)) 
+    /* Check if we can still sign with this sk, return -2 if not: */
+    // Extract the max_sigs
+    unsigned long long max = 0;
+    for (int j = params->bytes_for_max; j > 0; j--) {
+        max |= ((unsigned long long)sk[params->sk_bytes - XMSS_OID_LEN - j] << 8*(j - 1));
+    }
+
+    if (idx >= max) {
+        printf("ERROR! Exceeded maximum number of sigs");
         return -2;
+    }
+
+
+    // if (idx >= ((1U << params->tree_height) - 1)) 
+    //     return -2;
 
     /* Load the BDS state from sk. */
     xmss_deserialize_state(params, &state, sk);
@@ -1008,10 +1020,23 @@ int xmssmt_core_sign(const xmss_params *params,
     for (i = 0; i < params->index_bytes; i++) {
         idx |= ((unsigned long long)sk[i]) << 8*(params->index_bytes - 1 - i);
     }
-        
-    // Check if we can still sign with this sk, return -2 if not:
-    if (idx >= ((1ULL << params->full_height) - 1))
+
+    /* ========= CHECKING AGAINST MAX =========== */
+    // Check if we can still sign with this sk, return -2 if not: */
+    // Extract the max_sigs
+    unsigned long long max = 0;
+    for (int j = params->bytes_for_max; j > 0; j--) {
+        max |= ((unsigned long long)sk[params->sk_bytes - XMSS_OID_LEN - j] << 8*(j - 1));
+    }
+
+    if (idx >= max) {
+        printf("ERROR! Exceeded maximum number of sigs");
         return -2;
+    }
+
+    // // Check if we can still sign with this sk, return -2 if not:
+    // if (idx >= ((1ULL << params->full_height) - 1))
+    //     return -2;
 
     memcpy(sk_seed, sk+params->index_bytes, params->n);
     #ifdef FORWARD_SECURE
