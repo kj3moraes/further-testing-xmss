@@ -41,10 +41,17 @@ int xmss_keypair(unsigned char *pk, OQS_SECRET_KEY *sk, const uint32_t oid)
     for (i = params.sk_bytes - params.bytes_for_max; i < params.sk_bytes; i++) {
         printf("%02x", sk->secret_key[i]);
     }
+    printf("\n");
     #endif
     
     return ret;
 }
+
+
+int xmss_derive_subkey(OQS_SECRET_KEY *master, OQS_SECRET_KEY *subkey, unsigned long long number_of_sigs) {
+    return 0;
+}
+
 
 int xmss_sign(OQS_SECRET_KEY *sk,
               unsigned char *sm, unsigned long long *smlen,

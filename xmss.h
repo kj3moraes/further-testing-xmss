@@ -2,7 +2,6 @@
 #define XMSS_H
 
 #include <stdint.h>
-
 #include "secret_key.h"
 
 /**
@@ -11,6 +10,17 @@
  * Format pk: [OID || root || PUB_SEED]
  */
 int xmss_keypair(unsigned char *pk, OQS_SECRET_KEY *sk, const uint32_t oid);
+
+/**
+ * @brief 
+ * 
+ * @param master 
+ * @param subkey 
+ * @param number_of_sigs 
+ * @return int 
+ */
+int xmss_derive_subkey(OQS_SECRET_KEY *master, OQS_SECRET_KEY *subkey, unsigned long long number_of_sigs);
+
 
 /**
  * Signs a message using an XMSS secret key.

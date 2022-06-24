@@ -8,13 +8,19 @@ HEADERS = params.h hash.h fips202.h hash_address.h randombytes.h wots.h xmss.h x
 SOURCES_FAST = $(subst xmss_core.c,xmss_core_fast.c,$(SOURCES))
 HEADERS_FAST = $(subst xmss_core.c,xmss_core_fast.c,$(HEADERS))
 
-TESTS = $(BUILD_DIR)/test_fast 
+TESTS = $(BUILD_DIR)/test_fast $(BUILD_DIR)/test_subkeys $(BUILD_DIR)/test_multi 
 
 tests: $(TESTS)
 
 .PHONY: clean test
 
 $(BUILD_DIR)/test_fast: tests/full_tester.c $(SOURCES_FAST) $(OBJS) $(HEADERS_FAST)
+	$(CXX) $(CXX_FLAGS) -o $@ $(SOURCES_FAST) $< $(LDLIBS) -L../liboqs/build/lib -I../liboqs/build/include -I.
+
+$(BUILD_DIR)/test_subkeys: tests/subkeys_tester.c $(SOURCES_FAST) $(OBJS) $(HEADERS_FAST)
+	$(CXX) $(CXX_FLAGS) -o $@ $(SOURCES_FAST) $< $(LDLIBS) -L../liboqs/build/lib -I../liboqs/build/include -I.
+
+$(BUILD_DIR)/test_multi: tests/multithreaded_tester.c $(SOURCES_FAST) $(OBJS) $(HEADERS_FAST)
 	$(CXX) $(CXX_FLAGS) -o $@ $(SOURCES_FAST) $< $(LDLIBS) -L../liboqs/build/lib -I../liboqs/build/include -I.
 
 clean:

@@ -1,3 +1,4 @@
+#include <inttypes.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
@@ -10,7 +11,9 @@
 
 #define XMSS_IMPLEMENTATION "XMSS-SHA2_20_256"
 #define XMSS_MLEN 32
+
 #define NUM_TESTS 100
+#define NUM_SUBKEYS 8
 #define MAX_LENGTH_FILENAME 60
 
 static void hexdump(unsigned char *d, unsigned int l) {
@@ -111,11 +114,16 @@ int test_case(const char *name, int xmssmt) {
 
     unsigned char pk[XMSS_OID_LEN + params.pk_bytes];
     
-    // Defining the secret key
-    OQS_SECRET_KEY *sk = OQS_SECRET_KEY_new(name);
-    sk->lock_key = lock_sk_key;
-    sk->release_key = release_sk_key;
-    sk->oqs_save_updated_sk_key = sk_file_write;
+    // Defining the secret master key
+    OQS_SECRET_KEY *master_key = OQS_SECRET_KEY_new(name);
+    master_key->lock_key = lock_sk_key;
+    master_key->release_key = release_sk_key;
+    master_key->oqs_save_updated_sk_key = sk_file_write;
+
+    // Defining the secret subkeys
+    OQS_SECRET_KEY *subkeys[NUM_SUBKEYS];
+
+
 
     unsigned char *m = (unsigned char*)malloc(XMSS_MLEN);
     unsigned char *sm = (unsigned char*)malloc(params.sig_bytes + XMSS_MLEN);
@@ -129,20 +137,19 @@ int test_case(const char *name, int xmssmt) {
     printf("sk_bytes=%llu + oid\n", params.sk_bytes);
 
     unsigned int decision;
-    printf("Do you want to generate keys (0) or use stored ones (1) ? >");
+    printf("Do you want to generate the master key (0) or use a stored one (1) ? >");
     scanf("%d", &decision);
 
-    
-    if (decision == 0) {
+     if (decision == 0) {
 
         /* === GENERATING KEYS AND THEN STORING THEM === */
 
         printf("Generating keys ....\n");
         if(xmssmt){
-            xmssmt_keypair(pk, sk, oid);
+            xmssmt_keypair(pk, master_key, oid);
         }
         else {
-            xmss_keypair(pk, sk, oid);
+            xmss_keypair(pk, master_key, oid);
         }
 
         // Receiving the filestem and then storing it in the keys folder.
@@ -159,8 +166,8 @@ int test_case(const char *name, int xmssmt) {
         // Changing the .pub extension to .prv
         filename[strlen(filename) - 2] = 'r'; filename[strlen(filename) - 1] = 'v';
         FILE *prv_key = fopen(filename, "w+");
-        for (unsigned int i = 0; i < sk->length_secret_key; i++) {
-            fputc(sk->secret_key[i], prv_key);
+        for (unsigned int i = 0; i < master_key->length_secret_key; i++) {
+            fputc(master_key->secret_key[i], prv_key);
         }
         fclose(prv_key);
 
@@ -186,11 +193,11 @@ int test_case(const char *name, int xmssmt) {
         printf("Reading in the secret key := \n");
         FILE *prv_key = fopen(filename, "rb");
         if (prv_key == NULL) return -1;
-        for (unsigned int i = 0; i < sk->length_secret_key; i++) {
-            sk->secret_key[i] = fgetc(prv_key);
+        for (unsigned int i = 0; i < master_key->length_secret_key; i++) {
+            master_key->secret_key[i] = fgetc(prv_key);
 
             #ifdef DEBUGGING
-            printf("%02x", sk->secret_key[i]);
+            printf("%02x", master_key->secret_key[i]);
             #endif
         }
         fclose(prv_key);
@@ -198,104 +205,49 @@ int test_case(const char *name, int xmssmt) {
 
     }
 
-    // Print out the public key, secret key as part of the debugging process
+     // Print out the public key, secret key as part of the debugging process
     #ifdef DEBUGGING
     printf("pk="); hexdump(pk, sizeof pk); printf("\n");
-    printf("sk="); hexdump(sk->secret_key, sk->length_secret_key); printf("\n");
+    printf("sk="); hexdump(master_key->secret_key, master_key->length_secret_key); printf("\n");
     
     printf("Continue (0 - no, 1 - yes) ? >");
     scanf("%d", &decision);
     if (decision == 0) return -1;   
     #endif
 
-    printf("Testing %d %s signatures.. \n", NUM_TESTS, name);
-    for (i = 0; i < NUM_TESTS; i++) {
-        printf("\n\n=========  - iteration #%d: ==============\n", i);
+    unsigned long long number_of_sigs; 
 
-        /* ========================== SIGNING ================================= */
-
-        if(xmssmt){
-            ret = xmssmt_sign(sk, sm, &smlen, m, XMSS_MLEN);
-            if(i >= ((1ULL << params.full_height)-1)) {
-                if(ret != -2) {
-                    printf("Error detecting running out of OTS keys\n");
-                }
-                else {
-                    printf("Successfully detected running out of OTS keys\n");
-                    return 0;
-                }
-            }
-        }
-        else {
-            ret = xmss_sign(sk, sm, &smlen, m, XMSS_MLEN);
-            if(i >= ((1ULL << params.tree_height)-1)) {
-                if(ret != -2) {
-                    printf("Error detecting running out of OTS keys\n");
-                }
-                else {
-                    printf("Successfully detected running out of OTS keys\n");
-                    return 0;
-                }
-            }
-        }
-
-        printf("sm="); hexdump(sm, smlen);
-        #ifdef DEBUGGING
-        printf("\nnew_sk="); hexdump(sk->secret_key, sk->length_secret_key);
-        #endif
-
-        /* ===================== SIGNATURE LENGTH CHECK ======================= */
-   
-
-        if (smlen != params.sig_bytes + XMSS_MLEN) {
-            printf("  X smlen incorrect [%llu != %u]!\n", smlen, params.sig_bytes);
-            ret = -1;
-        }
-        else 
-            printf("    smlen as expected [%llu].\n", smlen);
+    // MAIN LOOP TO ITERATE THROUGH THE SUBKEYS
+    printf("Testing %d %s signatures on %d subkeys.. \n", NUM_TESTS, name, NUM_SUBKEYS);
+    for (i = 0; i < NUM_SUBKEYS; i++) {
         
+        printf("\t === SUBKEY %d ===\n\n", (i + 1));
 
-        /* ========================= VERIFICATION ============================= */
+        printf("\nEnter the amount of signatures you wish to generate with subkey %d>", (i + 1));
+        scanf("%"SCNu64, &number_of_sigs);
+        printf("\n%"PRIu64"\n\n", number_of_sigs); 
 
+        subkeys[i] = OQS_SECRET_KEY_new(name);
+        subkeys[i]->lock_key = lock_sk_key;
+        subkeys[i]->release_key = release_sk_key;
+        subkeys[i]->oqs_save_updated_sk_key = do_nothing_save;
 
-        if(xmssmt){
-            ret = xmssmt_sign_open(mout, &mlen, sm, smlen, pk);
-        }
-        else {
-            ret = xmss_sign_open(mout, &mlen, sm, smlen, pk);
-        }
-        if (ret) {
-            printf("  X verification failed!\n");
-        }
-        else {
-            printf("    verification succeeded.\n");
-        }
-
-        /* Test if the correct message was recovered. */
-        if (mlen != XMSS_MLEN) {
-            printf("  X mlen incorrect [%llu != %u]!\n", mlen, XMSS_MLEN);
-            ret = -1;
-        }
-        else {
-            printf("    mlen as expected [%llu].\n", mlen);
-        }
-        if (memcmp(m, mout, XMSS_MLEN)) {
-            printf("  X output message incorrect!\n");
-            ret = -1;
-        }
-        else {
-            printf("    output message as expected.\n");
+        if (xmss_derive_subkey(master_key, subkeys[i], i) != 0) {
+            printf("Error deriving subkey %d\n", i);
+            return -1;
         }
 
-        // if(ret) return ret;
+        // NESTED LOOP TO TEST ON THE SUBKEYS
+        printf("How many signatures do you want to complete with subkey %d>", (i + 1));
+        unsigned long long sigs_to_complete;
+        scanf("%llu", &sigs_to_complete);
+        for (unsigned j = 0; j < sigs_to_complete; j++) {
+            
+        }
     }
 
-    OQS_SECRET_KEY_free(sk);
-    free(m);
-    free(sm);
-    free(mout);
-    return 0;
 }
+
 
 int main() {
     int rc = test_case(XMSS_IMPLEMENTATION, 0);

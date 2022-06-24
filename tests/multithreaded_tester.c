@@ -1,3 +1,4 @@
+#include <pthread.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
@@ -10,8 +11,12 @@
 
 #define XMSS_IMPLEMENTATION "XMSS-SHA2_20_256"
 #define XMSS_MLEN 32
+
 #define NUM_TESTS 100
+#define NUM_THREADS 2
 #define MAX_LENGTH_FILENAME 60
+
+pthread_mutex_t mutex;
 
 static void hexdump(unsigned char *d, unsigned int l) {
     for(unsigned int i=0; i<l ;i++) printf("%02x", d[i]);
@@ -27,10 +32,12 @@ void prepend(char* s, const char* t) {
 /** =========== FUNCTIONS THAT GET ASSIGNED TO THE POINTERS IN THE OBJECT ===== */
 
 int lock_sk_key(OQS_SECRET_KEY *sk) {
+    pthread_mutex_lock(&mutex);
     return 0;
 }
 
 int release_sk_key(OQS_SECRET_KEY *sk) {
+    pthread_mutex_unlock(&mutex);
     return 0;
 }
 
@@ -40,7 +47,7 @@ int do_nothing_save(OQS_SECRET_KEY *sk) {
 
 int sk_file_write(OQS_SECRET_KEY *sk) {
 
-    unsigned char filename[MAX_LENGTH_FILENAME] = "./keys/max1_xmss20_sha256.prv";
+    unsigned char filename[MAX_LENGTH_FILENAME] = "./keys/sink_xmss20_sha256.prv";
 
     #ifdef CUSTOM_NAME
     printf("\nEnter the filename that you want written to>");
@@ -82,6 +89,83 @@ int sk_file_write(OQS_SECRET_KEY *sk) {
     printf("Completed the write operation\n");
     return 0;
 }
+
+/** =========================================================================== */
+
+
+/** ================= WRAPPER FUNCTIONS FOR MULTITHREADING ==================== */
+
+struct siging_params {
+    OQS_SECRET_KEY *sk;
+    unsigned char *message;
+    unsigned int message_length;
+    unsigned char *signature;
+    unsigned int signature_length;
+};
+
+struct verif_params {
+    unsigned char *pk;
+    unsigned char *message;
+    unsigned int message_length;
+    unsigned char *signature;
+    unsigned int signature_length;
+};
+
+
+
+void *multi_xmss_sign(void *arg) {
+
+    struct siging_params *params = (struct siging_params *)arg;
+
+    for (unsigned int i = 0; i < NUM_TESTS; i++) {
+        if (xmss_sign(params->sk, params->signature, params->signature_length, params->message, params->message_length) != 0) {
+            printf("\nERROR! Signature failed\n");
+            return NULL;
+        }
+    }
+    return NULL;
+}
+
+void *multi_xmss_sign_open(void *arg) {
+
+    struct verif_params *params = (struct verif_params *)arg;
+    
+    for (unsigned int i = 0; i < NUM_TESTS; i++) {
+        if (xmss_sign_open(params->pk, params->signature, params->signature_length, params->message, params->message_length) != 0) {
+            printf("\nERROR! Signature failed\n");
+            return NULL;
+        }
+    }
+    return NULL;
+}
+
+
+void *multi_xmssmt_sign(void *arg) {
+
+    struct siging_params *params = (struct siging_params *)arg;
+
+    for (unsigned int i = 0; i < NUM_TESTS; i++) {
+        if (xmssmt_sign(params->sk, params->signature, params->signature_length, params->message, params->message_length) != 0) {
+            printf("\nERROR! Signature failed\n");
+            return NULL;
+        }
+    }
+    return NULL;
+}
+
+void *multi_xmssmt_sign_open(void *arg) {
+
+    struct verif_params *params = (struct verif_params *)arg;
+    
+    for (unsigned int i = 0; i < NUM_TESTS; i++) {
+        if (xmssmt_sign_open(params->pk, params->signature, params->signature_length, params->message, params->message_length) != 0) {
+            printf("\nERROR! Signature failed\n");
+            return NULL;
+        }
+    }
+    return NULL;
+}
+
 
 /** =========================================================================== */
 
@@ -208,6 +292,10 @@ int test_case(const char *name, int xmssmt) {
     if (decision == 0) return -1;   
     #endif
 
+    // Define the threads and the number of threads.
+    pthread_t threads[NUM_THREADS];
+    pthread_mutex_init(&mutex, NULL);
+
     printf("Testing %d %s signatures.. \n", NUM_TESTS, name);
     for (i = 0; i < NUM_TESTS; i++) {
         printf("\n\n=========  - iteration #%d: ==============\n", i);
@@ -227,7 +315,14 @@ int test_case(const char *name, int xmssmt) {
             }
         }
         else {
-            ret = xmss_sign(sk, sm, &smlen, m, XMSS_MLEN);
+            // struct signing_params sg_params{sk, m, XMSS_MLEN, sm, &smlen};
+            for (unsigned int ts = 0; ts < NUM_THREADS; ts++) {
+                
+                if (pthread_create(threads[ts], NULL, multi_xmss_sign, (void*)sk)) {
+
+                };
+            }
+            // ret = xmss_sign(sk, sm, &smlen, m, XMSS_MLEN);
             if(i >= ((1ULL << params.tree_height)-1)) {
                 if(ret != -2) {
                     printf("Error detecting running out of OTS keys\n");
@@ -298,7 +393,5 @@ int test_case(const char *name, int xmssmt) {
 }
 
 int main() {
-    int rc = test_case(XMSS_IMPLEMENTATION, 0);
-    if(rc) return rc;
-    return 0;
+
 }
