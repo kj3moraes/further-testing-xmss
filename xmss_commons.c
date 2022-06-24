@@ -192,7 +192,7 @@ int xmssmt_core_sign_open(const xmss_params *params,
     idx = bytes_to_ull(sm, params->index_bytes);
 
     #ifdef NO_MSG_RCV
-        unsigned int length = *mlen + 4 * params * n;
+        unsigned int length = *mlen + 4 * params->n;
         unsigned char *buffer = (unsigned char*)malloc((*mlen + 4 * params->n) * sizeof(unsigned char));
         memcpy(buffer + 4* params->n, m, *mlen);
         memcpy(buffer, m - 4 * params->n, 4 * params->n);
@@ -202,20 +202,20 @@ int xmssmt_core_sign_open(const xmss_params *params,
 
         /* Compute the message hash. */
         hash_message(params, mhash, sm + params->index_bytes, pk, idx,
-                    tmp, *mlen);
+                    buffer, *mlen);
         printf("mhash=");
         for (i = 0; i < params->n; i++) printf("%02x", mhash[i]);
         printf("\n");
 
         return -1;
     #else
+        /* Put the message all the way at the end of the m buffer, so that we can
+        * prepend the required other inputs for the hash function. */
+        memcpy(m + params->sig_bytes, sm + params->sig_bytes, *mlen);
         printf("stuff_to_be_hashed=");
         for (i = params->sig_bytes - 4 * params->n; i < params->sig_bytes; i++) printf("%02x", m[i]);
         for (i = 0; i < *mlen; i++) printf("%02x", m[i]);
         printf("\n");
-        /* Put the message all the way at the end of the m buffer, so that we can
-        * prepend the required other inputs for the hash function. */
-        memcpy(m + params->sig_bytes, sm + params->sig_bytes, *mlen);
 
         /* Compute the message hash. */
         hash_message(params, mhash, sm + params->index_bytes, pk, idx,

@@ -751,10 +751,18 @@ int xmss_core_sign(const xmss_params *params,
      * is made in XMSS. The counter is incremented. */
 
     // Update SK
-    sk[0] = ((idx + 1) >> 24) & 255;
-    sk[1] = ((idx + 1) >> 16) & 255;
-    sk[2] = ((idx + 1) >> 8) & 255;
-    sk[3] = (idx + 1) & 255;
+
+    #ifdef NO_MSG_RCV
+        sk[0] = ((idx) >> 24) & 255;
+        sk[1] = ((idx) >> 16) & 255;
+        sk[2] = ((idx) >> 8) & 255;
+        sk[3] = (idx) & 255; 
+    #else
+        sk[0] = ((idx + 1) >> 24) & 255;
+        sk[1] = ((idx + 1) >> 16) & 255;
+        sk[2] = ((idx + 1) >> 8) & 255;
+        sk[3] = (idx + 1) & 255;
+    #endif
 
     /* Secret key for this non-forward-secure version is now updated.
        A production implementation should consider using a file handle instead,

@@ -10,11 +10,11 @@
 
 #define XMSS_IMPLEMENTATION "XMSS-SHA2_20_256"
 #define XMSS_MLEN 32
-#define NUM_TESTS 100
+#define NUM_TESTS 15
 #define MAX_LENGTH_FILENAME 60
 
 static void hexdump(unsigned char *d, unsigned int l) {
-    for(unsigned int i=0; i<l ;i++) printf("%02x", d[i]);
+    for(unsigned int i=0; i<16 ;i++) printf("%02x", d[i]);
     printf("\n");
 }
 
@@ -117,13 +117,16 @@ int test_case(const char *name, int xmssmt) {
     sk->release_key = release_sk_key;
     sk->oqs_save_updated_sk_key = sk_file_write;
 
+    // Standardized in the message so that we can check the output.
     unsigned char *m = (unsigned char*)malloc(XMSS_MLEN);
+    for (i = 0; i < XMSS_MLEN; i++) m[i] = i;
+    
     unsigned char *sm = (unsigned char*)malloc(params.sig_bytes + XMSS_MLEN);
     unsigned char *mout = (unsigned char*)malloc(params.sig_bytes + XMSS_MLEN);
     unsigned long long smlen, mlen;
     unsigned char filename[MAX_LENGTH_FILENAME];
 
-    randombytes(m, XMSS_MLEN);
+    // randombytes(m, XMSS_MLEN);
     printf("\nmsg="); hexdump(m, XMSS_MLEN);
 
     printf("sk_bytes=%llu + oid\n", params.sk_bytes);
