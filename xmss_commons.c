@@ -224,13 +224,13 @@ int xmssmt_core_sign_open(const xmss_params *params,
         for (i = 0; i < params->n; i++) printf("%02x", mhash[i]);
         printf("\n");
     #endif
-    /* Put the message all the way at the end of the m buffer, so that we can
-     * prepend the required other inputs for the hash function. */
-    memcpy(m + params->sig_bytes, sm + params->sig_bytes, *mlen);
+    // /* Put the message all the way at the end of the m buffer, so that we can
+    //  * prepend the required other inputs for the hash function. */
+    // memcpy(m + params->sig_bytes, sm + params->sig_bytes, *mlen);
 
-    /* Compute the message hash. */
-    hash_message(params, mhash, sm + params->index_bytes, pk, idx,
-                 m + params->sig_bytes - 4*params->n, *mlen);
+    // /* Compute the message hash. */
+    // hash_message(params, mhash, sm + params->index_bytes, pk, idx,
+    //              m + params->sig_bytes - 4*params->n, *mlen);
     sm += params->index_bytes + params->n;
 
     /* For each subtree.. */
