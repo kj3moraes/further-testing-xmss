@@ -1,5 +1,5 @@
 CXX = gcc
-CXX_FLAGS = --std=c11 -g -Wall -O0 -DDEBUGGING -DMAX_MOD
+CXX_FLAGS = --std=c11 -g -Wall -O0 -DDEBUGGING -DMAX_MOD 
 LDLIBS = -lcrypto -loqs -lm
 BUILD_DIR = build
 SOURCES = params.c hash.c fips202.c hash_address.c randombytes.c wots.c xmss.c xmss_core.c xmss_commons.c utils.c secret_key.c
