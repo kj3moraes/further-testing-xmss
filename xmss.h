@@ -21,6 +21,11 @@ int xmss_keypair(unsigned char *pk, OQS_SECRET_KEY *sk, const uint32_t oid);
  */
 int xmss_derive_subkey(OQS_SECRET_KEY *master, OQS_SECRET_KEY *subkey, unsigned long long number_of_sigs);
 
+#ifdef MAX_MOD
+
+int xmss_modify_maximum(OQS_SECRET_KEY *sk, unsigned long long new_max);
+
+#endif
 
 /**
  * Signs a message using an XMSS secret key.

@@ -190,7 +190,7 @@ int test_case(const char *name, int xmssmt) {
             sk->secret_key[i] = fgetc(prv_key);
 
             #ifdef DEBUGGING
-            printf("%02x", sk->secret_key[i]);
+                printf("%02x", sk->secret_key[i]);
             #endif
         }
         fclose(prv_key);
@@ -198,14 +198,28 @@ int test_case(const char *name, int xmssmt) {
 
     }
 
-    // Print out the public key, secret key as part of the debugging process
     #ifdef DEBUGGING
-    printf("pk="); hexdump(pk, sizeof pk); printf("\n");
-    printf("sk="); hexdump(sk->secret_key, sk->length_secret_key); printf("\n");
-    
-    printf("Continue (0 - no, 1 - yes) ? >");
-    scanf("%d", &decision);
-    if (decision == 0) return -1;   
+        // Print out the public key, secret key as part of the debugging process
+        printf("pk="); hexdump(pk, sizeof pk); printf("\n");
+        printf("sk="); hexdump(sk->secret_key, sk->length_secret_key); printf("\n");
+        
+        printf("Continue (0 - no, 1 - yes) ? >");
+        scanf("%d", &decision);
+        if (decision == 0) return -1;   
+    #endif
+
+
+    #ifdef MAX_MOD
+        // Change the max field of the secret key as part of the debugging process
+        unsigned long long number_of_sigs;
+        printf("Enter the max no. of the signatures >");
+        scanf("%llu", &number_of_sigs);
+
+        if (xmss_modify_maximum(sk, number_of_sigs) != 0) {
+            printf("\nError in modifying the maximum number of signatures\n");
+            return -1;
+        }
+        printf("\nnew_sk(post modify)="); hexdump(sk->secret_key, sk->length_secret_key); printf("\n");
     #endif
 
     printf("Testing %d %s signatures.. \n", NUM_TESTS, name);
@@ -241,7 +255,7 @@ int test_case(const char *name, int xmssmt) {
 
         printf("sm="); hexdump(sm, smlen);
         #ifdef DEBUGGING
-        printf("\nnew_sk="); hexdump(sk->secret_key, sk->length_secret_key);
+            printf("\nnew_sk="); hexdump(sk->secret_key, sk->length_secret_key);
         #endif
 
         /* ===================== SIGNATURE LENGTH CHECK ======================= */
@@ -299,6 +313,6 @@ int test_case(const char *name, int xmssmt) {
 
 int main() {
     int rc = test_case(XMSS_IMPLEMENTATION, 0);
-    if(rc) return rc;
+    if(rc != 0) return rc;
     return 0;
 }
