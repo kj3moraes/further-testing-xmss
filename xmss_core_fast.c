@@ -836,8 +836,8 @@ int xmss_core_sign(const xmss_params *params,
     sm += params->tree_height*params->n;
     *smlen += params->tree_height*params->n;
 
-    memcpy(sm, m, mlen);
-    *smlen += mlen;
+    // memcpy(sm, m, mlen);
+    // *smlen += mlen;
 
     #ifdef FORWARD_SECURE
     // move forward next seeds for all tree hash instances

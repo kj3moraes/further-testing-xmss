@@ -8,13 +8,13 @@
 #include "../randombytes.h"
 #include "../secret_key.h"
 
-#define XMSS_IMPLEMENTATION "XMSS-SHAKE_20_512"
+#define XMSS_IMPLEMENTATION "XMSS-SHA2_16_512"
 #define XMSS_MLEN 32
 #define NUM_TESTS 15
 #define MAX_LENGTH_FILENAME 60
 
 static void hexdump(unsigned char *d, unsigned int l) {
-    for(unsigned int i=0; i<16 ;i++) printf("%02x", d[i]);
+    for(unsigned int i=0; i<l ;i++) printf("%02x", d[i]);
     printf("\n");
 }
 
@@ -256,6 +256,7 @@ int test_case(const char *name, int xmssmt) {
             }
         }
 
+        printf("\nsignature_lenght=%llu\n", smlen);
         printf("sm="); hexdump(sm, smlen);
         #ifdef DEBUGGING
             printf("\nnew_sk="); hexdump(sk->secret_key, sk->length_secret_key);
@@ -264,7 +265,7 @@ int test_case(const char *name, int xmssmt) {
         /* ===================== SIGNATURE LENGTH CHECK ======================= */
    
 
-        if (smlen != params.sig_bytes + XMSS_MLEN) {
+        if (smlen != params.sig_bytes) {
             printf("  X smlen incorrect [%llu != %u]!\n", smlen, params.sig_bytes);
             ret = -1;
         }
