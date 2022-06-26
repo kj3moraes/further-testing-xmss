@@ -9,10 +9,12 @@
 #include "../randombytes.h"
 #include "../secret_key.h"
 
+// Algorithm parameters
 #define XMSS_IMPLEMENTATION "XMSS-SHA2_20_256"
 #define XMSS_MLEN 32
 
-#define NUM_TESTS 100
+// Testing parameters
+#define NUM_TESTS 10
 #define NUM_THREADS 2
 #define MAX_LENGTH_FILENAME 60
 
@@ -97,10 +99,10 @@ int sk_file_write(OQS_SECRET_KEY *sk) {
 
 struct siging_params {
     OQS_SECRET_KEY *sk;
-    unsigned char *message;
-    unsigned int message_length;
     unsigned char *signature;
     unsigned int signature_length;
+    unsigned char *message;
+    unsigned int message_length;
 };
 
 struct verif_params {
@@ -203,14 +205,13 @@ int test_case(const char *name, int xmssmt) {
 
     // Standardized in the message so that we can check the output.
     unsigned char *m = (unsigned char*)malloc(XMSS_MLEN);
-    for (i = 0; i < XMSS_MLEN; i++) m[i] = i;
-    
+
     unsigned char *sm = (unsigned char*)malloc(params.sig_bytes + XMSS_MLEN);
     unsigned char *mout = (unsigned char*)malloc(params.sig_bytes + XMSS_MLEN);
-    unsigned long long smlen, mlen;
+    unsigned long long smlen;
     unsigned char filename[MAX_LENGTH_FILENAME];
 
-    // randombytes(m, XMSS_MLEN);
+    randombytes(m, XMSS_MLEN);
     printf("\nmsg="); hexdump(m, XMSS_MLEN);
 
     printf("sk_bytes=%llu + oid\n", params.sk_bytes);
@@ -309,14 +310,35 @@ int test_case(const char *name, int xmssmt) {
         printf("\nnew_sk(post modify)="); hexdump(sk->secret_key, sk->length_secret_key); printf("\n");
     #endif
 
+    pthread_t threads[NUM_THREADS];
+    pthread_mutex_init(&mutex, NULL);
+
     printf("Testing %d %s signatures.. \n", NUM_TESTS, name);
     for (i = 0; i < NUM_TESTS; i++) {
         printf("\n\n=========  - iteration #%d: ==============\n", i);
 
         /* ========================== SIGNING ================================= */
 
+        randombytes(m, XMSS_MLEN);
+        struct signing_params *sgpar = {sk, sm, smlen, m, XMSS_MLEN};
         if(xmssmt){
-            ret = xmssmt_sign(sk, sm, &smlen, m, XMSS_MLEN);
+
+            // CALLING IT IN A MULTITHREADED MANNER
+            for (i = 0; i < NUM_THREADS; i++) {
+
+                // Create the threads and run the xmssmt_sign function (multithreaded)
+                if (pthread_create(&threads[i], NULL, multi_xmssmt_sign, (void*)sgpar) != 0) {
+                    printf("Error creating thread\n");
+                    return -1;
+                }
+
+                // Join the threads
+                if (pthread_join(threads[i], NULL) != 0) {
+                    printf("Error joining thread\n");
+                    return -1;
+                }
+            }
+           
             if(i >= ((1ULL << params.full_height)-1)) {
                 if(ret != -2) {
                     printf("Error detecting running out of OTS keys\n");
@@ -328,7 +350,20 @@ int test_case(const char *name, int xmssmt) {
             }
         }
         else {
-            ret = xmss_sign(sk, sm, &smlen, m, XMSS_MLEN);
+            
+            // CALLING IT IN A MULTITHREADED MANNER
+            for (i = 0; i < NUM_THREADS; i++) {
+                if (pthread_create(&threads[i], NULL, multi_xmss_sign, (void*)sgpar) != 0) {
+                    printf("Error creating thread\n");
+                    return -1;
+                }
+
+                if (pthread_join(threads[i], NULL) != 0) {
+                    printf("Error joining thread\n");
+                    return -1;
+                }
+            }
+
             if(i >= ((1ULL << params.tree_height)-1)) {
                 if(ret != -2) {
                     printf("Error detecting running out of OTS keys\n");
@@ -340,6 +375,7 @@ int test_case(const char *name, int xmssmt) {
             }
         }
 
+        printf("\nsignature_lenght=%llu\n", smlen);
         printf("sm="); hexdump(sm, smlen);
         #ifdef DEBUGGING
             printf("\nnew_sk="); hexdump(sk->secret_key, sk->length_secret_key);
@@ -348,7 +384,7 @@ int test_case(const char *name, int xmssmt) {
         /* ===================== SIGNATURE LENGTH CHECK ======================= */
    
 
-        if (smlen != params.sig_bytes + XMSS_MLEN) {
+        if (smlen != params.sig_bytes) {
             printf("  X smlen incorrect [%llu != %u]!\n", smlen, params.sig_bytes);
             ret = -1;
         }
@@ -374,23 +410,7 @@ int test_case(const char *name, int xmssmt) {
             printf("    verification succeeded.\n");
         }
 
-        /* Test if the correct message was recovered. */
-        // if (mlen != XMSS_MLEN) {
-        //     printf("  X mlen incorrect [%llu != %u]!\n", mlen, XMSS_MLEN);
-        //     ret = -1;
-        // }
-        // else {
-        //     printf("    mlen as expected [%llu].\n", mlen);
-        // }
-        // if (memcmp(m, mout, XMSS_MLEN)) {
-        //     printf("  X output message incorrect!\n");
-        //     ret = -1;
-        // }
-        // else {
-        //     printf("    output message as expected.\n");
-        // }
-
-        // if(ret) return ret;
+        if(ret) return ret;
     }
 
     OQS_SECRET_KEY_free(sk);

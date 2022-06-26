@@ -8,7 +8,7 @@ HEADERS = params.h hash.h fips202.h hash_address.h randombytes.h wots.h xmss.h x
 SOURCES_FAST = $(subst xmss_core.c,xmss_core_fast.c,$(SOURCES))
 HEADERS_FAST = $(subst xmss_core.c,xmss_core_fast.c,$(HEADERS))
 
-TESTS = $(BUILD_DIR)/test_fast # $(BUILD_DIR)/test_subkeys $(BUILD_DIR)/test_multi 
+TESTS = $(BUILD_DIR)/test_fast $(BUILD_DIR)/test_multi # $(BUILD_DIR)/test_subkeys
 
 tests: $(TESTS)
 
