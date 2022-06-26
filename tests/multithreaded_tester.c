@@ -321,6 +321,7 @@ int test_case(const char *name, int xmssmt) {
 
         randombytes(m, XMSS_MLEN);
         struct signing_params *sgpar = {sk, sm, smlen, m, XMSS_MLEN};
+        struct verif_params *vfpar = {sk, sm, smlen, m, XMSS_MLEN};
         if(xmssmt){
 
             // CALLING IT IN A MULTITHREADED MANNER
@@ -354,6 +355,11 @@ int test_case(const char *name, int xmssmt) {
             // CALLING IT IN A MULTITHREADED MANNER
             for (i = 0; i < NUM_THREADS; i++) {
                 if (pthread_create(&threads[i], NULL, multi_xmss_sign, (void*)sgpar) != 0) {
+                    printf("Error creating thread\n");
+                    return -1;
+                }
+                
+                if (pthread_create(&threads[i], NULL, multi_xmss_sign_open, (void*)sgpar) != 0) {
                     printf("Error creating thread\n");
                     return -1;
                 }
