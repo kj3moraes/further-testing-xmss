@@ -186,44 +186,40 @@ int xmssmt_core_sign_open(const xmss_params *params,
     set_type(ltree_addr, XMSS_ADDR_TYPE_LTREE);
     set_type(node_addr, XMSS_ADDR_TYPE_HASHTREE);
 
-    *mlen = smlen - params->sig_bytes;
-
     /* Convert the index bytes from the signature to an integer. */
     idx = bytes_to_ull(sm, params->index_bytes);
 
-    #ifdef NO_MSG_RCV
-        unsigned int length = *mlen + 4 * params->n;
-        unsigned char *buffer = (unsigned char*)malloc((*mlen + 4 * params->n) * sizeof(unsigned char));
-        memcpy(buffer + 4* params->n, m, *mlen);
-        memcpy(buffer, m - 4 * params->n, 4 * params->n);
-        printf("buffer=%s", buffer);
-        for (i = 0; i < length; i++) printf("%02x", buffer[i]);
-        printf("\n");
+    unsigned char *buffer = (unsigned char*)malloc((*mlen + 4 * params->n) * sizeof(unsigned char));
+    
+    memcpy(buffer + 4* params->n, m, *mlen);
 
-        /* Compute the message hash. */
-        hash_message(params, mhash, sm + params->index_bytes, pk, idx,
-                    buffer, *mlen);
-        printf("mhash=");
-        for (i = 0; i < params->n; i++) printf("%02x", mhash[i]);
-        printf("\n");
+    /* Compute the message hash. */
+    hash_message(params, mhash, sm + params->index_bytes, pk, idx,
+                buffer, *mlen);
+    
 
-        return -1;
-    #else
-        /* Put the message all the way at the end of the m buffer, so that we can
-        * prepend the required other inputs for the hash function. */
-        memcpy(m + params->sig_bytes, sm + params->sig_bytes, *mlen);
-        printf("stuff_to_be_hashed=");
-        for (i = params->sig_bytes - 4 * params->n; i < params->sig_bytes; i++) printf("%02x", m[i]);
-        for (i = 0; i < *mlen; i++) printf("%02x", m[i]);
-        printf("\n");
+    // #else
+    //     printf("\nmout(before memcopy)=");
+    //     for (i = 0; i < *mlen + params->sig_bytes; i++) printf("%02x", m[i]);
+    //     printf("\n");
 
-        /* Compute the message hash. */
-        hash_message(params, mhash, sm + params->index_bytes, pk, idx,
-                    m + params->sig_bytes - 4*params->n, *mlen);
-        printf("mhash=");
-        for (i = 0; i < params->n; i++) printf("%02x", mhash[i]);
-        printf("\n");
-    #endif
+    //     /* Put the message all the way at the end of the m buffer, so that we can
+    //     * prepend the required other inputs for the hash function. */
+    //     memcpy(m + params->sig_bytes, sm + params->sig_bytes, *mlen);
+        
+    //     printf("stuff_to_be_hashed=");
+    //     for (i = params->sig_bytes - 4 * params->n; i < params->sig_bytes; i++) printf("%02x", m[i]);
+    //     for (i = 0; i < *mlen; i++) printf("%02x", m[i]);
+    //     printf("\n");
+
+    //     /* Compute the message hash. */
+    //     hash_message(params, mhash, sm + params->index_bytes, pk, idx,
+    //                 m + params->sig_bytes - 4*params->n, *mlen);
+        
+    //     printf("mhash=");
+    //     for (i = 0; i < params->n; i++) printf("%02x", mhash[i]);
+    //     printf("\n");
+    // #endif
     // /* Put the message all the way at the end of the m buffer, so that we can
     //  * prepend the required other inputs for the hash function. */
     // memcpy(m + params->sig_bytes, sm + params->sig_bytes, *mlen);

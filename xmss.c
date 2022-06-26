@@ -30,10 +30,6 @@ int xmss_keypair(unsigned char *pk, OQS_SECRET_KEY *sk, const uint32_t oid)
     unsigned long long max = pow(2, params.tree_height) - (unsigned long) 1; 
     for (i = params.sk_bytes - params.bytes_for_max; i < params.sk_bytes; i++) {
         sk->secret_key[i] = (max >> (8 * (params.sk_bytes - i - 1))) & 0xFF;
-
-        #ifdef DEBUGGING
-        printf("%02x\n", (max >> (8 * (params.sk_bytes - i - 1))) & 0xFF);
-        #endif
     }
 
     #ifdef DEBUGGING
