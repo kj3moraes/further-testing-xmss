@@ -8,7 +8,7 @@
 #include "../randombytes.h"
 #include "../secret_key.h"
 
-#define XMSS_IMPLEMENTATION "XMSS-SHA2_20_256"
+#define XMSS_IMPLEMENTATION "XMSS-SHAKE_20_512"
 #define XMSS_MLEN 32
 #define NUM_TESTS 15
 #define MAX_LENGTH_FILENAME 60
@@ -119,14 +119,14 @@ int test_case(const char *name, int xmssmt) {
 
     // Standardized in the message so that we can check the output.
     unsigned char *m = (unsigned char*)malloc(XMSS_MLEN);
-    for (i = 0; i < XMSS_MLEN; i++) m[i] = i;
+    // for (i = 0; i < XMSS_MLEN; i++) m[i] = i;
     
     unsigned char *sm = (unsigned char*)malloc(params.sig_bytes + XMSS_MLEN);
     unsigned char *mout = (unsigned char*)malloc(params.sig_bytes + XMSS_MLEN);
     unsigned long long smlen, mlen;
     unsigned char filename[MAX_LENGTH_FILENAME];
 
-    // randombytes(m, XMSS_MLEN);
+    randombytes(m, XMSS_MLEN);
     printf("\nmsg="); hexdump(m, XMSS_MLEN);
 
     printf("sk_bytes=%llu + oid\n", params.sk_bytes);
@@ -230,7 +230,7 @@ int test_case(const char *name, int xmssmt) {
         printf("\n\n=========  - iteration #%d: ==============\n", i);
 
         /* ========================== SIGNING ================================= */
-
+        randombytes(m, XMSS_MLEN);
         if(xmssmt){
             ret = xmssmt_sign(sk, sm, &smlen, m, XMSS_MLEN);
             if(i >= ((1ULL << params.full_height)-1)) {
