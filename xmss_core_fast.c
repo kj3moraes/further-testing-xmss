@@ -1230,9 +1230,6 @@ int xmssmt_core_sign(const xmss_params *params,
         }
     }
 
-    memcpy(sm, m, mlen);
-    *smlen += mlen;
-
     #ifdef FORWARD_SECURE
     set_layer_addr(ots_addr, 0);
     // move forward next seeds for all tree hash instances
