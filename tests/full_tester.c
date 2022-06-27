@@ -291,23 +291,7 @@ int test_case(const char *name, int xmssmt) {
             printf("    verification succeeded.\n");
         }
 
-        /* Test if the correct message was recovered. */
-        // if (mlen != XMSS_MLEN) {
-        //     printf("  X mlen incorrect [%llu != %u]!\n", mlen, XMSS_MLEN);
-        //     ret = -1;
-        // }
-        // else {
-        //     printf("    mlen as expected [%llu].\n", mlen);
-        // }
-        // if (memcmp(m, mout, XMSS_MLEN)) {
-        //     printf("  X output message incorrect!\n");
-        //     ret = -1;
-        // }
-        // else {
-        //     printf("    output message as expected.\n");
-        // }
-
-        // if(ret) return ret;
+        if(ret) return ret;
     }
 
     OQS_SECRET_KEY_free(sk);

@@ -114,21 +114,19 @@ int test_case(const char *name, int xmssmt) {
 
     unsigned char pk[XMSS_OID_LEN + params.pk_bytes];
     
-    // Defining the secret master key
+    // Defining the secret key
     OQS_SECRET_KEY *master_key = OQS_SECRET_KEY_new(name);
     master_key->lock_key = lock_sk_key;
     master_key->release_key = release_sk_key;
     master_key->oqs_save_updated_sk_key = sk_file_write;
 
-    // Defining the secret subkeys
+    // Array of subkeys
     OQS_SECRET_KEY *subkeys[NUM_SUBKEYS];
-
-
 
     unsigned char *m = (unsigned char*)malloc(XMSS_MLEN);
     unsigned char *sm = (unsigned char*)malloc(params.sig_bytes + XMSS_MLEN);
     unsigned char *mout = (unsigned char*)malloc(params.sig_bytes + XMSS_MLEN);
-    unsigned long long smlen, mlen;
+    unsigned long long smlen;
     unsigned char filename[MAX_LENGTH_FILENAME];
 
     randombytes(m, XMSS_MLEN);
@@ -137,10 +135,11 @@ int test_case(const char *name, int xmssmt) {
     printf("sk_bytes=%llu + oid\n", params.sk_bytes);
 
     unsigned int decision;
-    printf("Do you want to generate the master key (0) or use a stored one (1) ? >");
+    printf("Do you want to generate keys (0) or use stored ones (1) ? >");
     scanf("%d", &decision);
 
-     if (decision == 0) {
+    
+    if (decision == 0) {
 
         /* === GENERATING KEYS AND THEN STORING THEM === */
 
@@ -197,7 +196,7 @@ int test_case(const char *name, int xmssmt) {
             master_key->secret_key[i] = fgetc(prv_key);
 
             #ifdef DEBUGGING
-            printf("%02x", master_key->secret_key[i]);
+                printf("%02x", sk->secret_key[i]);
             #endif
         }
         fclose(prv_key);
@@ -205,47 +204,43 @@ int test_case(const char *name, int xmssmt) {
 
     }
 
-     // Print out the public key, secret key as part of the debugging process
     #ifdef DEBUGGING
-    printf("pk="); hexdump(pk, sizeof pk); printf("\n");
-    printf("sk="); hexdump(master_key->secret_key, master_key->length_secret_key); printf("\n");
-    
-    printf("Continue (0 - no, 1 - yes) ? >");
-    scanf("%d", &decision);
-    if (decision == 0) return -1;   
+        // Print out the public key, secret key as part of the debugging process
+        printf("pk="); hexdump(pk, sizeof pk); printf("\n");
+        printf("sk="); hexdump(sk->secret_key, sk->length_secret_key); printf("\n");
+        
+        printf("Continue (0 - no, 1 - yes) ? >");
+        scanf("%d", &decision);
+        if (decision == 0) return -1;   
     #endif
 
-    unsigned long long number_of_sigs; 
 
-    // MAIN LOOP TO ITERATE THROUGH THE SUBKEYS
-    printf("Testing %d %s signatures on %d subkeys.. \n", NUM_TESTS, name, NUM_SUBKEYS);
-    for (i = 0; i < NUM_SUBKEYS; i++) {
-        
-        printf("\t === SUBKEY %d ===\n\n", (i + 1));
+    #ifdef MAX_MOD
+        // Change the max field of the secret key as part of the debugging process
+        unsigned long long number_of_sigs;
+        printf("Enter the max no. of the signatures >");
+        scanf("%llu", &number_of_sigs);
 
-        printf("\nEnter the amount of signatures you wish to generate with subkey %d>", (i + 1));
-        scanf("%"SCNu64, &number_of_sigs);
-        printf("\n%"PRIu64"\n\n", number_of_sigs); 
-
-        subkeys[i] = OQS_SECRET_KEY_new(name);
-        subkeys[i]->lock_key = lock_sk_key;
-        subkeys[i]->release_key = release_sk_key;
-        subkeys[i]->oqs_save_updated_sk_key = do_nothing_save;
-
-        if (xmss_derive_subkey(master_key, subkeys[i], i) != 0) {
-            printf("Error deriving subkey %d\n", i);
+        if (xmss_modify_maximum(sk, number_of_sigs) != 0) {
+            printf("\nError in modifying the maximum number of signatures\n");
             return -1;
         }
+        printf("\nnew_sk(post modify)="); hexdump(sk->secret_key, sk->length_secret_key); printf("\n");
+    #endif
 
-        // NESTED LOOP TO TEST ON THE SUBKEYS
-        printf("How many signatures do you want to complete with subkey %d>", (i + 1));
-        unsigned long long sigs_to_complete;
-        scanf("%llu", &sigs_to_complete);
-        for (unsigned j = 0; j < sigs_to_complete; j++) {
-            
-        }
-    }
+    printf("Testing %d %s signatures.. \n", NUM_TESTS, name);
 
+    /*
+        Enter code on how you will test the subkey derivations and 
+        signing with the subkey and the master key (post derivation)
+    */
+    
+
+    OQS_SECRET_KEY_free(master_key);
+    free(m);
+    free(sm);
+    free(mout);
+    return 0;
 }
 
 

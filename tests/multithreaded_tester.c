@@ -106,11 +106,11 @@ struct siging_params {
 };
 
 struct verif_params {
-    unsigned char *pk;
     unsigned char *message;
     unsigned int message_length;
     unsigned char *signature;
     unsigned int signature_length;
+    unsigned char *pk;
 };
 
 
@@ -133,7 +133,7 @@ void *multi_xmss_sign_open(void *arg) {
     struct verif_params *params = (struct verif_params *)arg;
     
     for (unsigned int i = 0; i < NUM_TESTS; i++) {
-        if (xmss_sign_open(params->pk, params->signature, params->signature_length, params->message, params->message_length) != 0) {
+        if (xmss_sign_open(params->message, params->message_length, params->signature, params->signature_length, params->pk) != 0) {
             printf("\nERROR! Signature failed\n");
             return NULL;
         }
@@ -148,7 +148,7 @@ void *multi_xmssmt_sign(void *arg) {
 
     for (unsigned int i = 0; i < NUM_TESTS; i++) {
         if (xmssmt_sign(params->sk, params->signature, params->signature_length, params->message, params->message_length) != 0) {
-            printf("\nERROR! Signature failed\n");
+            printf("\nERROR! Verification failed\n");
             return NULL;
         }
     }
@@ -160,8 +160,8 @@ void *multi_xmssmt_sign_open(void *arg) {
     struct verif_params *params = (struct verif_params *)arg;
     
     for (unsigned int i = 0; i < NUM_TESTS; i++) {
-        if (xmssmt_sign_open(params->pk, params->signature, params->signature_length, params->message, params->message_length) != 0) {
-            printf("\nERROR! Signature failed\n");
+        if (xmssmt_sign_open(params->message, params->message_length, params->signature, params->signature_length, params->pk) != 0) {
+            printf("\nERROR! Verification failed\n");
             return NULL;
         }
     }
@@ -201,7 +201,7 @@ int test_case(const char *name, int xmssmt) {
     OQS_SECRET_KEY *sk = OQS_SECRET_KEY_new(name);
     sk->lock_key = lock_sk_key;
     sk->release_key = release_sk_key;
-    sk->oqs_save_updated_sk_key = sk_file_write;
+    sk->oqs_save_updated_sk_key = do_nothing_save;
 
     // Standardized in the message so that we can check the output.
     unsigned char *m = (unsigned char*)malloc(XMSS_MLEN);
@@ -321,7 +321,8 @@ int test_case(const char *name, int xmssmt) {
 
         randombytes(m, XMSS_MLEN);
         struct signing_params *sgpar = {sk, sm, smlen, m, XMSS_MLEN};
-        struct verif_params *vfpar = {sk, sm, smlen, m, XMSS_MLEN};
+        struct verif_params *vfpar = {m, XMSS_MLEN, sm, smlen, pk};
+
         if(xmssmt){
 
             // CALLING IT IN A MULTITHREADED MANNER
@@ -333,6 +334,12 @@ int test_case(const char *name, int xmssmt) {
                     return -1;
                 }
 
+                // Create the threads and run the xmssmt_sign_open function (multithreaded)
+                if (pthread_create(&threads[i], NULL, multi_xmssmt_sign_open, (void*)vfpar) != 0) {
+                    printf("Error creating thread\n");
+                    return -1;
+                }
+
                 // Join the threads
                 if (pthread_join(threads[i], NULL) != 0) {
                     printf("Error joining thread\n");
@@ -340,7 +347,7 @@ int test_case(const char *name, int xmssmt) {
                 }
             }
            
-            if(i >= ((1ULL << params.full_height)-1)) {
+            if (i >= ((1ULL << params.full_height)-1)) {
                 if(ret != -2) {
                     printf("Error detecting running out of OTS keys\n");
                 }
@@ -359,7 +366,7 @@ int test_case(const char *name, int xmssmt) {
                     return -1;
                 }
                 
-                if (pthread_create(&threads[i], NULL, multi_xmss_sign_open, (void*)sgpar) != 0) {
+                if (pthread_create(&threads[i], NULL, multi_xmss_sign_open, (void*)vfpar) != 0) {
                     printf("Error creating thread\n");
                     return -1;
                 }
