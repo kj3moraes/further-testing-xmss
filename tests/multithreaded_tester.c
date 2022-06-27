@@ -10,7 +10,7 @@
 #include "../secret_key.h"
 
 // Algorithm parameters
-#define XMSS_IMPLEMENTATION "XMSS-SHA2_20_256"
+#define XMSS_IMPLEMENTATION "XMSS-SHA2_10_256"
 #define XMSS_MLEN 32
 
 // Testing parameters
@@ -178,6 +178,7 @@ int test_case(const char *name, int xmssmt) {
     int ret = 0;
     unsigned int i;
 
+    printf("\n\t===== Multithreaded Testing %s ===== \n", name);
     if(xmssmt){
         ret  = xmssmt_str_to_oid(&oid, name);
         ret |= xmssmt_parse_oid(&params, oid);
@@ -208,7 +209,7 @@ int test_case(const char *name, int xmssmt) {
 
     unsigned char *sm = (unsigned char*)malloc(params.sig_bytes + XMSS_MLEN);
     unsigned char *mout = (unsigned char*)malloc(params.sig_bytes + XMSS_MLEN);
-    unsigned long long smlen;
+    unsigned long long smlen, message_length = XMSS_MLEN;
     unsigned char filename[MAX_LENGTH_FILENAME];
 
     randombytes(m, XMSS_MLEN);
@@ -320,8 +321,8 @@ int test_case(const char *name, int xmssmt) {
         /* ========================== SIGNING ================================= */
 
         randombytes(m, XMSS_MLEN);
-        struct signing_params *sgpar = {sk, sm, smlen, m, XMSS_MLEN};
-        struct verif_params *vfpar = {m, XMSS_MLEN, sm, smlen, pk};
+        struct signing_params *sgpar = {sk, sm, smlen, m, message_length};
+        struct verif_params *vfpar = {m, message_length, sm, smlen, pk};
 
         if(xmssmt){
 
@@ -434,5 +435,7 @@ int test_case(const char *name, int xmssmt) {
 }
 
 int main() {
-
+    int rc = test_case(XMSS_IMPLEMENTATION, 0);
+    if(rc != 0) return rc;
+    return 0;
 }

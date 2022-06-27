@@ -40,13 +40,13 @@ int do_nothing_save(OQS_SECRET_KEY *sk) {
 
 int sk_file_write(OQS_SECRET_KEY *sk) {
 
-    unsigned char filename[MAX_LENGTH_FILENAME] = "./keys/reg1_xmss20_sha256.prv";
+    unsigned char filename[MAX_LENGTH_FILENAME] = "./keys/reg2_xmss16_sha256.prv";
 
     #ifdef CUSTOM_NAME
-    printf("\nEnter the filename that you want written to>");
-    scanf("%32s", filename);
-    strcat(filename, ".prv");
-    prepend(filename, "./keys/")
+        printf("\nEnter the filename that you want written to>");
+        scanf("%32s", filename);
+        strcat(filename, ".prv");
+        prepend(filename, "./keys/")
     #endif
 
     printf("\nWriting to file %s\n", filename);
@@ -57,7 +57,7 @@ int sk_file_write(OQS_SECRET_KEY *sk) {
                         ((unsigned long)sk->secret_key[XMSS_OID_LEN + 3]);
 
     #ifdef DEBUGGING
-    printf("The index (after the increment) is : %ld\n", idx);
+        printf("The index (after the increment) is : %ld\n", idx);
     #endif
 
     FILE *printer = fopen(filename, "w+");
@@ -73,10 +73,6 @@ int sk_file_write(OQS_SECRET_KEY *sk) {
             perror("ERROR! There is no such file. Terminating...");
             return -1;
         }
-
-        #ifdef DEBUGGING
-        // printf("Byte being put: %02x\n", sk->secret_key[i]);
-        #endif
     }
     fclose(printer);
     printf("Completed the write operation\n");
@@ -92,6 +88,7 @@ int test_case(const char *name, int xmssmt) {
     int ret = 0;
     unsigned int i;
 
+    printf("\n\t===== Complete Testing %s ===== \n", name);
     if(xmssmt){
         ret  = xmssmt_str_to_oid(&oid, name);
         ret |= xmssmt_parse_oid(&params, oid);
@@ -123,7 +120,7 @@ int test_case(const char *name, int xmssmt) {
     
     unsigned char *sm = (unsigned char*)malloc(params.sig_bytes + XMSS_MLEN);
     unsigned char *mout = (unsigned char*)malloc(params.sig_bytes + XMSS_MLEN);
-    unsigned long long smlen, mlen;
+    unsigned long long smlen;
     unsigned char filename[MAX_LENGTH_FILENAME];
 
     randombytes(m, XMSS_MLEN);
@@ -191,10 +188,6 @@ int test_case(const char *name, int xmssmt) {
         if (prv_key == NULL) return -1;
         for (unsigned int i = 0; i < sk->length_secret_key; i++) {
             sk->secret_key[i] = fgetc(prv_key);
-
-            #ifdef DEBUGGING
-                printf("%02x", sk->secret_key[i]);
-            #endif
         }
         fclose(prv_key);
         printf("\n");
@@ -256,7 +249,7 @@ int test_case(const char *name, int xmssmt) {
             }
         }
 
-        printf("\nsignature_lenght=%llu\n", smlen);
+        printf("\nsignature_length=%llu\n", smlen);
         printf("sm="); hexdump(sm, smlen);
         #ifdef DEBUGGING
             printf("\nnew_sk="); hexdump(sk->secret_key, sk->length_secret_key);
