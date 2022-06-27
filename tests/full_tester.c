@@ -8,7 +8,7 @@
 #include "../randombytes.h"
 #include "../secret_key.h"
 
-#define XMSS_IMPLEMENTATION "XMSS-SHA2_16_512"
+#define XMSS_IMPLEMENTATION "XMSS-SHA2_16_256"
 #define XMSS_MLEN 32
 #define NUM_TESTS 15
 #define MAX_LENGTH_FILENAME 60
@@ -40,7 +40,7 @@ int do_nothing_save(OQS_SECRET_KEY *sk) {
 
 int sk_file_write(OQS_SECRET_KEY *sk) {
 
-    unsigned char filename[MAX_LENGTH_FILENAME] = "./keys/reg2_xmss16_sha256.prv";
+    unsigned char filename[MAX_LENGTH_FILENAME] = "./keys/reg2_xmssmt60_3_sha256.prv";
 
     #ifdef CUSTOM_NAME
         printf("\nEnter the filename that you want written to>");
@@ -295,7 +295,7 @@ int test_case(const char *name, int xmssmt) {
 }
 
 int main() {
-    int rc = test_case(XMSS_IMPLEMENTATION, 0);
+    int rc = test_case(XMSS_IMPLEMENTATION, 1);
     if(rc != 0) return rc;
     return 0;
 }

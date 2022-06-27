@@ -97,7 +97,7 @@ int sk_file_write(OQS_SECRET_KEY *sk) {
 
 /** ================= WRAPPER FUNCTIONS FOR MULTITHREADING ==================== */
 
-struct siging_params {
+struct signing_params {
     OQS_SECRET_KEY *sk;
     unsigned char *signature;
     unsigned int signature_length;
@@ -117,7 +117,7 @@ struct verif_params {
 
 void *multi_xmss_sign(void *arg) {
 
-    struct siging_params *params = (struct siging_params *)arg;
+    struct signing_params *params = (struct signing_params *)arg;
 
     for (unsigned int i = 0; i < NUM_TESTS; i++) {
         if (xmss_sign(params->sk, params->signature, params->signature_length, params->message, params->message_length) != 0) {
@@ -134,7 +134,7 @@ void *multi_xmss_sign_open(void *arg) {
     
     for (unsigned int i = 0; i < NUM_TESTS; i++) {
         if (xmss_sign_open(params->message, params->message_length, params->signature, params->signature_length, params->pk) != 0) {
-            printf("\nERROR! Signature failed\n");
+            printf("\nERROR! Verification failed\n");
             return NULL;
         }
     }
@@ -144,11 +144,11 @@ void *multi_xmss_sign_open(void *arg) {
 
 void *multi_xmssmt_sign(void *arg) {
 
-    struct siging_params *params = (struct siging_params *)arg;
+    struct signing_params *params = (struct signing_params *)arg;
 
     for (unsigned int i = 0; i < NUM_TESTS; i++) {
         if (xmssmt_sign(params->sk, params->signature, params->signature_length, params->message, params->message_length) != 0) {
-            printf("\nERROR! Verification failed\n");
+            printf("\nERROR! Signing failed\n");
             return NULL;
         }
     }
@@ -321,33 +321,48 @@ int test_case(const char *name, int xmssmt) {
         /* ========================== SIGNING ================================= */
 
         randombytes(m, XMSS_MLEN);
-        struct signing_params *sgpar = {sk, sm, smlen, m, message_length};
-        struct verif_params *vfpar = {m, message_length, sm, smlen, pk};
+        struct signing_params sgpar  = {sk, sm, smlen, m, message_length};
+        // sgpar.sk = sk;
+        
+        struct verif_params vfpar = {m, message_length, sm, smlen, pk};
 
         if(xmssmt){
 
-            // CALLING IT IN A MULTITHREADED MANNER
+            // SIGNING IN A MULTITHREADED WAY
             for (i = 0; i < NUM_THREADS; i++) {
-
                 // Create the threads and run the xmssmt_sign function (multithreaded)
-                if (pthread_create(&threads[i], NULL, multi_xmssmt_sign, (void*)sgpar) != 0) {
+                if (pthread_create(&threads[i], NULL, multi_xmssmt_sign, (void*)&sgpar) != 0) {
                     printf("Error creating thread\n");
                     return -1;
                 }
+            }
 
+            // WAITING FOR ALL THE SIGNING TO COMPLETE
+            for (i = 0; i < NUM_THREADS; i++) {
+                if (pthread_join(threads[i], NULL) != 0) {
+                    printf("Error joining thread\n");
+                    return -1;
+                }
+
+            }
+
+            // VERIFYING IN A MULTITHREADED WAY
+            for (i = 0; i < NUM_THREADS; i++) {
                 // Create the threads and run the xmssmt_sign_open function (multithreaded)
-                if (pthread_create(&threads[i], NULL, multi_xmssmt_sign_open, (void*)vfpar) != 0) {
+                if (pthread_create(&threads[i], NULL, multi_xmssmt_sign_open, (void*)&vfpar) != 0) {
                     printf("Error creating thread\n");
                     return -1;
                 }
-
-                // Join the threads
+            }
+           
+            // WAITING FOR ALL THE VERIFICATIONS TO COMPLETE
+            for (i = 0; i < NUM_THREADS; i++) {
                 if (pthread_join(threads[i], NULL) != 0) {
                     printf("Error joining thread\n");
                     return -1;
                 }
             }
-           
+
             if (i >= ((1ULL << params.full_height)-1)) {
                 if(ret != -2) {
                     printf("Error detecting running out of OTS keys\n");
@@ -360,18 +375,35 @@ int test_case(const char *name, int xmssmt) {
         }
         else {
             
-            // CALLING IT IN A MULTITHREADED MANNER
+            // SIGNING IN A MULTITHREADED WAY
             for (i = 0; i < NUM_THREADS; i++) {
-                if (pthread_create(&threads[i], NULL, multi_xmss_sign, (void*)sgpar) != 0) {
+                // Create the threads and run the xmssmt_sign function (multithreaded)
+                if (pthread_create(&threads[i], NULL, multi_xmss_sign, (void*)&sgpar) != 0) {
                     printf("Error creating thread\n");
                     return -1;
                 }
-                
-                if (pthread_create(&threads[i], NULL, multi_xmss_sign_open, (void*)vfpar) != 0) {
-                    printf("Error creating thread\n");
+            }
+
+            // WAITING FOR ALL THE SIGNING TO COMPLETE
+            for (i = 0; i < NUM_THREADS; i++) {
+                if (pthread_join(threads[i], NULL) != 0) {
+                    printf("Error joining thread\n");
                     return -1;
                 }
 
+            }
+
+            // VERIFYING IN A MULTITHREADED WAY
+            for (i = 0; i < NUM_THREADS; i++) {
+                // Create the threads and run the xmssmt_sign_open function (multithreaded)
+                if (pthread_create(&threads[i], NULL, multi_xmss_sign_open, (void*)&vfpar) != 0) {
+                    printf("Error creating thread\n");
+                    return -1;
+                }
+            }
+           
+            // WAITING FOR ALL THE VERIFICATIONS TO COMPLETE
+            for (i = 0; i < NUM_THREADS; i++) {
                 if (pthread_join(threads[i], NULL) != 0) {
                     printf("Error joining thread\n");
                     return -1;
