@@ -1,18 +1,18 @@
+# Compiler detials and flags
 CXX = gcc
 CXX_FLAGS = --std=c11 -g -Wall -O0 -DDEBUGGING 
 
+# Library details and flags
 LDFLAGS = -L../liboqs/build/lib
 LDLIBS = -lcrypto -loqs -lm
 INC_FLAGS = -I../liboqs/build/include
 
+# Executable details and flags
 BUILD_DIR = build
-SRC_DIR = sig_stfl/xmss/extern
+SRC_DIR = sig_stfl/xmss/external
 
-# Is there a better way than to prepend each soruce file with SRC_DIR ?
-SOURCES = #params.c hash.c fips202.c hash_address.c randombytes.c wots.c xmss.c xmss_core.c xmss_commons.c utils.c secret_key.c
-HEADERS = params.h hash.h fips202.h hash_address.h randombytes.h wots.h xmss.h xmss_core.h xmss_commons.h utils.h secret_key.h
-
-# AC_SRC = $(SRC_DIR)/$(SOURCES)
+SOURCES = $(wildcard $(SRC_DIR)/*.c)
+HEADERS = $(wildcard $(SRC_DIR)/*.h) 
 
 SOURCES_FAST = $(subst xmss_core.c,xmss_core_fast.c,$(SOURCES))
 HEADERS_FAST = $(subst xmss_core.c,xmss_core_fast.c,$(HEADERS))
@@ -23,14 +23,17 @@ tests: $(TESTS)
 
 .PHONY: clean test
 
-$(BUILD_DIR)/test_fast: tests/full_tester.c $(SOURCES_FAST) $(OBJS) $(HEADERS_FAST)
-	$(CXX) $(CXX_FLAGS) -o $@ $(SOURCES_FAST) $< $(LDLIBS) $(LDFLAGS) $(INC_FLAGS) -I.
+$(BUILD_DIR)/test_fast: tests/full_tester.c $(SOURCES) $(OBJS) $(HEADERS)
+	$(CXX) $(CXX_FLAGS) -o $@ $(SOURCES) $< $(LDLIBS) $(LDFLAGS) $(INC_FLAGS) -I.
 
-$(BUILD_DIR)/test_subkeys: tests/subkeys_tester.c $(SOURCES_FAST) $(OBJS) $(HEADERS_FAST)
-	$(CXX) $(CXX_FLAGS) -o $@ $(SOURCES_FAST) $< $(LDLIBS) $(LDFLAGS) $(INC_FLAGS) -I.
+$(BUILD_DIR)/test_fast: tests/full_tester.c $(SOURCES) $(OBJS) $(HEADERS)
+	$(CXX) $(CXX_FLAGS) -o $@ $(SOURCES) $< $(LDLIBS) $(LDFLAGS) $(INC_FLAGS) -I.
 
-$(BUILD_DIR)/test_multi: tests/multithreaded_tester.c $(SOURCES_FAST) $(OBJS) $(HEADERS_FAST)
-	$(CXX) $(CXX_FLAGS) -o $@ $(SOURCES_FAST) $< $(LDLIBS) $(LDFLAGS) $(INC_FLAGS) -I.
+$(BUILD_DIR)/test_subkeys: tests/subkeys_tester.c $(SOURCES) $(OBJS) $(HEADERS)
+	$(CXX) $(CXX_FLAGS) -o $@ $(SOURCES) $< $(LDLIBS) $(LDFLAGS) $(INC_FLAGS) -I.
+
+$(BUILD_DIR)/test_multi: tests/multithreaded_tester.c $(SOURCES) $(OBJS) $(HEADERS)
+	$(CXX) $(CXX_FLAGS) -o $@ $(SOURCES) $< $(LDLIBS) $(LDFLAGS) $(INC_FLAGS) -I.
 
 clean:
 	-$(RM) $(TESTS)

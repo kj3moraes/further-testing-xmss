@@ -4,10 +4,10 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "../xmss.h"
-#include "../params.h"
-#include "../randombytes.h"
-#include "../secret_key.h"
+#include "../sig_stfl/xmss/external/params.h"
+#include "../sig_stfl/xmss/external/randombytes.h"
+#include "../sig_stfl/xmss/external/secret_key.h"
+#include "../sig_stfl/xmss/xmss.h"
 
 #define XMSS_IMPLEMENTATION "XMSS-SHA2_20_256"
 #define XMSS_MLEN 32

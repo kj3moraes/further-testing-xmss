@@ -43,7 +43,6 @@ extern "C" {
 /* Algorithm identifier for XMSS-SHAKE_20_512 */
 #define OQS_SIG_STFL_alg_xmss_shake256_h20 "XMSS-SHAKE_20_512"
 
-
 /**
  * LMS will be added later. So far its only XMSS and XMSS^MT
  * 
@@ -51,7 +50,6 @@ extern "C" {
 
 
 #define OQS_SIG_algs_length 12
-
 
 /**
  * Returns identifiers for available signature schemes in liboqs.  Used with OQS_SIG_new.
@@ -113,19 +111,44 @@ typedef struct OQS_SIG_STFL {
 } OQS_SIG_STFL;
 
 
+OQS_SIG_STFL *OQS_SIG_STFL_new(const char *method_name);
+
+OQS_SIG_STFL *OQS_SIG_STFL_keypair(const OQS_SIG_STFL *sig, const uint8_t *pk, uint8_t *sk);
+
+OQS_SIG_STFL *OQS_SIG_STFL_sign(const OQS_SIG_STFL *sig, uint8_t *sk, );
+
+OQS_SIG_STFL *OQS_SIG_STFL_verify(const OQS_SIG_STFL *sig, const uint8_t *pk, uint8_t *sk);
+
+
+void OQS_SIG_STFL_free(OQS_SIG_STFL *sig);
+
+typedef struct OQS_SECRET_KEY OQS_SECRET_KEY;
+
 typedef struct OQS_SECRET_KEY {
 	
 	/** The (maximum) length, in bytes, of secret keys for this signature scheme. */
-	size_t length_secret_key;
+	unsigned long long length_secret_key;
+
+	uint32_t oid;
 
 	/** The physical secret key stored in memory as an array of bytes*/
 	uint8_t *secret_key;
 
-	unsigned long long signatures_completed;
+	unsigned long long (*sigs_total)();
 
-	unsigned long long signatures_left;
+	unsigned long long (*sigs_left)();
 
-};	
+	int (*lock_key)(OQS_SECRET_KEY *sk);
+	int (*oqs_save_updated_sk_key)(OQS_SECRET_KEY *sk);
+	int (*release_key)(OQS_SECRET_KEY *sk);
+
+} OQS_SECRET_KEY;
+
+// extern int (*oqs_save_updated_key)(OQS_SECRET_KEY *sk);
+
+extern OQS_SECRET_KEY *OQS_SECRET_KEY_new(const char *method_name);
+
+extern void OQS_SECRET_KEY_free(OQS_SECRET_KEY *sk);	
 
 #if defined(__cplusplus)
 } // extern "C"

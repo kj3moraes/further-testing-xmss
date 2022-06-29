@@ -4,9 +4,9 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "../sig_stfl/xmss/params.h"
-#include "../sig_stfl/xmss/randombytes.h"
-#include "../sig_stfl/xmss/secret_key.h"
+#include "../sig_stfl/xmss/external/params.h"
+#include "../sig_stfl/xmss/external/randombytes.h"
+#include "../sig_stfl/xmss/external/secret_key.h"
 #include "../sig_stfl/xmss/xmss.h"
 
 // Algorithm parameters
