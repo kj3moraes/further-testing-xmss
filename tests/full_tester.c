@@ -3,10 +3,10 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "../xmss.h"
-#include "../params.h"
-#include "../randombytes.h"
-#include "../secret_key.h"
+#include "../sig_stfl/xmss/params.h"
+#include "../sig_stfl/xmss/randombytes.h"
+#include "../sig_stfl/xmss/secret_key.h"
+#include "../sig_stfl/xmss/xmss.h"
 
 #define XMSS_IMPLEMENTATION "XMSS-SHA2_16_256"
 #define XMSS_MLEN 32
@@ -123,7 +123,7 @@ int test_case(const char *name, int xmssmt) {
     unsigned long long smlen;
     unsigned char filename[MAX_LENGTH_FILENAME];
 
-    randombytes(m, XMSS_MLEN);
+    OQS_randombytes(m, XMSS_MLEN);
     printf("\nmsg="); hexdump(m, XMSS_MLEN);
 
     printf("sk_bytes=%llu + oid\n", params.sk_bytes);

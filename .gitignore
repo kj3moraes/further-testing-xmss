@@ -1,14 +1,18 @@
+# Object build
 *.o
 *.d
+
+# Testing files
 *.in
 *.out
 *.msg
 *.pub
 *.prv
 *.sig
-vgcore.*
-build*
-/.vscode*
-keys*
 *.log
+keys*
+
+# Miscellaneous code dev files
+vgcore.*
+/.vscode*
 /build*
