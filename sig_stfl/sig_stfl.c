@@ -11,4 +11,3 @@
 
 #include <oqs/oqs.h>
 
-OQS_SIG_STFL *

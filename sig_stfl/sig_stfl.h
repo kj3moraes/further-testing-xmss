@@ -110,15 +110,13 @@ typedef struct OQS_SIG_STFL {
 
 } OQS_SIG_STFL;
 
-
 OQS_SIG_STFL *OQS_SIG_STFL_new(const char *method_name);
 
 OQS_SIG_STFL *OQS_SIG_STFL_keypair(const OQS_SIG_STFL *sig, const uint8_t *pk, uint8_t *sk);
 
-OQS_SIG_STFL *OQS_SIG_STFL_sign(const OQS_SIG_STFL *sig, uint8_t *sk, );
+OQS_SIG_STFL *OQS_SIG_STFL_sign(const OQS_SIG_STFL *sig, uint8_t *signature, size_t *signature_len, const uint8_t *message, size_t message_len, const OQS_SECRET_KEY *secret_key);
 
-OQS_SIG_STFL *OQS_SIG_STFL_verify(const OQS_SIG_STFL *sig, const uint8_t *pk, uint8_t *sk);
-
+OQS_SIG_STFL *OQS_SIG_STFL_verify(const OQS_SIG_STFL *sig, const uint8_t *message, size_t message_len, const uint8_t *signature, size_t signature_len, const uint8_t *public_key);
 
 void OQS_SIG_STFL_free(OQS_SIG_STFL *sig);
 

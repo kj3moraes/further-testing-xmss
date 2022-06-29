@@ -3,6 +3,8 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include "../sig_stfl/xmss/external/params.h"
+#include "../sig_stfl/xmss/external/secret_key.h"
 
 #define XMSS_IMPLEMENTATION "XMSS-SHA2_16_256"
 #define XMSS_MLEN 32
@@ -78,5 +80,5 @@ int sk_file_write(OQS_SECRET_KEY *sk) {
 /** =========================================================================== */
 
 int main() {
-    
+
 }
