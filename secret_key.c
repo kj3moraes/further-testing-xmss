@@ -12,15 +12,24 @@ OQS_SECRET_KEY *OQS_SECRET_KEY_new(const char *method_name) {
     if (sk == NULL) return NULL;
     
     // Convert the XMSS/XMSS^MT algorithm name to an OID
-    xmss_str_to_oid(&sk->oid, method_name);
+    if (strstr("MT", method_name) != NULL) {
+        xmssmt_str_to_oid(&sk->oid, method_name);
+    } else {
+        xmss_str_to_oid(&sk->oid, method_name);
+    }
 
     // Convert the oid into a XMSS parameters list and extract the length of the secret key.
     xmss_params par;
-    xmss_parse_oid(&par, sk->oid);
+    if (strstr("MT", method_name) != NULL) {
+        xmssmt_parse_oid(&par, sk->oid);
+    } else {
+        xmss_parse_oid(&par, sk->oid);
+    }
     sk->length_secret_key = par.sk_bytes;
 
     // Initialize the key with length_secret_key amount of bytes.
     sk->secret_key = (uint8_t *)malloc(sk->length_secret_key * sizeof(uint8_t));
+    
 }
 
 void OQS_SECRET_KEY_free(OQS_SECRET_KEY *sk) {
