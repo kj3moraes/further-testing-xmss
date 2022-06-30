@@ -44,11 +44,9 @@ extern "C" {
 #define OQS_SIG_STFL_alg_xmss_shake256_h20 "XMSS-SHAKE_20_512"
 
 /**
- * LMS will be added later. So far its only XMSS and XMSS^MT
+ * LMS will be added later. So far its only XMSS 
  * 
  */
-
-
 #define OQS_SIG_algs_length 12
 
 /**
@@ -101,12 +99,52 @@ typedef struct OQS_SIG_STFL {
 
 	/** Whether the signature offers EUF-CMA security (TRUE) or not (FALSE). */
 	bool euf_cma;
-
 	/** The (maximum) length, in bytes, of public keys for this signature scheme. */
 	size_t length_public_key;
-	
 	/** The (maximum) length, in bytes, of signatures for this signature scheme. */
 	size_t length_signature;
+
+
+	/**
+	 * Keypair generation algorithm.
+	 *
+	 * Caller is responsible for allocating sufficient memory for `public_key` and
+	 * `secret_key`, based on the `length_*` members in this object or the per-scheme
+	 * compile-time macros `OQS_SIG_*_length_*`.
+	 *
+	 * @param[out] public_key The public key represented as a byte string.
+	 * @param[out] secret_key The secret key represented as a byte string.
+	 * @return OQS_SUCCESS or OQS_ERROR
+	 */
+	int (*keypair)(uint8_t *public_key, OQS_SECRET_KEY *secret_key);
+
+	/**
+	 * Signature generation algorithm.
+	 *
+	 * Caller is responsible for allocating sufficient memory for `signature`,
+	 * based on the `length_*` members in this object or the per-scheme
+	 * compile-time macros `OQS_SIG_*_length_*`.
+	 *
+	 * @param[out] signature The signature on the message represented as a byte string.
+	 * @param[out] signature_len The length of the signature.
+	 * @param[in] message The message to sign represented as a byte string.
+	 * @param[in] message_len The length of the message to sign.
+	 * @param[in] secret_key The secret key represented as a byte string.
+	 * @return OQS_SUCCESS or OQS_ERROR
+	 */
+	int (*sign)(uint8_t *signature, size_t *signature_len, const uint8_t *message, size_t message_len, OQS_SECRET_KEY *secret_key);
+
+	/**
+	 * Signature verification algorithm.
+	 *
+	 * @param[in] message The message represented as a byte string.
+	 * @param[in] message_len The length of the message.
+	 * @param[in] signature The signature on the message represented as a byte string.
+	 * @param[in] signature_len The length of the signature.
+	 * @param[in] public_key The public key represented as a byte string.
+	 * @return OQS_SUCCESS or OQS_ERROR
+	 */
+	int (*verify)(const uint8_t *message, size_t message_len, const uint8_t *signature, size_t signature_len, const uint8_t *public_key);
 
 } OQS_SIG_STFL;
 

@@ -9,5 +9,78 @@
 #include <strings.h>
 #endif
 
-#include <oqs/oqs.h>
+#include "sig_stfl.h"
+
+const char *OQS_SIG_STFL_alg_identifier(size_t i) {
+
+    const char *a[OQS_SIG_algs_length] = {
+
+        OQS_SIG_STFL_alg_xmss_sha256_h10,
+        OQS_SIG_STFL_alg_xmss_sha256_h16,
+        OQS_SIG_STFL_alg_xmss_sha256_h20
+    };
+
+    if (i >= OQS_SIG_algs_length) {
+		return NULL;
+	} else {
+		return a[i];
+	}
+}
+
+
+OQS_SIG_STFL *OQS_SIG_STFL_new(const char *method_name) {
+    if (method_name == NULL) {
+        return NULL;
+    } 
+
+    if (0) {    
+
+    } else if (0 == strcasecmp(method_name, OQS_SIG_STFL_alg_xmss_sha256_h10)) {
+#ifdef OQS_ENABLE_SIG_STFL_XMSS_SHA256_H10
+        return OQS_SIG_STFL_XMSS_SHA256_H10_new();
+#else 
+        return NULL;
+#endif
+    } else if (0 == strcasecmp(method_name, OQS_SIG_STFL_alg_xmss_sha256_h16)) {
+#ifdef OQS_ENABLE_SIG_STFL_XMSS_SHA256_H16
+        return OQS_SIG_STFL_XMSS_SHA256_H16_new();
+#else 
+        return NULL;
+#endif
+    } else if (0 == strcasecmp(method_name, OQS_SIG_STFL_alg_xmss_sha256_h20)) {
+#ifdef OQS_ENABLE_SIG_STFL_XMSS_SHA256_H20
+        return OQS_SIG_STFL_XMSS_SHA256_H20_new();
+#else 
+        return NULL;
+#endif
+    } else {
+        return NULL;
+    }
+}
+
+
+int OQS_SIG_keypair(const OQS_SIG_STFL *sig, uint8_t *public_key, OQS_SECRET_KEY *secret_key) {
+	if (sig == NULL || sig->keypair(public_key, secret_key) != 0) {
+		return -1;
+	} else {
+		return 0;
+	}
+}
+
+int OQS_SIG_sign(const OQS_SIG_STFL *sig, uint8_t *signature, size_t *signature_len, const uint8_t *message, size_t message_len, OQS_SECRET_KEY *secret_key) {
+	if (sig == NULL || sig->sign(signature, signature_len, message, message_len, secret_key) != 0) {
+		return -1;
+	} else {
+		return 0;
+	}
+}
+
+int OQS_SIG_verify(const OQS_SIG_STFL *sig, const uint8_t *message, size_t message_len, const uint8_t *signature, size_t signature_len, const uint8_t *public_key) {
+	if (sig == NULL || sig->verify(message, message_len, signature, signature_len, public_key) != 0) {
+		return -1;
+	} else {
+		return 0;
+	}
+}
+
 
