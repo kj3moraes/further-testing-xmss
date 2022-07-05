@@ -18,7 +18,7 @@ int OQS_SIG_STFL_alg_xmss_sign(uint8_t *signature, size_t signature_length, cons
 int OQS_SIG_STFL_alg_xmss_verify(const uint8_t *message, size_t message_len, const uint8_t *signature, size_t signature_len, const uint8_t *public_key) {
     if (message == NULL || signature == NULL || public_key == NULL) return -1;
     
-    return xmss_sign_open(message, message_len, signature, signature_len, public_key);
+    return xmss_sign_open(message, &message_len, signature, signature_len, public_key);
 }
 
 int OQS_SIG_STFL_alg_xmssmt_keypair(uint8_t *public_key, OQS_SECRET_KEY *secret_key) {
@@ -36,17 +36,17 @@ int OQS_SIG_STFL_alg_xmssmt_sign(uint8_t *signature, size_t signature_length, co
 int OQS_SIG_STFL_alg_xmssmt_verify(const uint8_t *message, size_t message_len, const uint8_t *signature, size_t signature_len, const uint8_t *public_key) {
     if (message == NULL || signature == NULL || public_key == NULL) return -1;
     
-    return xmssmt_sign_open(message, message_len, signature, signature_len, public_key);
+    return xmssmt_sign_open(message, &message_len, signature, signature_len, public_key);
 }
 
 unsigned long long OQS_SIG_STFL_alg_xmss_xmssmt_sigs_left(const OQS_SECRET_KEY *secret_key) {
     if (secret_key == NULL) return -1;
     
     xmss_params params;
-    if (secret_key->is_xmssmt == 0) {
-        xmss_params_init(&params, secret_key->oid);
+    if (secret_key->is_xmssmt) {
+        xmssmt_parse_oid(&params, secret_key->oid);
     } else {
-        xmssmt_params_init(&params, secret_key->oid);
+        xmss_parse_oid(&params, secret_key->oid);
     }
 
     unsigned long long max = OQS_SIG_STFL_alg_xmss_xmssmt_sigs_total(secret_key);
@@ -61,10 +61,10 @@ unsigned long long OQS_SIG_STFL_alg_xmss_xmssmt_sigs_total(const OQS_SECRET_KEY 
     if (secret_key == NULL) return -1;
     
     xmss_params params;
-    if (secret_key->is_xmssmt == 0) {
-        xmss_params_init(&params, secret_key->oid);
+    if (secret_key->is_xmssmt) {
+        xmssmt_parse_oid(&params, secret_key->oid);
     } else {
-        xmssmt_params_init(&params, secret_key->oid);
+        xmss_parse_oid(&params, secret_key->oid);
     }
 
     unsigned long long max = 0;
@@ -82,7 +82,12 @@ void perform_key_allocation(OQS_SECRET_KEY *sk) {
 
     // Convert the oid into a XMSS parameters list and extract the length of the secret key.
     xmss_params par;
-    xmss_parse_oid(&par, sk->oid);
+
+    if (sk->is_xmssmt) {
+        xmssmt_parse_oid(&par, sk->oid);
+    } else {
+        xmss_parse_oid(&par, sk->oid);
+    }
     sk->length_secret_key = par.sk_bytes;
 
     // Initialize the key with length_secret_key amount of bytes.

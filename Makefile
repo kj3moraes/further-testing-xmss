@@ -1,6 +1,6 @@
 # Compiler detials and flags
 CXX = gcc
-CXX_FLAGS = --std=c11 -g -Wall -Werror -Wextra
+CXX_FLAGS = --std=c11 -g -Wall 
 
 # Executable details and flags
 BUILD_DIR = build

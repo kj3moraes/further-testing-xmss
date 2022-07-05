@@ -7,7 +7,7 @@
 
 // ======================== XMSS10-SHA256 ======================== //
 
-OQS_SIG_STFL *OQS_SIG_STFL_xmss_sha256_h10() {
+OQS_SIG_STFL *OQS_SIG_STFL_alg_xmss_sha256_h10_new() {
     
     OQS_SIG_STFL *sig = (OQS_SIG_STFL *)malloc(sizeof(OQS_SIG_STFL));
     if (sig == NULL) {
@@ -19,6 +19,9 @@ OQS_SIG_STFL *OQS_SIG_STFL_xmss_sha256_h10() {
     // Check how true this is
     sig->claimed_nist_level = 2;
     sig->euf_cma = true;
+
+    sig->length_public_key = OQS_SIG_STFL_alg_xmss_sha256_h10_length_pk;
+    sig->length_signature = OQS_SIG_STFL_alg_xmss_sha256_h10_length_signature;
 
     sig->keypair = OQS_SIG_STFL_alg_xmss_keypair;
     sig->sign = OQS_SIG_STFL_alg_xmss_sign;
@@ -44,7 +47,7 @@ OQS_SECRET_KEY *OQS_SECRET_KEY_XMSS_SHA256_H10_new() {
 
 // ======================== XMSS16-SHA256 ======================== //
 
-OQS_SIG_STFL *OQS_SIG_STFL_xmss_sha256_h16() {
+OQS_SIG_STFL *OQS_SIG_STFL_alg_xmss_sha256_h16_new() {
     
     OQS_SIG_STFL *sig = (OQS_SIG_STFL *)malloc(sizeof(OQS_SIG_STFL));
     if (sig == NULL) {
@@ -56,6 +59,9 @@ OQS_SIG_STFL *OQS_SIG_STFL_xmss_sha256_h16() {
     // Check how true this is
     sig->claimed_nist_level = 2;
     sig->euf_cma = true;
+
+    sig->length_public_key = OQS_SIG_STFL_alg_xmss_sha256_h16_length_pk;
+    sig->length_signature = OQS_SIG_STFL_alg_xmss_sha256_h16_length_signature;
 
     sig->keypair = OQS_SIG_STFL_alg_xmss_keypair;
     sig->sign = OQS_SIG_STFL_alg_xmss_sign;
@@ -80,7 +86,7 @@ OQS_SECRET_KEY *OQS_SECRET_KEY_XMSS_SHA256_H16_new() {
 
 // ======================== XMSS20-SHA256 ======================== //
 
-OQS_SIG_STFL *OQS_SIG_STFL_xmss_sha256_h20() {
+OQS_SIG_STFL *OQS_SIG_STFL_alg_xmss_sha256_h20_new() {
     
     OQS_SIG_STFL *sig = (OQS_SIG_STFL *)malloc(sizeof(OQS_SIG_STFL));
     if (sig == NULL) {
@@ -92,6 +98,9 @@ OQS_SIG_STFL *OQS_SIG_STFL_xmss_sha256_h20() {
     // Check how true this is
     sig->claimed_nist_level = 2;
     sig->euf_cma = true;
+
+    sig->length_public_key = OQS_SIG_STFL_alg_xmss_sha256_h20_length_pk;
+    sig->length_signature = OQS_SIG_STFL_alg_xmss_sha256_h20_length_signature;
 
     sig->keypair = OQS_SIG_STFL_alg_xmss_keypair;
     sig->sign = OQS_SIG_STFL_alg_xmss_sign;

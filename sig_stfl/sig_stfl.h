@@ -78,6 +78,41 @@ int OQS_SIG_alg_count(void);
  */
 int OQS_SIG_alg_is_enabled(const char *method_name);
 
+
+/**
+ * @brief Secret Kye object for stateful signature schemes * 
+ */
+
+typedef struct OQS_SECRET_KEY OQS_SECRET_KEY;
+
+typedef struct OQS_SECRET_KEY {
+	
+	/** The (maximum) length, in bytes, of secret keys for this signature scheme. */
+	unsigned long long length_secret_key;
+
+	uint32_t oid;
+
+	bool is_xmssmt;
+
+	/** The physical secret key stored in memory as an array of bytes*/
+	volatile uint8_t *secret_key;
+
+	unsigned long long (*sigs_total)(const OQS_SECRET_KEY *secret_key);
+
+	unsigned long long (*sigs_left)(const OQS_SECRET_KEY *secret_key);
+
+	int (*lock_key)(OQS_SECRET_KEY *sk);
+	int (*oqs_save_updated_sk_key)(const OQS_SECRET_KEY *sk);
+	int (*release_key)(OQS_SECRET_KEY *sk);
+
+} OQS_SECRET_KEY;
+
+OQS_SECRET_KEY *OQS_SECRET_KEY_new(const char *method_name);
+
+void OQS_SECRET_KEY_free(OQS_SECRET_KEY *sk);	
+
+
+
 /**
  * Signature schemes object
  */
@@ -99,6 +134,7 @@ typedef struct OQS_SIG_STFL {
 
 	/** Whether the signature offers EUF-CMA security (TRUE) or not (FALSE). */
 	bool euf_cma;
+	
 	/** The (maximum) length, in bytes, of public keys for this signature scheme. */
 	size_t length_public_key;
 	/** The (maximum) length, in bytes, of signatures for this signature scheme. */
@@ -150,41 +186,13 @@ typedef struct OQS_SIG_STFL {
 
 OQS_SIG_STFL *OQS_SIG_STFL_new(const char *method_name);
 
-int OQS_SIG_STFL_keypair(const OQS_SIG_STFL *sig, const uint8_t *pk, uint8_t *sk);
+int OQS_SIG_STFL_keypair(const OQS_SIG_STFL *sig, uint8_t *pk, OQS_SECRET_KEY *sk);
 
-int OQS_SIG_STFL_sign(const OQS_SIG_STFL *sig, uint8_t *signature, size_t signature_len, const uint8_t *message, size_t message_len, const OQS_SECRET_KEY *secret_key);
+int OQS_SIG_STFL_sign(const OQS_SIG_STFL *sig, uint8_t *signature, size_t signature_len, const uint8_t *message, size_t message_len, OQS_SECRET_KEY *secret_key);
 
 int OQS_SIG_STFL_verify(const OQS_SIG_STFL *sig, const uint8_t *message, size_t message_len, const uint8_t *signature, size_t signature_len, const uint8_t *public_key);
 
 void OQS_SIG_STFL_free(OQS_SIG_STFL *sig);
-
-typedef struct OQS_SECRET_KEY OQS_SECRET_KEY;
-
-typedef struct OQS_SECRET_KEY {
-	
-	/** The (maximum) length, in bytes, of secret keys for this signature scheme. */
-	unsigned long long length_secret_key;
-
-	uint32_t oid;
-
-	bool is_xmssmt;
-
-	/** The physical secret key stored in memory as an array of bytes*/
-	volatile uint8_t *secret_key;
-
-	unsigned long long (*sigs_total)(const OQS_SECRET_KEY *secret_key);
-
-	unsigned long long (*sigs_left)(const OQS_SECRET_KEY *secret_key);
-
-	int (*lock_key)(OQS_SECRET_KEY *sk);
-	int (*oqs_save_updated_sk_key)(const OQS_SECRET_KEY *sk);
-	int (*release_key)(OQS_SECRET_KEY *sk);
-
-} OQS_SECRET_KEY;
-
-OQS_SECRET_KEY *OQS_SECRET_KEY_new(const char *method_name);
-
-void OQS_SECRET_KEY_free(OQS_SECRET_KEY *sk);	
 
 #if defined(__cplusplus)
 } // extern "C"
