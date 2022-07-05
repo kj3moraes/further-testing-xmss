@@ -14,9 +14,6 @@ SRC_DIR = sig_stfl/xmss/external
 SOURCES = $(wildcard $(SRC_DIR)/*.c)
 HEADERS = $(wildcard $(SRC_DIR)/*.h) 
 
-SOURCES_FAST = $(subst xmss_core.c,xmss_core_fast.c,$(SOURCES))
-HEADERS_FAST = $(subst xmss_core.c,xmss_core_fast.c,$(HEADERS))
-
 TESTS = $(BUILD_DIR)/test_fast $(BUILD_DIR)/test_multi $(BUILD_DIR)/test_struct # $(BUILD_DIR)/test_subkeys
 
 tests: $(TESTS)

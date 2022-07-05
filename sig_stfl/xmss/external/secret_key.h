@@ -15,7 +15,7 @@ typedef struct OQS_SECRET_KEY {
 	uint32_t oid;
 
 	/** The physical secret key stored in memory as an array of bytes*/
-	uint8_t *secret_key;
+	volatile uint8_t *secret_key;
 
 	unsigned long long (*sigs_total)();
 

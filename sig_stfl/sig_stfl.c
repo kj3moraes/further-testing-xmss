@@ -17,7 +17,16 @@ const char *OQS_SIG_STFL_alg_identifier(size_t i) {
 
         OQS_SIG_STFL_alg_xmss_sha256_h10,
         OQS_SIG_STFL_alg_xmss_sha256_h16,
-        OQS_SIG_STFL_alg_xmss_sha256_h20
+        OQS_SIG_STFL_alg_xmss_sha256_h20,
+        OQS_SIG_STFL_alg_xmss_sha512_h10,
+        OQS_SIG_STFL_alg_xmss_sha512_h16,
+        OQS_SIG_STFL_alg_xmss_sha512_h20,
+        OQS_SIG_STFL_alg_xmss_shake128_h10,
+        OQS_SIG_STFL_alg_xmss_shake128_h16,
+        OQS_SIG_STFL_alg_xmss_shake128_h20,
+        OQS_SIG_STFL_alg_xmss_shake256_h10,
+        OQS_SIG_STFL_alg_xmss_shake256_h16,
+        OQS_SIG_STFL_alg_xmss_shake256_h20,
     };
 
     if (i >= OQS_SIG_algs_length) {
@@ -83,4 +92,38 @@ int OQS_SIG_verify(const OQS_SIG_STFL *sig, const uint8_t *message, size_t messa
 	}
 }
 
+OQS_SECRET_KEY *OQS_SECRET_KEY_new(const char *method_name) {
+    if (method_name == NULL) {
+        return NULL;
+    } 
 
+    if (0) {    
+
+    } else if (0 == strcasecmp(method_name, OQS_SIG_STFL_alg_xmss_sha256_h10)) {
+#ifdef OQS_ENABLE_SIG_STFL_XMSS_SHA256_H10
+        return OQS_SECRET_KEY_XMSS_SHA256_H10_new();
+#else 
+        return NULL;
+#endif
+    } else if (0 == strcasecmp(method_name, OQS_SIG_STFL_alg_xmss_sha256_h16)) {
+#ifdef OQS_ENABLE_SIG_STFL_XMSS_SHA256_H16
+        return OQS_SECRET_KEY_XMSS_SHA256_H16_new();
+#else 
+        return NULL;
+#endif
+    } else if (0 == strcasecmp(method_name, OQS_SIG_STFL_alg_xmss_sha256_h20)) {
+#ifdef OQS_ENABLE_SIG_STFL_XMSS_SHA256_H20
+        return OQS_SECRET_KEY_XMSS_SHA256_H20_new();
+#else 
+        return NULL;
+#endif
+    } else {
+        return NULL;
+    }
+}
+
+
+void OQS_SECRET_KEY_free(OQS_SECRET_KEY *sk) {
+    free(sk->secret_key);
+    free(sk);
+}

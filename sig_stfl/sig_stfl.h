@@ -180,11 +180,9 @@ typedef struct OQS_SECRET_KEY {
 
 } OQS_SECRET_KEY;
 
-// extern int (*oqs_save_updated_key)(OQS_SECRET_KEY *sk);
+OQS_SECRET_KEY *OQS_SECRET_KEY_new(const char *method_name);
 
-extern OQS_SECRET_KEY *OQS_SECRET_KEY_new(const char *method_name);
-
-extern void OQS_SECRET_KEY_free(OQS_SECRET_KEY *sk);	
+void OQS_SECRET_KEY_free(OQS_SECRET_KEY *sk);	
 
 #if defined(__cplusplus)
 } // extern "C"
