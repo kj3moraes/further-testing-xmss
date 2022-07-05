@@ -2,7 +2,7 @@
 #define XMSS_CORE_H
 
 #include "params.h"
-#include "secret_key.h"
+#include "../../sig_stfl.h"
 
 /**
  * Given a set of parameters, this function returns the size of the secret key.

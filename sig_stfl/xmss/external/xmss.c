@@ -1,7 +1,7 @@
 #include <stdint.h>
 
 #include "params.h"
-#include "secret_key.h"
+#include "../../sig_stfl.h"
 #include "xmss_core.h"
 
 /* This file provides wrapper functions that take keys that include OIDs to

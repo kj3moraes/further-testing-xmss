@@ -2,7 +2,7 @@
 #define XMSS_H
 
 #include <stdint.h>
-#include "secret_key.h"
+#include "../../sig_stfl.h"
 
 /**
  * Generates a XMSS key pair for a given parameter set.
