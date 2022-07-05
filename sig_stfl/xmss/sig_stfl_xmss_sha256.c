@@ -33,14 +33,11 @@ OQS_SECRET_KEY *OQS_SECRET_KEY_XMSS_SHA256_H10_new() {
     OQS_SECRET_KEY *sk = malloc(sizeof(OQS_SECRET_KEY));
     if (sk == NULL) return NULL;
     sk->oid = 0x00000001;
+    sk->is_xmssmt = 0;
 
-    // Convert the oid into a XMSS parameters list and extract the length of the secret key.
-    xmss_params par;
-    xmss_parse_oid(&par, sk->oid);
-    sk->length_secret_key = par.sk_bytes;
+    perform_key_allocation(sk);
 
-    // Initialize the key with length_secret_key amount of bytes.
-    sk->secret_key = (uint8_t *)malloc(sk->length_secret_key * sizeof(uint8_t));
+    return sk;
 }
 
 // ================================================================ //
@@ -73,14 +70,10 @@ OQS_SECRET_KEY *OQS_SECRET_KEY_XMSS_SHA256_H16_new() {
     OQS_SECRET_KEY *sk = malloc(sizeof(OQS_SECRET_KEY));
     if (sk == NULL) return NULL;
     sk->oid = 0x00000002;
+    sk->is_xmssmt = 0;
+    perform_key_allocation(sk);
 
-    // Convert the oid into a XMSS parameters list and extract the length of the secret key.
-    xmss_params par;
-    xmss_parse_oid(&par, sk->oid);
-    sk->length_secret_key = par.sk_bytes;
-
-    // Initialize the key with length_secret_key amount of bytes.
-    sk->secret_key = (uint8_t *)malloc(sk->length_secret_key * sizeof(uint8_t));
+    return sk;
 }
 
 // ================================================================ //
@@ -113,27 +106,12 @@ OQS_SECRET_KEY *OQS_SECRET_KEY_XMSS_SHA256_H20_new() {
     OQS_SECRET_KEY *sk = malloc(sizeof(OQS_SECRET_KEY));
     if (sk == NULL) return NULL;
     sk->oid = 0x00000003;
+    sk->is_xmssmt = 0;
 
-    // Convert the oid into a XMSS parameters list and extract the length of the secret key.
-    xmss_params par;
-    xmss_parse_oid(&par, sk->oid);
-    sk->length_secret_key = par.sk_bytes;
+    perform_key_allocation(sk);
 
-    // Initialize the key with length_secret_key amount of bytes.
-    sk->secret_key = (uint8_t *)malloc(sk->length_secret_key * sizeof(uint8_t));
+    return sk;
 }
 
 // ================================================================ //
 
-
-int OQS_SIG_STFL_alg_xmss_sha256_h10_keypair(uint8_t *public_key, OQS_SECRET_KEY *secret_key) {
-    return xmss_keypair(public_key, secret_key, secret_key->oid);
-}
-
-int OQS_SIG_STFL_alg_xmss_sha256_h10_sign(uint8_t *signature, size_t *signature_len, const uint8_t *message, size_t message_len, OQS_SECRET_KEY *secret_key) {
-    return xmss_sign(secret_key, signature, signature_len, message, message_len);
-}
-
-int OQS_SIG_STFL_alg_xmss_sha256_h10_verify(const uint8_t *message, size_t message_len, const uint8_t *signature, size_t signature_len, const uint8_t *public_key) {
-    return xmss_sign_open(message, message_len, signature, signature_len, public_key);
-}

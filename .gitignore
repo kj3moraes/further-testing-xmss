@@ -16,3 +16,4 @@ keys*
 vgcore.*
 /.vscode*
 /build*
+/bin*

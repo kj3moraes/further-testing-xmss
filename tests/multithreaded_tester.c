@@ -6,8 +6,7 @@
 
 #include "../sig_stfl/xmss/external/params.h"
 #include "../sig_stfl/xmss/external/randombytes.h"
-#include "../sig_stfl/xmss/external/secret_key.h"
-#include "../sig_stfl/xmss/xmss.h"
+#include "../sig_stfl/xmss/external/xmss.h"
 
 // Algorithm parameters
 #define XMSS_IMPLEMENTATION "XMSS-SHA2_10_256"

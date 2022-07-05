@@ -150,11 +150,11 @@ typedef struct OQS_SIG_STFL {
 
 OQS_SIG_STFL *OQS_SIG_STFL_new(const char *method_name);
 
-OQS_SIG_STFL *OQS_SIG_STFL_keypair(const OQS_SIG_STFL *sig, const uint8_t *pk, uint8_t *sk);
+int OQS_SIG_STFL_keypair(const OQS_SIG_STFL *sig, const uint8_t *pk, uint8_t *sk);
 
-OQS_SIG_STFL *OQS_SIG_STFL_sign(const OQS_SIG_STFL *sig, uint8_t *signature, size_t *signature_len, const uint8_t *message, size_t message_len, const OQS_SECRET_KEY *secret_key);
+int OQS_SIG_STFL_sign(const OQS_SIG_STFL *sig, uint8_t *signature, size_t signature_len, const uint8_t *message, size_t message_len, const OQS_SECRET_KEY *secret_key);
 
-OQS_SIG_STFL *OQS_SIG_STFL_verify(const OQS_SIG_STFL *sig, const uint8_t *message, size_t message_len, const uint8_t *signature, size_t signature_len, const uint8_t *public_key);
+int OQS_SIG_STFL_verify(const OQS_SIG_STFL *sig, const uint8_t *message, size_t message_len, const uint8_t *signature, size_t signature_len, const uint8_t *public_key);
 
 void OQS_SIG_STFL_free(OQS_SIG_STFL *sig);
 
@@ -167,15 +167,17 @@ typedef struct OQS_SECRET_KEY {
 
 	uint32_t oid;
 
+	bool is_xmssmt;
+
 	/** The physical secret key stored in memory as an array of bytes*/
-	uint8_t *secret_key;
+	volatile uint8_t *secret_key;
 
-	unsigned long long (*sigs_total)();
+	unsigned long long (*sigs_total)(const OQS_SECRET_KEY *secret_key);
 
-	unsigned long long (*sigs_left)();
+	unsigned long long (*sigs_left)(const OQS_SECRET_KEY *secret_key);
 
 	int (*lock_key)(OQS_SECRET_KEY *sk);
-	int (*oqs_save_updated_sk_key)(OQS_SECRET_KEY *sk);
+	int (*oqs_save_updated_sk_key)(const OQS_SECRET_KEY *sk);
 	int (*release_key)(OQS_SECRET_KEY *sk);
 
 } OQS_SECRET_KEY;

@@ -3,12 +3,10 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "../sig_stfl/xmss/external/params.h"
-#include "../sig_stfl/xmss/external/secret_key.h"
+#include "../sig_stfl/sig_stfl.h"
 
 #define XMSS_IMPLEMENTATION "XMSS-SHA2_16_256"
 #define XMSS_MLEN 32
-#define NUM_TESTS 15
 #define MAX_LENGTH_FILENAME 60
 
 static void hexdump(unsigned char *d, unsigned int l) {
@@ -38,7 +36,7 @@ int do_nothing_save(OQS_SECRET_KEY *sk) {
 
 int sk_file_write(OQS_SECRET_KEY *sk) {
 
-    unsigned char filename[MAX_LENGTH_FILENAME] = "./keys/reg2_xmssmt60_3_sha256.prv";
+    unsigned char filename[MAX_LENGTH_FILENAME] = "./keys/opps_xmss16_sha256.prv";
 
     #ifdef CUSTOM_NAME
         printf("\nEnter the filename that you want written to>");
@@ -49,12 +47,11 @@ int sk_file_write(OQS_SECRET_KEY *sk) {
 
     printf("\nWriting to file %s\n", filename);
 
-    unsigned long idx = ((unsigned long)sk->secret_key[XMSS_OID_LEN + 0] << 24) |
+    #ifdef DEBUGGING
+        unsigned long idx = ((unsigned long)sk->secret_key[XMSS_OID_LEN + 0] << 24) |
                         ((unsigned long)sk->secret_key[XMSS_OID_LEN + 1] << 16) |
                         ((unsigned long)sk->secret_key[XMSS_OID_LEN + 2] << 8) |
                         ((unsigned long)sk->secret_key[XMSS_OID_LEN + 3]);
-
-    #ifdef DEBUGGING
         printf("The index (after the increment) is : %ld\n", idx);
     #endif
 
@@ -79,6 +76,46 @@ int sk_file_write(OQS_SECRET_KEY *sk) {
 
 /** =========================================================================== */
 
-int main() {
 
+int test_case(const char *name, int xmssmt) {
+
+    int ret = 0;
+    unsigned int i;
+
+    printf("\n\t===== Complete Testing %s ===== \n", name);
+    OQS_SIG_STFL *signature_gen = OQS_SIG_STFL_new(name);
+
+
+    
+    // Defining the secret key
+    OQS_SECRET_KEY *sk = OQS_SECRET_KEY_new(name);
+    sk->lock_key = lock_sk_key;
+    sk->release_key = release_sk_key;
+    sk->oqs_save_updated_sk_key = sk_file_write;
+
+    // Standardized in the message so that we can check the output.
+    unsigned char *m = (unsigned char*)malloc(XMSS_MLEN);
+    // for (i = 0; i < XMSS_MLEN; i++) m[i] = i;
+    
+    unsigned char *sm = (unsigned char*)malloc(params.sig_bytes + XMSS_MLEN);
+    unsigned char *mout = (unsigned char*)malloc(params.sig_bytes + XMSS_MLEN);
+    unsigned long long smlen;
+    unsigned char filename[MAX_LENGTH_FILENAME];
+
+    OQS_randombytes(m, XMSS_MLEN);
+    printf("\nmsg="); hexdump(m, XMSS_MLEN);
+
+    printf("sk_bytes=%llu + oid\n", params.sk_bytes);
+
+    unsigned int decision;
+    printf("Do you want to generate keys (0) or use stored ones (1) ? >");
+    scanf("%d", &decision);
+    return 0;
+}
+
+
+int main() {
+    int rc = test_case(XMSS_IMPLEMENTATION, 0);
+    if(rc != 0) return rc;
+    return 0;
 }
