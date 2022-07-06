@@ -40,7 +40,7 @@ int do_nothing_save(OQS_SECRET_KEY *sk) {
 
 int sk_file_write(OQS_SECRET_KEY *sk) {
 
-    unsigned char filename[MAX_LENGTH_FILENAME] = "./keys/demo_xmss20_sha256.prv";
+    unsigned char filename[MAX_LENGTH_FILENAME] = "./keys/mine2_xmss10_sha256.prv";
 
     #ifdef CUSTOM_NAME
         printf("\nEnter the filename that you want written to>");
@@ -118,7 +118,7 @@ int test_case(const char *name, int xmssmt) {
     unsigned char *m = (unsigned char*)malloc(XMSS_MLEN);
     // for (i = 0; i < XMSS_MLEN; i++) m[i] = i;
     
-    unsigned char *sm = (unsigned char*)malloc(params.sig_bytes + XMSS_MLEN);
+    unsigned char *sm = (unsigned char*)malloc(params.sig_bytes);
     unsigned char *mout = (unsigned char*)malloc(params.sig_bytes + XMSS_MLEN);
     unsigned long long smlen;
     unsigned char filename[MAX_LENGTH_FILENAME];

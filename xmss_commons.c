@@ -240,7 +240,7 @@ int xmssmt_core_sign_open(const xmss_params *params,
     }
 
     /* If verification was successful, copy the message from the signature. */
-    memcpy(m, sm, *mlen);
+    // memcpy(m, sm, *mlen);
 
     return 0;
 }
