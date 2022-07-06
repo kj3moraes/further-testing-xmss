@@ -8,6 +8,7 @@
 #include "../randombytes.h"
 
 #define XMSS_MLEN 32
+#define DEBUG 0
 
 static void hexdump(unsigned char *d, unsigned int l)
 {
@@ -67,7 +68,6 @@ int test_case(const char *name, int xmssmt, unsigned int num_tests){
         if(xmssmt){
             ret = xmssmt_sign(sk, sm, &smlen, m, XMSS_MLEN);
             if(i >= ((1ULL << params.full_height)-1)) {
-                printf("here\n");
                 if(ret != -2) {
                     printf("Error detecting running out of OTS keys\n");
                 }
@@ -98,7 +98,7 @@ int test_case(const char *name, int xmssmt, unsigned int num_tests){
             ret = -1;
         }
         else {
-            printf("    smlen as expected [%llu].\n", smlen);
+            if (DEBUG) printf("    smlen as expected [%llu].\n", smlen);
         }
 
         /* Test if signature is valid. */
@@ -113,7 +113,7 @@ int test_case(const char *name, int xmssmt, unsigned int num_tests){
             printf("  X verification failed!\n");
         }
         else {
-            printf("    verification succeeded.\n");
+            if (DEBUG) printf("    verification succeeded.\n");
         }
 
         /* Test if the correct message was recovered. */
@@ -122,14 +122,14 @@ int test_case(const char *name, int xmssmt, unsigned int num_tests){
             ret = -1;
         }
         else {
-            printf("    mlen as expected [%llu].\n", mlen);
+            if (DEBUG) printf("    mlen as expected [%llu].\n", mlen);
         }
         if (memcmp(m, mout, XMSS_MLEN)) {
             printf("  X output message incorrect!\n");
             ret = -1;
         }
         else {
-            printf("    output message as expected.\n");
+            if (DEBUG) printf("    output message as expected.\n");
         }
 
         if(ret) return ret;
@@ -143,7 +143,14 @@ int test_case(const char *name, int xmssmt, unsigned int num_tests){
 int main()
 {
     int rc;
-    rc = test_case("XMSSMT-SHA2_22/2_192", 0, 1<<16);
+    rc = test_case("XMSS-SHA2_10_256", 0, 1<<11);
+    // rc |= test_case("XMSS-SHA2_16_256", 0, 1<<5);
+    // rc |= test_case("XMSS-SHA2_20_256", 0, 1<<5);
+    rc |= test_case("XMSSMT-SHA2_20/2_256", 1, 1<<5);
+    // rc |= test_case("XMSSMT-SHA2_40/2_256", 1, 1<<5);
+    // rc |= test_case("XMSSMT-SHA2_60/2_256", 1, 1<<5);
     if(rc) return rc;
+
+    printf("OK\n");
     return 0;
 }
