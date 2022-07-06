@@ -85,9 +85,9 @@ int test_case(const char *name) {
     
     // Defining the secret key
     OQS_SECRET_KEY *sk = OQS_SECRET_KEY_new(name);
-    sk->lock_key = lock_sk_key;
-    sk->release_key = release_sk_key;
-    sk->oqs_save_updated_sk_key = sk_file_write;
+    sk->lock_key = &lock_sk_key;
+    sk->release_key = &release_sk_key;
+    sk->oqs_save_updated_sk_key = &sk_file_write;
     
     // Defining the stateful signature object
     OQS_SIG_STFL *signature_gen = OQS_SIG_STFL_new(name);
@@ -98,7 +98,9 @@ int test_case(const char *name) {
 
     // Defining the rest of the data needed for singing and verifying.
     uint8_t *pk = (uint8_t *)malloc(signature_gen->length_public_key);
-    uint8_t *sm = (uint8_t *)malloc(signature_gen->length_signature);
+    // uint8_t *sm = (uint8_t *)malloc(signature_gen->length_signature);
+    uint8_t smarray[5000];
+    uint8_t *sm = &smarray; 
     unsigned long long smlen;
     unsigned char filename[MAX_LENGTH_FILENAME];
 
@@ -166,7 +168,7 @@ int test_case(const char *name) {
     OQS_SECRET_KEY_free(sk);
     OQS_SIG_STFL_free(signature_gen);
     free(m);
-    free(sm);
+    // free(sm);
     return 0;
 }
 
