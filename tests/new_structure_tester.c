@@ -5,7 +5,7 @@
 
 #include "../sig_stfl/sig_stfl.h"
 
-#define XMSS_IMPLEMENTATION "XMSS-SHA2_16_256"
+#define XMSS_IMPLEMENTATION "XMSS-SHA2_10_256"
 #define MAX_LENGTH_FILENAME 60
 
 static void hexdump(uint8_t*d, unsigned int l) {
@@ -107,11 +107,14 @@ int test_case(const char *name) {
     printf("\nmsg="); hexdump(m, MESSAGE_LENGTH);
 
     printf("sk_bytes=%llu + oid\n", sk->length_secret_key);
-    printf("pk_bytes=%llu + oid\n", signature_gen->length_public_key);
+    printf("pk_bytes=%llu\n", signature_gen->length_public_key);
     printf("sig_bytes=%llu\n", signature_gen->length_signature);
 
     printf("Generating keys ...\n");
     signature_gen->keypair(pk, sk);
+    
+    printf("\nPublic key="); hexdump(pk, signature_gen->length_public_key);
+    printf("\nSecret key="); hexdump(sk->secret_key, sk->length_secret_key);
 
     unsigned int NUM_TESTS;
     printf("\nEnter the number of tests you want to run>");
