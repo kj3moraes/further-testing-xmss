@@ -12,3 +12,4 @@ build*
 keys*
 *.log
 /build*
+/bin*
