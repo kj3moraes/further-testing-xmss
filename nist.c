@@ -40,6 +40,9 @@ int crypto_sign_keypair(unsigned char *pk, unsigned char *sk)
 #endif
         return OQS_ERROR;
     }
+#if DEBUG
+    printf("sklen, pklen, siglen = %llu, %u, %u\n", params.sk_bytes, params.pk_bytes, params.sig_bytes);
+#endif
 
     ret |= XMSS_KEYPAIR(pk, sk, oid);
     if (ret)

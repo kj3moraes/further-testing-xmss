@@ -1,16 +1,17 @@
-#include "../api.h"
-#include "../nist_params.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
+#include "../api.h"
+#include "../nist_params.h"
 #include "../xmss.h"
+#include "../params.h"
 
 #define XMSS_SIGNATURES 64
 
 #define CALC(start, stop) ((stop.tv_sec - start.tv_sec) * 1e6 + (stop.tv_nsec - start.tv_nsec) / 1e3)
 
-/* 
+/*
  * This array collect the performance number
  * and then use it to compute average and median number
  */
@@ -59,12 +60,8 @@ static unsigned long long average(unsigned long long *t, size_t tlen)
 
 static void print_results(unsigned long long *t, size_t tlen)
 {
-    for (size_t i = 0; i < tlen - 1; i++)
-    {
-        t[i] = t[i + 1] - t[i];
-    }
     printf("\tmedian        : %llu us\n", median(t, tlen));
-    printf("\taverage       : %llu us\n", average(t, tlen - 1));
+    printf("\taverage       : %llu us\n", average(t, tlen));
     printf("\n");
 }
 
@@ -165,16 +162,40 @@ int test_verify(unsigned char *mout, unsigned long long *moutlen,
     return ret;
 }
 
-/* 
+/*
  * Testing remaining signatures
  */
 int test_remain(unsigned char *sk)
 {
-    unsigned long long remain = 0, max = 0;
+    unsigned long long remain = 0, max;
+    uint32_t oid = 0;
+    xmss_params params;
     int ret;
     ret = crypto_remain_signatures(&remain, sk);
 
+    for (int i = 0; i < XMSS_OID_LEN; i++)
+    {
+        oid |= sk[XMSS_OID_LEN - i - 1] << (i * 8);
+    }
+
+#if XMSSMT
+    if (xmssmt_parse_oid(&params, oid))
+#else
+    if (xmss_parse_oid(&params, oid))
+#endif
+    {
+        return -1;
+    }
+    max = ((1ULL << params.full_height) - 1);
+
     printf("used = %lld, remain = %lld, max = %lld\n", max - remain, remain, max);
+
+    // Incorrect count;
+    if (max - remain != XMSS_SIGNATURES)
+    {
+        printf("    Incorrect used signatures\n");
+        return 1;
+    }
 
     return ret;
 }
