@@ -172,16 +172,9 @@ int test_remain(unsigned char *sk)
 {
     unsigned long long remain = 0, max = 0;
     int ret;
-    ret = crypto_remain_signatures(&remain, &max, sk);
+    ret = crypto_remain_signatures(&remain, sk);
 
     printf("used = %lld, remain = %lld, max = %lld\n", max - remain, remain, max);
-
-    // Incorrect count;
-    if (max - remain != XMSS_SIGNATURES)
-    {
-        printf("    Incorrect used signatures\n");
-        return 1;
-    }
 
     return ret;
 }

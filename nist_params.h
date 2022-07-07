@@ -3,20 +3,19 @@
 
 #include "params.h"
 
-
-#ifndef TREE_LEVEL
-#define TREE_LEVEL 1
-#endif
-
 #ifndef XMSSMT
 #define XMSSMT 0
+#endif
+
+#ifndef LEVEL
+#define LEVEL 0
 #endif
 
 #if XMSSMT == 0
     /* 
     * Maximum signatures: 2^h = 2^10
     */
-    #if TREE_LEVEL == 0
+    #if LEVEL == 0
 
     #define XMSS_OID "XMSS-SHA2_10_256"
 
@@ -29,7 +28,7 @@
     /* 
     * Maximum signatures: 2^h = 2^16
     */
-    #elif TREE_LEVEL == 1
+    #elif LEVEL == 1
 
     #define XMSS_OID "XMSS-SHA2_16_256"
 
@@ -42,7 +41,7 @@
     /* 
     * Maximum signatures: 2^h = 2^20
     */
-    #elif TREE_LEVEL == 2
+    #elif LEVEL == 2
 
     #define XMSS_OID "XMSS-SHA2_20_256"
 
@@ -55,7 +54,7 @@
 
     #else
 
-    #error "Unspecified TREE_LEVEL {0,1,2}"
+    #error "Unspecified LEVEL {0,1,2}"
 
     #endif
 #else 
@@ -63,7 +62,7 @@
     * Maximum signatures: 2^h = 2^20
     * XMSS^MT has bigger signature and secret key (secret is not transfer), but better speed
     */
-    #if TREE_LEVEL == 0
+    #if LEVEL == 0
 
     #define XMSS_OID "XMSSMT-SHA2_20/2_256"
 
@@ -77,7 +76,7 @@
     * Maximum signatures: 2^h = 2^40
     * XMSS^MT has bigger signature and secret key (secret is not transfer), but better speed
     */
-    #elif TREE_LEVEL == 1
+    #elif LEVEL == 1
 
     #define XMSS_OID "XMSSMT-SHA2_40/2_256"
 
@@ -91,7 +90,7 @@
     * Maximum signatures: 2^h = 2^60
     * XMSS^MT has bigger signature and secret key (secret is not transfer), but better speed
     */
-    #elif TREE_LEVEL == 2
+    #elif LEVEL == 2
 
     #define XMSS_OID "XMSSMT-SHA2_60/3_256"
 
@@ -104,7 +103,7 @@
 
     #else
 
-    #error "Unspecified TREE_LEVEL {0,1,2}"
+    #error "Unspecified LEVEL {0,1,2}"
 
     #endif
 

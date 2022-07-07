@@ -2,6 +2,7 @@
 
 #include "params.h"
 #include "xmss_core.h"
+#include "utils.h"
 
 /* This file provides wrapper functions that take keys that include OIDs to
 identify the parameter set to be used. After setting the parameters accordingly
