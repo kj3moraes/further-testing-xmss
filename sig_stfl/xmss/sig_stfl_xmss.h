@@ -5,7 +5,7 @@
 
 // #ifdef OQS_ENABLE_SIG_STFL_XMSS_SHA256_H10
 
-#define OQS_SIG_STFL_alg_xmss_sha256_h10_length_signature 2500 
+#define OQS_SIG_STFL_alg_xmss_sha256_h10_length_signature 2504
 #define OQS_SIG_STFL_alg_xmss_sha256_h10_length_pk 68
 #define OQS_SIG_STFL_alg_xmss_sha256_h10_length_sk 2407
 
@@ -19,7 +19,7 @@ int OQS_SIG_STFL_alg_xmss_sha256_h10_verify(const uint8_t *message, size_t messa
 
 // #ifdef OQS_ENABLE_SIG_STFL_XMSS_SHA256_H16
 
-#define OQS_SIG_STFL_alg_xmss_sha256_h16_length_signature 2692
+#define OQS_SIG_STFL_alg_xmss_sha256_h16_length_signature 2696
 #define OQS_SIG_STFL_alg_xmss_sha256_h16_length_pk 68
 #define OQS_SIG_STFL_alg_xmss_sha256_h16_length_sk 3151
 
@@ -33,7 +33,7 @@ int OQS_SIG_STFL_alg_xmss_sha256_h16_verify(const uint8_t *message, size_t messa
 
 // #ifdef OQS_ENABLE_SIG_STFL_XMSS_SHA256_H20
 
-#define OQS_SIG_STFL_alg_xmss_sha256_h20_length_signature 2820
+#define OQS_SIG_STFL_alg_xmss_sha256_h20_length_signature 2824
 #define OQS_SIG_STFL_alg_xmss_sha256_h20_length_pk 68
 #define OQS_SIG_STFL_alg_xmss_sha256_h20_length_sk 3889
 

@@ -1,6 +1,6 @@
 # Compiler detials and flags
 CXX = clang
-CXX_FLAGS = --std=c11 -g -Wall -fsanitize=address -fno-omit-frame-pointer 
+CXX_FLAGS = --std=c11 -g -Wall # -fsanitize=address -fno-omit-frame-pointer 
 
 # Executable details and flags
 BUILD_DIR = build

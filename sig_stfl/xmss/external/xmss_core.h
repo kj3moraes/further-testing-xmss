@@ -19,7 +19,7 @@ unsigned long long xmss_xmssmt_core_sk_bytes(const xmss_params *params);
  * Format pk: [root || PUB_SEED], omitting algorithm OID.
  */
 int xmss_core_keypair(const xmss_params *params,
-                      unsigned char *pk, unsigned char *sk);
+                      uint8_t *pk, uint8_t *sk);
 
 /**
  * Signs a message. Returns an array containing the signature followed by the
@@ -27,17 +27,17 @@ int xmss_core_keypair(const xmss_params *params,
  */
 int xmss_core_sign(const xmss_params *params,
                    OQS_SECRET_KEY *secret_key,
-                   unsigned char *sm, unsigned long long *smlen,
-                   const unsigned char *m, unsigned long long mlen);
+                   uint8_t *sm, unsigned long long *smlen,
+                   const uint8_t *m, unsigned long long mlen);
 
 /**
  * Verifies a given message signature pair under a given public key.
  * Note that this assumes a pk without an OID, i.e. [root || PUB_SEED]
  */
 int xmss_core_sign_open(const xmss_params *params,
-                        unsigned char *m, unsigned long long *mlen,
-                        const unsigned char *sm, unsigned long long smlen,
-                        const unsigned char *pk);
+                        uint8_t *m, unsigned long long *mlen,
+                        const uint8_t *sm, unsigned long long smlen,
+                        const uint8_t *pk);
 
 /*
  * Generates a XMSSMT key pair for a given parameter set.
@@ -45,7 +45,7 @@ int xmss_core_sign_open(const xmss_params *params,
  * Format pk: [root || PUB_SEED] omitting algorithm OID.
  */
 int xmssmt_core_keypair(const xmss_params *params,
-                        unsigned char *pk, unsigned char *sk);
+                        uint8_t *pk, uint8_t *sk);
 
 /**
  * Signs a message. Returns an array containing the signature followed by the
@@ -53,16 +53,16 @@ int xmssmt_core_keypair(const xmss_params *params,
  */
 int xmssmt_core_sign(const xmss_params *params,
                      OQS_SECRET_KEY *secret_key,
-                     unsigned char *sm, unsigned long long *smlen,
-                     const unsigned char *m, unsigned long long mlen);
+                     uint8_t *sm, unsigned long long *smlen,
+                     const uint8_t *m, unsigned long long mlen);
 
 /**
  * Verifies a given message signature pair under a given public key.
  * Note that this assumes a pk without an OID, i.e. [root || PUB_SEED]
  */
 int xmssmt_core_sign_open(const xmss_params *params,
-                          unsigned char *m, unsigned long long *mlen,
-                          const unsigned char *sm, unsigned long long smlen,
-                          const unsigned char *pk);
+                          uint8_t *m, unsigned long long *mlen,
+                          const uint8_t *sm, unsigned long long smlen,
+                          const uint8_t *pk);
 
 #endif

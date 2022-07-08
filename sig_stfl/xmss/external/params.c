@@ -1,6 +1,6 @@
 #include <stdint.h>
 #include <string.h>
-
+#include <math.h>
 #include "params.h"
 #include "xmss_core.h"
 

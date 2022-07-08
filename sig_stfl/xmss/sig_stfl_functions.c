@@ -88,8 +88,8 @@ void perform_key_allocation(OQS_SECRET_KEY *sk) {
     } else {
         xmss_parse_oid(&par, sk->oid);
     }
-    sk->length_secret_key = par.sk_bytes;
+    sk->length_secret_key = OQS_SIG_STFL_alg_xmss_sha256_h10_length_sk;
 
     // Initialize the key with length_secret_key amount of bytes.
-    sk->secret_key = (uint8_t *)malloc(sk->length_secret_key * sizeof(uint8_t));
+    sk->secret_key = (uint8_t *)malloc(sk->length_secret_key);
 }

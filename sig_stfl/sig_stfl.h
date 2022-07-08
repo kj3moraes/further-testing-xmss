@@ -95,7 +95,7 @@ typedef struct OQS_SECRET_KEY {
 	bool is_xmssmt;
 
 	/** The physical secret key stored in memory as an array of bytes*/
-	volatile uint8_t *secret_key;
+	uint8_t *secret_key;
 
 	unsigned long long (*sigs_total)(const OQS_SECRET_KEY *secret_key);
 

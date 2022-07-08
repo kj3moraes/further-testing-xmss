@@ -12,28 +12,28 @@
 #include "xmss_core.h"
 
 typedef struct{
-    unsigned char h;
+    uint8_t h;
     unsigned long next_idx;
-    unsigned char stackusage;
-    unsigned char completed;
-    unsigned char *node;
+    uint8_t stackusage;
+    uint8_t completed;
+    uint8_t *node;
     #ifdef FORWARD_SECURE
-        unsigned char *seed_active;
-        unsigned char *seed_next;
+        uint8_t *seed_active;
+        uint8_t *seed_next;
     #endif
 } treehash_inst;
 
 typedef struct {
-    unsigned char *stack;
+    uint8_t *stack;
     unsigned int stackoffset;
-    unsigned char *stacklevels;
-    unsigned char *auth;
-    unsigned char *keep;
+    uint8_t *stacklevels;
+    uint8_t *auth;
+    uint8_t *keep;
     treehash_inst *treehash;
-    unsigned char *retain;
+    uint8_t *retain;
     unsigned int next_leaf;
     #ifdef FORWARD_SECURE
-    unsigned char *left_leaf;
+    uint8_t *left_leaf;
     #endif
 } bds_state;
 
@@ -43,7 +43,7 @@ typedef struct {
    They will probably be refactored in a non-backwards-compatible way, soon. */
 
 static void xmssmt_serialize_state(const xmss_params *params,
-                                   unsigned char *sk, bds_state *states)
+                                   uint8_t *sk, bds_state *states)
 {
     unsigned int i, j;
 
@@ -99,8 +99,8 @@ static void xmssmt_serialize_state(const xmss_params *params,
 
 static void xmssmt_deserialize_state(const xmss_params *params,
                                      bds_state *states,
-                                     unsigned char **wots_sigs,
-                                     unsigned char *sk)
+                                     uint8_t **wots_sigs,
+                                     uint8_t *sk)
 {
     unsigned int i, j;
 
@@ -169,13 +169,13 @@ static void xmssmt_deserialize_state(const xmss_params *params,
 }
 
 static void xmss_serialize_state(const xmss_params *params,
-                                 unsigned char *sk, bds_state *state)
+                                 uint8_t *sk, bds_state *state)
 {
     xmssmt_serialize_state(params, sk, state);
 }
 
 static void xmss_deserialize_state(const xmss_params *params,
-                                   bds_state *state, unsigned char *sk)
+                                   bds_state *state, uint8_t *sk)
 {
     xmssmt_deserialize_state(params, state, NULL, sk);
 }
@@ -235,9 +235,9 @@ static int treehash_minheight_on_stack(const xmss_params *params,
  *
  */
 static void treehash_init(const xmss_params *params,
-                          unsigned char *node, int height, int index,
-                          bds_state *state, unsigned char *sk_seed,
-                          const unsigned char *pub_seed, const uint32_t addr[8])
+                          uint8_t *node, int height, int index,
+                          bds_state *state, uint8_t *sk_seed,
+                          const uint8_t *pub_seed, const uint32_t addr[8])
 {
     unsigned int idx = index;
     // use three different addresses because at this point we use all three formats in parallel
@@ -254,13 +254,13 @@ static void treehash_init(const xmss_params *params,
     set_type(node_addr, 2);
 
     uint32_t lastnode, i;
-    unsigned char stack[(height+1)*params->n];
+    uint8_t stack[(height+1)*params->n];
     unsigned int stacklevels[height+1];
     unsigned int stackoffset=0;
     unsigned int nodeh;
 
     #ifdef FORWARD_SECURE
-    unsigned char ots_seed[params->n];
+    uint8_t ots_seed[params->n];
     #endif
 
     lastnode = idx+(1<<height);
@@ -324,8 +324,8 @@ static void treehash_init(const xmss_params *params,
 
 static void treehash_update(const xmss_params *params,
                             treehash_inst *treehash, bds_state *state,
-                            const unsigned char *sk_seed,
-                            const unsigned char *pub_seed,
+                            const uint8_t *sk_seed,
+                            const uint8_t *pub_seed,
                             const uint32_t addr[8])
 {
     uint32_t ots_addr[8] = {0};
@@ -343,10 +343,10 @@ static void treehash_update(const xmss_params *params,
     set_ltree_addr(ltree_addr, treehash->next_idx);
     set_ots_addr(ots_addr, treehash->next_idx);
 
-    unsigned char nodebuffer[2 * params->n];
+    uint8_t nodebuffer[2 * params->n];
     unsigned int nodeheight = 0;
     #ifdef FORWARD_SECURE
-    unsigned char ots_seed[params->n];
+    uint8_t ots_seed[params->n];
 
     //sk_seed is not needed here suppress warning
     (void) sk_seed;
@@ -385,8 +385,8 @@ static void treehash_update(const xmss_params *params,
  **/
 static char bds_treehash_update(const xmss_params *params,
                                 bds_state *state, unsigned int updates,
-                                const unsigned char *sk_seed,
-                                unsigned char *pub_seed,
+                                const uint8_t *sk_seed,
+                                uint8_t *pub_seed,
                                 const uint32_t addr[8])
 {
     uint32_t i, j;
@@ -425,8 +425,8 @@ static char bds_treehash_update(const xmss_params *params,
  * Returns -1 if all leaf nodes have already been processed
  **/
 static char bds_state_update(const xmss_params *params,
-                             bds_state *state, unsigned char *sk_seed,
-                             const unsigned char *pub_seed,
+                             bds_state *state, uint8_t *sk_seed,
+                             const uint8_t *pub_seed,
                              const uint32_t addr[8])
 {
     uint32_t ltree_addr[8] = {0};
@@ -437,7 +437,7 @@ static char bds_state_update(const xmss_params *params,
     int idx = state->next_leaf;
 
     #ifdef FORWARD_SECURE
-    unsigned char ots_seed[params->n];
+    uint8_t ots_seed[params->n];
     #endif
 
 
@@ -514,21 +514,21 @@ static char bds_state_update(const xmss_params *params,
  */
 static void bds_round(const xmss_params *params,
                       bds_state *state, const unsigned long leaf_idx,
-                      const unsigned char *sk_seed,
-                      const unsigned char *pub_seed, uint32_t addr[8])
+                      const uint8_t *sk_seed,
+                      const uint8_t *pub_seed, uint32_t addr[8])
 {
     unsigned int i;
     unsigned int tau = params->tree_height;
     unsigned int startidx;
     unsigned int offset, rowidx;
-    unsigned char buf[2 * params->n];
+    uint8_t buf[2 * params->n];
 
     uint32_t ots_addr[8] = {0};
     uint32_t ltree_addr[8] = {0};
     uint32_t node_addr[8] = {0};
 
     #ifdef FORWARD_SECURE
-    unsigned char ots_seed[params->n];
+    uint8_t ots_seed[params->n];
     #endif
 
     // only copy layer and tree address parts
@@ -640,12 +640,12 @@ unsigned long long xmss_xmssmt_core_sk_bytes(const xmss_params *params)
  * Format pk: [root || PUB_SEED] omitting algo oid.
  */
 int xmss_core_keypair(const xmss_params *params,
-                      unsigned char *pk, unsigned char *sk)
+                      uint8_t *pk, uint8_t *sk)
 {
     uint32_t addr[8] = {0};
 
     #ifdef FORWARD_SECURE
-    unsigned char ots_seed[params->n];
+    uint8_t ots_seed[params->n];
     #endif
 
     bds_state state;
@@ -695,12 +695,12 @@ int xmss_core_keypair(const xmss_params *params,
  */
 int xmss_core_sign(const xmss_params *params,
                    OQS_SECRET_KEY *secret_key,
-                   unsigned char *sm, unsigned long long *smlen,
-                   const unsigned char *m, unsigned long long mlen)
+                   uint8_t *sm, unsigned long long *smlen,
+                   const uint8_t *m, unsigned long long mlen)
 {
-    unsigned char *sk = secret_key->secret_key + XMSS_OID_LEN;
+    uint8_t *sk = secret_key->secret_key + XMSS_OID_LEN;
 
-    const unsigned char *pub_root = sk + params->index_bytes + 2*params->n;
+    const uint8_t *pub_root = sk + params->index_bytes + 2*params->n;
 
     uint16_t i = 0;
 
@@ -735,15 +735,15 @@ int xmss_core_sign(const xmss_params *params,
     xmss_deserialize_state(params, &state, sk);
 
     // Extract remaining SK
-    unsigned char sk_seed[params->n];
+    uint8_t sk_seed[params->n];
     memcpy(sk_seed, sk + params->index_bytes, params->n);
-    unsigned char sk_prf[params->n];
+    uint8_t sk_prf[params->n];
     memcpy(sk_prf, sk + params->index_bytes + params->n, params->n);
-    unsigned char pub_seed[params->n];
+    uint8_t pub_seed[params->n];
     memcpy(pub_seed, sk + params->index_bytes + 3*params->n, params->n);
 
     // index as 32 bytes string
-    unsigned char idx_bytes_32[32];
+    uint8_t idx_bytes_32[32];
     ull_to_bytes(idx_bytes_32, 32, idx);
 
      /** ===============================================================================
@@ -765,9 +765,9 @@ int xmss_core_sign(const xmss_params *params,
 
 
     // Init working params
-    unsigned char R[params->n];
-    unsigned char msg_h[params->n];
-    unsigned char ots_seed[params->n];
+    uint8_t R[params->n];
+    uint8_t msg_h[params->n];
+    uint8_t ots_seed[params->n];
     uint32_t ots_addr[8] = {0};
 
     // ---------------------------------
@@ -778,13 +778,15 @@ int xmss_core_sign(const xmss_params *params,
     // First compute pseudorandom value
     prf(params, R, idx_bytes_32, sk_prf);
 
-    /* Already put the message in the right place, to make it easier to prepend
-     * things when computing the hash over the message. */
-    memcpy(sm + params->sig_bytes, m, mlen);
-
+    uint8_t *buffer = (uint8_t*)malloc((mlen + 4 * params->n) * sizeof(uint8_t));
+    
+    memcpy(buffer + 4* params->n, m, mlen);
+    
     /* Compute the message hash. */
     hash_message(params, msg_h, R, pub_root, idx,
-                 sm + params->sig_bytes - 4*params->n, mlen);
+                buffer, mlen);
+
+    free(buffer);
 
     // Start collecting signature
     *smlen = 0;
@@ -860,13 +862,13 @@ int xmss_core_sign(const xmss_params *params,
  * Format pk: [root || PUB_SEED] omitting algo oid.
  */
 int xmssmt_core_keypair(const xmss_params *params,
-                        unsigned char *pk, unsigned char *sk)
+                        uint8_t *pk, uint8_t *sk)
 {
-    unsigned char ots_seed[params->n];
+    uint8_t ots_seed[params->n];
 
     uint32_t addr[8] = {0};
     unsigned int i;
-    unsigned char *wots_sigs;
+    uint8_t *wots_sigs;
 
     bds_state states[2*params->d - 1];
     treehash_inst treehash[(2*params->d - 1) * (params->tree_height - params->bds_k)];
@@ -898,7 +900,7 @@ int xmssmt_core_keypair(const xmss_params *params,
     memcpy(pk+params->n, sk+params->index_bytes+ (2 + params->d)*params->n, params->n);
 
     // next seeds contains the seeds for the NEXT_i trees
-    unsigned char *next_seeds = sk+params->index_bytes+ (3 + params->d)*params->n;
+    uint8_t *next_seeds = sk+params->index_bytes+ (3 + params->d)*params->n;
 
     #else
     // Init SK_SEED (params->n byte) and SK_PRF (params->n byte)
@@ -927,7 +929,7 @@ int xmssmt_core_keypair(const xmss_params *params,
         wots_sign(params, wots_sigs + i*params->wots_sig_bytes, pk, ots_seed, pk+params->n, addr);
 
 
-        unsigned char tmp_wots_leaf[params->n];
+        uint8_t tmp_wots_leaf[params->n];
         uint32_t ltree_addr[8] = {0};
         memcpy(ltree_addr, addr, sizeof ltree_addr);
         set_type(ltree_addr, 1);
@@ -972,17 +974,17 @@ int xmssmt_core_keypair(const xmss_params *params,
  */
 int xmssmt_core_sign(const xmss_params *params,
                      OQS_SECRET_KEY *secret_key,
-                     unsigned char *sm, unsigned long long *smlen,
-                     const unsigned char *m, unsigned long long mlen)
+                     uint8_t *sm, unsigned long long *smlen,
+                     const uint8_t *m, unsigned long long mlen)
 {
 
-    unsigned char *sk = secret_key->secret_key + XMSS_OID_LEN;
+    uint8_t *sk = secret_key->secret_key + XMSS_OID_LEN;
 
     #ifdef FORWARD_SECURE
-    const unsigned char *pub_root = sk + params->index_bytes + (1 + params->d)*params->n;
-    unsigned char *next_seeds = sk + params->index_bytes + (3 + params->d)*params->n;
+    const uint8_t *pub_root = sk + params->index_bytes + (1 + params->d)*params->n;
+    uint8_t *next_seeds = sk + params->index_bytes + (3 + params->d)*params->n;
     #else
-    const unsigned char *pub_root = sk + params->index_bytes + 2*params->n;
+    const uint8_t *pub_root = sk + params->index_bytes + 2*params->n;
     #endif
     uint64_t idx_tree;
     uint32_t idx_leaf;
@@ -990,18 +992,18 @@ int xmssmt_core_sign(const xmss_params *params,
     int needswap_upto = -1;
     unsigned int updates;
 
-    unsigned char sk_seed[params->n];
-    unsigned char sk_prf[params->n];
-    unsigned char pub_seed[params->n];
+    uint8_t sk_seed[params->n];
+    uint8_t sk_prf[params->n];
+    uint8_t pub_seed[params->n];
     // Init working params
-    unsigned char R[params->n];
-    unsigned char msg_h[params->n];
-    unsigned char ots_seed[params->n];
+    uint8_t R[params->n];
+    uint8_t msg_h[params->n];
+    uint8_t ots_seed[params->n];
     uint32_t addr[8] = {0};
     uint32_t ots_addr[8] = {0};
-    unsigned char idx_bytes_32[32];
+    uint8_t idx_bytes_32[32];
 
-    unsigned char *wots_sigs;
+    uint8_t *wots_sigs;
 
     bds_state states[2*params->d - 1];
     treehash_inst treehash[(2*params->d - 1) * (params->tree_height - params->bds_k)];
@@ -1198,7 +1200,7 @@ int xmssmt_core_sign(const xmss_params *params,
             #ifdef FORWARD_SECURE
             // if this is a left node, we need to store it for BDS
             if ((((idx >> ((i+1) * params->tree_height)) + 1) & ((1 << params->tree_height)-1)) % 2 == 0){
-                unsigned char tmp_wots_leaf[params->n];
+                uint8_t tmp_wots_leaf[params->n];
                 uint32_t ltree_addr[8] = {0};
                 memcpy(ltree_addr, ots_addr, sizeof ltree_addr);
                 set_type(ltree_addr, 1);
