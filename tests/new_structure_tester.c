@@ -4,6 +4,8 @@
 #include <stdlib.h>
 
 #include "../sig_stfl/sig_stfl.h"
+#include "../sig_stfl/xmss/external/randombytes.h"
+
 
 #define XMSS_IMPLEMENTATION "XMSS-SHA2_10_256"
 #define MAX_LENGTH_FILENAME 60
@@ -33,9 +35,10 @@ int do_nothing_save(OQS_SECRET_KEY *sk) {
     return 0;
 }
 
-int sk_file_write(OQS_SECRET_KEY *sk) {
+int sk_file_write(const OQS_SECRET_KEY *sk) {
 
-    unsigned char filename[MAX_LENGTH_FILENAME] = "./keys/opps_xmss16_sha256.prv";
+    const char filename[MAX_LENGTH_FILENAME];
+    strcpy(filename, "./keys/opps_xmss16_sha256.prv");
 
     #ifdef CUSTOM_NAME
         printf("\nEnter the filename that you want written to>");
@@ -100,17 +103,16 @@ int test_case(const char *name) {
     uint8_t *pk = (uint8_t *)malloc(signature_gen->length_public_key);
     // uint8_t *sm = (uint8_t *)malloc(signature_gen->length_signature);
     uint8_t smarray[5000];
-    uint8_t *sm = &smarray; 
+    uint8_t *sm = smarray; 
     unsigned long long smlen;
-    unsigned char filename[MAX_LENGTH_FILENAME];
 
 
     OQS_randombytes(m, MESSAGE_LENGTH);
     printf("\nmsg="); hexdump(m, MESSAGE_LENGTH);
 
-    printf("sk_bytes=%llu + oid\n", sk->length_secret_key);
-    printf("pk_bytes=%llu\n", signature_gen->length_public_key);
-    printf("sig_bytes=%llu\n", signature_gen->length_signature);
+    printf("sk_bytes=%llu + oid\n", (unsigned long long)sk->length_secret_key);
+    printf("pk_bytes=%llu\n", (unsigned long long)signature_gen->length_public_key);
+    printf("sig_bytes=%llu\n", (unsigned long long)signature_gen->length_signature);
 
     printf("Generating keys ...\n");
     signature_gen->keypair(pk, sk);
@@ -129,7 +131,7 @@ int test_case(const char *name) {
 
         /* ========================== SIGNING ================================= */
         randombytes(m, MESSAGE_LENGTH);
-        if (signature_gen->sign(sm, &smlen, m, MESSAGE_LENGTH, sk) != 0) {
+        if (signature_gen->sign(sm, (size_t *)&smlen, m, MESSAGE_LENGTH, sk) != 0) {
             printf("ERROR!! Signature generation failed\n");
             ret = -1;
         }
@@ -144,7 +146,7 @@ int test_case(const char *name) {
    
 
         if (smlen != signature_gen->length_signature) {
-            printf("  X smlen incorrect [%llu != %u]!\n", smlen, signature_gen->length_signature);
+            printf("  X smlen incorrect [%llu != %u]!\n", smlen, (unsigned int)signature_gen->length_signature);
             ret = -1;
         }
         else 

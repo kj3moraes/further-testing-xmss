@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <math.h>
 
 #include "params.h"
 #include "../../sig_stfl.h"
@@ -8,7 +9,7 @@
 identify the parameter set to be used. After setting the parameters accordingly
 it falls back to the regular XMSS core functions. */
 
-int xmss_keypair(unsigned char *pk, OQS_SECRET_KEY *sk, const uint32_t oid)
+int xmss_keypair(uint8_t *pk, OQS_SECRET_KEY *sk, const uint32_t oid)
 {
     xmss_params params;
     unsigned int i;
@@ -73,8 +74,8 @@ int xmss_derive_subkey(OQS_SECRET_KEY *master, OQS_SECRET_KEY *subkey, unsigned 
 }
 
 int xmss_sign(OQS_SECRET_KEY *sk,
-              unsigned char *sm, unsigned long long *smlen,
-              const unsigned char *m, unsigned long long mlen)
+              uint8_t *sm, unsigned long long *smlen,
+              const uint8_t *m, unsigned long long mlen)
 {
     xmss_params params;
     uint32_t oid = sk->oid;
@@ -84,9 +85,9 @@ int xmss_sign(OQS_SECRET_KEY *sk,
     return xmss_core_sign(&params, sk, sm, smlen, m, mlen);
 }
 
-int xmss_sign_open(unsigned char *m, unsigned long long *mlen,
-                   const unsigned char *sm, unsigned long long smlen,
-                   const unsigned char *pk)
+int xmss_sign_open(uint8_t *m, unsigned long long *mlen,
+                   const uint8_t *sm, unsigned long long smlen,
+                   const uint8_t *pk)
 {
     xmss_params params;
     uint32_t oid = 0;
@@ -101,7 +102,7 @@ int xmss_sign_open(unsigned char *m, unsigned long long *mlen,
     return xmss_core_sign_open(&params, m, mlen, sm, smlen, pk + XMSS_OID_LEN);
 }
 
-int xmssmt_keypair(unsigned char *pk, OQS_SECRET_KEY *sk, const uint32_t oid)
+int xmssmt_keypair(uint8_t *pk, OQS_SECRET_KEY *sk, const uint32_t oid)
 {
     xmss_params params;
     unsigned int i;
@@ -117,8 +118,8 @@ int xmssmt_keypair(unsigned char *pk, OQS_SECRET_KEY *sk, const uint32_t oid)
 }
 
 int xmssmt_sign(OQS_SECRET_KEY *sk,
-                unsigned char *sm, unsigned long long *smlen,
-                const unsigned char *m, unsigned long long mlen)
+                uint8_t *sm, unsigned long long *smlen,
+                const uint8_t *m, unsigned long long mlen)
 {
     xmss_params params;
     uint32_t oid = 0;
@@ -133,9 +134,9 @@ int xmssmt_sign(OQS_SECRET_KEY *sk,
     return xmssmt_core_sign(&params, sk, sm, smlen, m, mlen);
 }
 
-int xmssmt_sign_open(unsigned char *m, unsigned long long *mlen,
-                     const unsigned char *sm, unsigned long long smlen,
-                     const unsigned char *pk)
+int xmssmt_sign_open(uint8_t *m, unsigned long long *mlen,
+                     const uint8_t *sm, unsigned long long smlen,
+                     const uint8_t *pk)
 {
     xmss_params params;
     uint32_t oid = 0;

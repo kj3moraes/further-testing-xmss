@@ -158,13 +158,13 @@ int OQS_SIG_STFL_alg_xmss_shake256_h20_verify(const uint8_t *message, size_t mes
 
 int OQS_SIG_STFL_alg_xmss_keypair(uint8_t *public_key, OQS_SECRET_KEY *secret_key);
 
-int OQS_SIG_STFL_alg_xmss_sign(uint8_t *signature, size_t signature_length, const uint8_t *message, size_t message_len, const OQS_SECRET_KEY *secret_key);
+int OQS_SIG_STFL_alg_xmss_sign(uint8_t *signature, size_t *signature_length, const uint8_t *message, size_t message_len, OQS_SECRET_KEY *secret_key);
 
 int OQS_SIG_STFL_alg_xmss_verify(const uint8_t *message, size_t message_len, const uint8_t *signature, size_t signature_len, const uint8_t *public_key);
 
 int OQS_SIG_STFL_alg_xmssmt_keypair(uint8_t *public_key, OQS_SECRET_KEY *secret_key);
 
-int OQS_SIG_STFL_alg_xmssmt_sign(uint8_t *signature, size_t signature_length, const uint8_t *message, size_t message_len, const OQS_SECRET_KEY *secret_key);
+int OQS_SIG_STFL_alg_xmssmt_sign(uint8_t *signature, size_t *signature_length, const uint8_t *message, size_t message_len, OQS_SECRET_KEY *secret_key);
 
 int OQS_SIG_STFL_alg_xmssmt_verify(const uint8_t *message, size_t message_len, const uint8_t *signature, size_t signature_len, const uint8_t *public_key);
 
