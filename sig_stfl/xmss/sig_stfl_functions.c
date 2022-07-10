@@ -1,3 +1,4 @@
+#include <string.h>
 #include "sig_stfl_xmss.h"
 
 #include "./external/params.h"
@@ -79,16 +80,8 @@ void perform_key_allocation(OQS_SECRET_KEY *sk) {
     // Assign the sigs_left and sigs_max functions
     sk->sigs_left = OQS_SIG_STFL_alg_xmss_xmssmt_sigs_left;
     sk->sigs_total = OQS_SIG_STFL_alg_xmss_xmssmt_sigs_total;
-
-    // Convert the oid into a XMSS parameters list and extract the length of the secret key.
-    xmss_params par;
-
-    if (sk->is_xmssmt) {
-        xmssmt_parse_oid(&par, sk->oid);
-    } else {
-        xmss_parse_oid(&par, sk->oid);
-    }
     
     // Initialize the key with length_secret_key amount of bytes.
-    sk->secret_key = (uint8_t *)malloc(par.sk_bytes * sizeof(uint8_t));
+    sk->secret_key = (uint8_t *)malloc(sk->length_secret_key * sizeof(uint8_t));
+    memset(sk->secret_key, 0, sk->length_secret_key);   
 }

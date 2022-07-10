@@ -56,7 +56,7 @@ int sk_file_write(const OQS_SECRET_KEY *sk) {
     }
 
     // Write the entire secret key byte array to the specified file.
-    for (unsigned int i = 0; i < sk->length_secret_key; i++) {
+    for (unsigned long i = 0; i < sk->length_secret_key; i++) {
         
         if (fputc(sk->secret_key[i], printer) == EOF) {
             perror("ERROR! There is no such file. Terminating...");
@@ -95,7 +95,6 @@ int test_case(const char *name) {
     uint8_t *pk = (uint8_t *)malloc(signature_gen->length_public_key);
     uint8_t *sm = (uint8_t *)malloc(signature_gen->length_signature);
     unsigned long long smlen;
-
 
     OQS_randombytes(m, MESSAGE_LENGTH);
     printf("\nmsg="); hexdump(m, MESSAGE_LENGTH);
