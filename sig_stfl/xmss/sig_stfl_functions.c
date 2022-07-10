@@ -90,5 +90,5 @@ void perform_key_allocation(OQS_SECRET_KEY *sk) {
     }
     
     // Initialize the key with length_secret_key amount of bytes.
-    sk->secret_key = (uint8_t *)malloc(sk->length_secret_key);
+    sk->secret_key = (uint8_t *)malloc(par.sk_bytes * sizeof(uint8_t));
 }
