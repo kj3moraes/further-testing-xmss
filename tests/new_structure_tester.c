@@ -10,8 +10,8 @@
 #define XMSS_IMPLEMENTATION "XMSS-SHA2_10_256"
 #define MAX_LENGTH_FILENAME 60
 
-static void hexdump(uint8_t*d, unsigned int l) {
-    for(unsigned int i=0; i<l ;i++) printf("%02x", d[i]);
+static void hexdump(uint8_t *d, unsigned long long l) {
+    for(unsigned long long i=0; i<l ;i++) printf("%02x", d[i]);
     printf("\n");
 }
 
@@ -101,9 +101,9 @@ int test_case(const char *name) {
 
     // Defining the rest of the data needed for singing and verifying.
     uint8_t *pk = (uint8_t *)malloc(signature_gen->length_public_key);
-    // uint8_t *sm = (uint8_t *)malloc(signature_gen->length_signature);
-    uint8_t smarray[5000];
-    uint8_t *sm = smarray; 
+    uint8_t *sm = (uint8_t *)malloc(signature_gen->length_signature);
+    // uint8_t smarray[5000];
+    // uint8_t *sm = smarray; 
     unsigned long long smlen;
 
 
