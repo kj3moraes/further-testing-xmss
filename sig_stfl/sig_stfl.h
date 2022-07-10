@@ -188,7 +188,7 @@ OQS_SIG_STFL *OQS_SIG_STFL_new(const char *method_name);
 
 int OQS_SIG_STFL_keypair(const OQS_SIG_STFL *sig, uint8_t *pk, OQS_SECRET_KEY *sk);
 
-int OQS_SIG_STFL_sign(const OQS_SIG_STFL *sig, uint8_t *signature, size_t signature_len, const uint8_t *message, size_t message_len, OQS_SECRET_KEY *secret_key);
+int OQS_SIG_STFL_sign(const OQS_SIG_STFL *sig, uint8_t *signature, size_t *signature_len, const uint8_t *message, size_t message_len, OQS_SECRET_KEY *secret_key);
 
 int OQS_SIG_STFL_verify(const OQS_SIG_STFL *sig, const uint8_t *message, size_t message_len, const uint8_t *signature, size_t signature_len, const uint8_t *public_key);
 

@@ -48,15 +48,6 @@ int sk_file_write(const OQS_SECRET_KEY *sk) {
     #endif
 
     printf("\nWriting to file %s\n", filename);
-
-    #ifdef DEBUGGING
-        unsigned long idx = ((unsigned long)sk->secret_key[XMSS_OID_LEN + 0] << 24) |
-                        ((unsigned long)sk->secret_key[XMSS_OID_LEN + 1] << 16) |
-                        ((unsigned long)sk->secret_key[XMSS_OID_LEN + 2] << 8) |
-                        ((unsigned long)sk->secret_key[XMSS_OID_LEN + 3]);
-        printf("The index (after the increment) is : %ld\n", idx);
-    #endif
-
     FILE *printer = fopen(filename, "w+");
     if (printer == NULL) {
         perror("ERROR! There is no such file. Terminating...");
@@ -102,8 +93,6 @@ int test_case(const char *name) {
     // Defining the rest of the data needed for singing and verifying.
     uint8_t *pk = (uint8_t *)malloc(signature_gen->length_public_key);
     uint8_t *sm = (uint8_t *)malloc(signature_gen->length_signature);
-    // uint8_t smarray[5000];
-    // uint8_t *sm = smarray; 
     unsigned long long smlen;
 
 
@@ -114,11 +103,82 @@ int test_case(const char *name) {
     printf("pk_bytes=%llu\n", (unsigned long long)signature_gen->length_public_key);
     printf("sig_bytes=%llu\n", (unsigned long long)signature_gen->length_signature);
 
-    printf("Generating keys ...\n");
-    signature_gen->keypair(pk, sk);
+    unsigned int decision;
+    char filename[MAX_LENGTH_FILENAME];
+    printf("\nDo you want to generate a new key? (1/0)>");
+    scanf("%d", &decision);
+
+    if (decision == 1) {
+        printf("Generating keys ...\n");
+        signature_gen->keypair(pk, sk);
+        printf("\nGenerated a new key\n");
+
+        printf("\nDo you want to save the key? (1/0)>");
+        scanf("%d", &decision);
+
+        if (decision == 1) {
+            printf("Saving the key ...\n");
+            
+            printf("\nEnter the filename that you want written to>");
+            scanf("%32s", filename);
+
+            prepend(filename, "./keys/");
+
+            FILE *pub_key = fopen(strcat(filename, ".pub"), "w+");
+            for (unsigned int i = 0; i < signature_gen->length_public_key; i++) {
+                fputc(pk[i], pub_key);
+            }
+            fclose(pub_key);
+
+            // Changing the .pub extension to .prv
+            filename[strlen(filename) - 2] = 'r'; filename[strlen(filename) - 1] = 'v';
+            FILE *prv_key = fopen(filename, "w+");
+            for (unsigned int i = 0; i < sk->length_secret_key; i++) {
+                fputc(sk->secret_key[i], prv_key);
+            }
+            fclose(prv_key);
+            printf("\nSaved the key\n");
+        }
+
+    } else {
+        printf("\nUsing the existing key...\n");
+
+        printf("\nEnter the filestem that you want read from>");
+        scanf("%32s", filename);
+        prepend(filename, "./keys/");
+
+        // Public Key
+        strcat(filename, ".pub");
+        FILE *reader = fopen(filename, "rb");
+        if (reader == NULL) {
+            perror("ERROR! There is no such file. Terminating...");
+            return -1;
+        }
+        for (i = 0; i < signature_gen->length_public_key; i++) {
+            pk[i] = fgetc(reader);
+        }
+        fclose(reader);
+
+        // Private Key
+        filename[strlen(filename) - 2] = 'r'; filename[strlen(filename) - 1] = 'v';
+        printf("\nReading from file %s\n", filename);
+        reader = fopen(filename, "rb");
+        if (reader == NULL) {
+            perror("ERROR! There is no such file. Terminating...");
+            return -1;
+        }
+        for (i = 0; i < sk->length_secret_key; i++) {
+            sk->secret_key[i] = fgetc(reader);
+        }
+        fclose(reader);
+    }  
     
     printf("\nPublic key="); hexdump(pk, signature_gen->length_public_key);
     printf("\nSecret key="); hexdump(sk->secret_key, sk->length_secret_key);
+
+    printf("Do you want to test? (1/0)>");
+    scanf("%d", &decision);
+    if (decision == 0) return -1;
 
     unsigned int NUM_TESTS;
     printf("\nEnter the number of tests you want to run>");
