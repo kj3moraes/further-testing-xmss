@@ -10,7 +10,8 @@
 #define XMSS_IMPLEMENTATION "XMSS-SHA2_10_256"
 #define MAX_LENGTH_FILENAME 60
 
-static void hexdump(uint8_t *d, unsigned long long l) {
+static void hexdump(const uint8_t *d, const unsigned long long l) {
+    printf("length=%llu\n", l);
     for(unsigned long long i=0; i<l ;i++) printf("%02x", d[i]);
     printf("\n");
 }

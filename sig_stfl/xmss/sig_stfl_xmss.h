@@ -7,7 +7,7 @@
 
 #define OQS_SIG_STFL_alg_xmss_sha256_h10_length_signature 2500
 #define OQS_SIG_STFL_alg_xmss_sha256_h10_length_pk 68
-#define OQS_SIG_STFL_alg_xmss_sha256_h10_length_sk 2407
+#define OQS_SIG_STFL_alg_xmss_sha256_h10_length_sk 2047
 
 OQS_SECRET_KEY *OQS_SECRET_KEY_XMSS_SHA256_H10_new();
 

@@ -29,18 +29,9 @@ int xmss_keypair(uint8_t *pk, OQS_SECRET_KEY *sk, const uint32_t oid)
 
     // Add the max field to the end of the secret key byte array
     unsigned long long max = pow(2, params.tree_height) - (unsigned long) 1; 
-    for (i = params.sk_bytes - params.bytes_for_max; i < params.sk_bytes; i++) {
-        sk->secret_key[i] = (max >> (8 * (params.sk_bytes - i - 1))) & 0xFF;
-    }
-
-    #ifdef DEBUGGING
-    printf("max_bytes=");
-    for (i = params.sk_bytes - params.bytes_for_max; i < params.sk_bytes; i++) {
-        printf("%02x", sk->secret_key[i]);
-    }
-    printf("\n");
-    #endif
-    
+    for (i = sk->length_secret_key - params.bytes_for_max; i < sk->length_secret_key; i++) {
+        sk->secret_key[i] = (max >> (8 * (sk->length_secret_key - i - 1))) & 0xFF;
+    }    
     return ret;
 }
 

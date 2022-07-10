@@ -727,11 +727,6 @@ int xmss_core_sign(const xmss_params *params,
         printf("ERROR! Exceeded maximum number of sigs");
         return -2;
     }
-
-
-    // if (idx >= ((1U << params->tree_height) - 1)) 
-    //     return -2;
-
     /* Load the BDS state from sk. */
     xmss_deserialize_state(params, &state, sk);
 
