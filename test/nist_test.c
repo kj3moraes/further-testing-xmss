@@ -3,8 +3,8 @@
 #include <time.h>
 #include <string.h>
 #include "../api.h"
-#include "../nist_params.h"
-#include "../xmss.h"
+#include "../nist_params.h" // Include NIST parameter header
+#include "../xmss.h"        // Include NIST XMSS header, to test no. of remaining signature
 #include "../params.h"
 
 #define XMSS_SIGNATURES 64
