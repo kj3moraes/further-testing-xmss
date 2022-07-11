@@ -171,7 +171,7 @@ int test_remain(unsigned char *sk)
     uint32_t oid = 0;
     xmss_params params;
     int ret;
-    ret = crypto_remain_signatures(&remain, sk);
+    ret = crypto_remaining_signatures(&remain, sk);
 
     for (int i = 0; i < XMSS_OID_LEN; i++)
     {
