@@ -713,15 +713,11 @@ int xmss_core_sign(const xmss_params *params,
     secret_key->lock_key(secret_key);
 
     // Extract index
-    unsigned long idx = ((unsigned long)sk[0] << 24) | ((unsigned long)sk[1] << 16) | ((unsigned long)sk[2] << 8) | sk[3];
-    printf("The index before we increment while signing is : %ld", idx);
+    unsigned long long idx = bytes_to_ull(sk, params->index_bytes);
 
     /* Check if we can still sign with this sk, return -2 if not: */
     // Extract the max_sigs
-    unsigned long long max = 0;
-    for (int j = params->bytes_for_max; j > 0; j--) {
-        max |= ((unsigned long long)sk[params->sk_bytes - XMSS_OID_LEN - j] << 8*(j - 1));
-    }
+    unsigned long long max = bytes_to_ull(sk + params->sk_bytes - params->bytes_for_max, params->bytes_for_max);
 
     if (idx >= max) {
         printf("ERROR! Exceeded maximum number of sigs");
@@ -1012,19 +1008,15 @@ int xmssmt_core_sign(const xmss_params *params,
     // Extract SK
     secret_key->lock_key(secret_key);
 
-    unsigned long long idx = 0;
-    for (i = 0; i < params->index_bytes; i++) {
-        idx |= ((unsigned long long)sk[i]) << 8*(params->index_bytes - 1 - i);
-    }
+        // Extract index
+    unsigned long long idx = bytes_to_ull(sk, params->index_bytes);
+
+    /* Check if we can still sign with this sk, return -2 if not: */
+    // Extract the max_sigs
+    unsigned long long max = bytes_to_ull(sk + params->sk_bytes - params->bytes_for_max, params->bytes_for_max);
 
     /* ========= CHECKING AGAINST MAX =========== */
     // Check if we can still sign with this sk, return -2 if not: */
-    // Extract the max_sigs
-    unsigned long long max = 0;
-    for (int j = params->bytes_for_max; j > 0; j--) {
-        max |= ((unsigned long long)sk[params->sk_bytes - XMSS_OID_LEN - j] << 8*(j - 1));
-    }
-
     if (idx >= max) {
         printf("ERROR! Exceeded maximum number of sigs");
         return -2;

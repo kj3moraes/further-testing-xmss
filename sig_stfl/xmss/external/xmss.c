@@ -1,7 +1,9 @@
 #include <stdint.h>
+#include <stdio.h>
 #include <math.h>
 
 #include "params.h"
+#include "utils.h"
 #include "../../sig_stfl.h"
 #include "xmss_core.h"
 
@@ -27,11 +29,9 @@ int xmss_keypair(uint8_t *pk, OQS_SECRET_KEY *sk, const uint32_t oid)
     int ret = xmss_core_keypair(&params, pk + XMSS_OID_LEN, sk->secret_key + XMSS_OID_LEN);
     if (ret != 0) return ret;
 
-    // Add the max field to the end of the secret key byte array
-    unsigned long long max = pow(2, params.tree_height) - (unsigned long) 1; 
-    for (i = sk->length_secret_key - params.bytes_for_max; i < sk->length_secret_key; i++) {
-        sk->secret_key[i] = (max >> (8 * (sk->length_secret_key - i - 1))) & 0xFF;
-    }    
+    unsigned long long max = pow(2, params.tree_height) - (unsigned long) 1;
+    ull_to_bytes(sk->secret_key + sk->length_secret_key - params.bytes_for_max, params.bytes_for_max, max);
+    
     return ret;
 }
 

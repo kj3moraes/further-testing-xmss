@@ -7,7 +7,7 @@
 #include "../sig_stfl/xmss/external/randombytes.h"
 
 
-#define XMSS_IMPLEMENTATION "XMSS-SHA2_10_256"
+#define XMSS_IMPLEMENTATION "XMSS-SHA2_16_256"
 #define MAX_LENGTH_FILENAME 60
 
 static void hexdump(const uint8_t *d, const unsigned long long l) {
@@ -94,7 +94,7 @@ int test_case(const char *name) {
     // Defining the rest of the data needed for singing and verifying.
     uint8_t *pk = (uint8_t *)malloc(signature_gen->length_public_key);
     uint8_t *sm = (uint8_t *)malloc(signature_gen->length_signature);
-    unsigned long long smlen;
+    unsigned long long smlen = 0;
 
     OQS_randombytes(m, MESSAGE_LENGTH);
     printf("\nmsg="); hexdump(m, MESSAGE_LENGTH);

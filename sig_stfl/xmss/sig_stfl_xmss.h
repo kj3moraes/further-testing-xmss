@@ -6,8 +6,8 @@
 // #ifdef OQS_ENABLE_SIG_STFL_XMSS_SHA256_H10
 
 #define OQS_SIG_STFL_alg_xmss_sha256_h10_length_signature 2500
-#define OQS_SIG_STFL_alg_xmss_sha256_h10_length_pk 68
-#define OQS_SIG_STFL_alg_xmss_sha256_h10_length_sk 2047
+#define OQS_SIG_STFL_alg_xmss_sha256_h10_length_pk 64 + XMSS_OID_LEN
+#define OQS_SIG_STFL_alg_xmss_sha256_h10_length_sk 2047 + XMSS_OID_LEN
 
 OQS_SECRET_KEY *OQS_SECRET_KEY_XMSS_SHA256_H10_new();
 
@@ -20,8 +20,8 @@ int OQS_SIG_STFL_alg_xmss_sha256_h10_verify(const uint8_t *message, size_t messa
 // #ifdef OQS_ENABLE_SIG_STFL_XMSS_SHA256_H16
 
 #define OQS_SIG_STFL_alg_xmss_sha256_h16_length_signature 2692
-#define OQS_SIG_STFL_alg_xmss_sha256_h16_length_pk 68
-#define OQS_SIG_STFL_alg_xmss_sha256_h16_length_sk 3151
+#define OQS_SIG_STFL_alg_xmss_sha256_h16_length_pk 64 + XMSS_OID_LEN
+#define OQS_SIG_STFL_alg_xmss_sha256_h16_length_sk 3151 + XMSS_OID_LEN
 
 OQS_SECRET_KEY *OQS_SECRET_KEY_XMSS_SHA256_H16_new();
 
@@ -34,8 +34,8 @@ int OQS_SIG_STFL_alg_xmss_sha256_h16_verify(const uint8_t *message, size_t messa
 // #ifdef OQS_ENABLE_SIG_STFL_XMSS_SHA256_H20
 
 #define OQS_SIG_STFL_alg_xmss_sha256_h20_length_signature 2820
-#define OQS_SIG_STFL_alg_xmss_sha256_h20_length_pk 68
-#define OQS_SIG_STFL_alg_xmss_sha256_h20_length_sk 3889
+#define OQS_SIG_STFL_alg_xmss_sha256_h20_length_pk 64 + XMSS_OID_LEN
+#define OQS_SIG_STFL_alg_xmss_sha256_h20_length_sk 3889 + XMSS_OID_LEN
 
 OQS_SECRET_KEY *OQS_SECRET_KEY_XMSS_SHA256_H20_new();
 
@@ -48,7 +48,7 @@ int OQS_SIG_STFL_alg_xmss_sha256_h20_verify(const uint8_t *message, size_t messa
 #ifdef OQS_ENABLE_SIG_STFL_XMSS_SHA512_H10
 
 #define OQS_SIG_STFL_alg_xmss_sha512_h10_length_signature 9092
-#define OQS_SIG_STFL_alg_xmss_sha512_h10_length_pk 132
+#define OQS_SIG_STFL_alg_xmss_sha512_h10_length_pk 128 + XMSS_OID_LEN
 #define OQS_SIG_STFL_alg_xmss_sha512_h10_length_sk 3999
 
 OQS_SECRET_KEY *OQS_SECRET_KEY_XMSS_SHA512_H10_new();
@@ -62,7 +62,7 @@ int OQS_SIG_STFL_alg_xmss_sha512_h10_verify(const uint8_t *message, size_t messa
 #ifdef OQS_ENABLE_SIG_STFL_XMSS_SHA512_H16
 
 #define OQS_SIG_STFL_alg_xmss_sha512_h16_length_signature 9476
-#define OQS_SIG_STFL_alg_xmss_sha512_h16_length_pk 132
+#define OQS_SIG_STFL_alg_xmss_sha512_h16_length_pk 128 + XMSS_OID_LEN 
 #define OQS_SIG_STFL_alg_xmss_sha512_h16_length_sk 6159
 
 OQS_SECRET_KEY *OQS_SECRET_KEY_XMSS_SHA512_H16_new();
@@ -76,7 +76,7 @@ int OQS_SIG_STFL_alg_xmss_sha512_h16_verify(const uint8_t *message, size_t messa
 #ifdef OQS_ENABLE_SIG_STFL_XMSS_SHA512_H20
 
 #define OQS_SIG_STFL_alg_xmss_sha512_h20_length_signature 9732
-#define OQS_SIG_STFL_alg_xmss_sha512_h20_length_pk 132
+#define OQS_SIG_STFL_alg_xmss_sha512_h20_length_pk 128 + XMSS_OID_LEN
 #define OQS_SIG_STFL_alg_xmss_sha512_h20_length_sk 7601
 
 OQS_SECRET_KEY *OQS_SECRET_KEY_XMSS_SHA512_H20_new();
