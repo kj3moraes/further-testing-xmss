@@ -36,12 +36,13 @@ int crypto_sign(unsigned char *sm, unsigned long long *smlen,
  *
  * Description: Verify signed message.
  *
- * Arguments:   - uint8_t *m: pointer to output message (allocated
+ * Arguments:   
+ *              - uint8_t *m: pointer to output message (allocated
  *                            array with smlen bytes), can be equal to sm
- *              - const uint8_t *sm: pointer to signed message
- *              - const uint8_t *pk: pointer to bit-packed public key
  *              - unsigned long long *mlen: pointer to output length of message
+ *              - const uint8_t *sm: pointer to signed message
  *              - unsigned long long smlen: length of signed message
+ *              - const uint8_t *pk: pointer to bit-packed public key
  *
  * Returns 0 if signed message could be verified correctly and -1 otherwise
  **************************************************/
@@ -49,16 +50,16 @@ int crypto_sign_open(unsigned char *m, unsigned long long *mlen,
                      const unsigned char *sm, unsigned long long smlen, const unsigned char *pk);
 
 /*************************************************
- * Name:        XMSS_crypto_remain_signatures
+ * Name:        XMSS_crypto_remaining_signatures
  *
- * Description: Return number of signature left
+ * Description: Return number of signatures left
  *
  * Arguments:   - unsigned long long *remain: remaining signatures
  *              - const uint8_t *sk: pointer to bit-packed private key
  *
  * Returns 0 (sucess), -1 otherwise
  **************************************************/
-int crypto_remain_signatures(unsigned long long *remain, const unsigned char *sk);
+int crypto_remaining_signatures(unsigned long long *remain, const unsigned char *sk);
 
 #endif 
 
