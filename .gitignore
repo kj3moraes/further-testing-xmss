@@ -1,0 +1,13 @@
+# All the testing files
+*.in
+*.prv
+*.pub
+
+# All the build files
+*.o
+*.d
+
+# All the unnecessary folders
+/.vscode*
+/bin*
+/build*
