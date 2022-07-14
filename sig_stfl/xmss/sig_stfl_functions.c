@@ -85,3 +85,7 @@ void perform_key_allocation(OQS_SECRET_KEY *sk) {
     sk->secret_key = (uint8_t *)malloc(sk->length_secret_key * sizeof(uint8_t));
     memset(sk->secret_key, 0, sk->length_secret_key);   
 }
+
+OQS_SECRET_KEY *OQS_SECRET_KEY_alg_derive_subkey(OQS_SECRET_KEY *master_key, const unsigned long long number_of_sigs) {
+
+}

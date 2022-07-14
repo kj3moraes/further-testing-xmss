@@ -1,5 +1,5 @@
 # Compiler detials and flags
-CXX = clang
+CXX = gcc
 CXX_FLAGS = --std=c11 -g -Wall # -fsanitize=address -fno-omit-frame-pointer 
 
 # Executable details and flags

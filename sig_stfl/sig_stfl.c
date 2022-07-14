@@ -140,6 +140,14 @@ void OQS_SIG_STFL_free(OQS_SIG_STFL *sig) {
 // ================================= OQS_SECRET_KEY FUNCTION ===============================================
 
 
+OQS_SECRET_KEY *OQS_SECRET_KEY_derive_subkey(OQS_SECRET_KEY *master_key, const unsigned long long number_of_signatures) {
+    if (master_key == NULL) {
+        return NULL;
+    } 
+    
+    return OQS_SECRET_KEY_alg_derive_subkey(master_key, number_of_signatures);
+}
+
 
 OQS_SECRET_KEY *OQS_SECRET_KEY_new(const char *method_name) {
     if (method_name == NULL) {

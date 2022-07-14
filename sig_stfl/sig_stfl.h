@@ -80,9 +80,8 @@ int OQS_SIG_STFL_alg_is_enabled(const char *method_name);
 
 
 /**
- * @brief Secret Kye object for stateful signature schemes * 
+ * @brief SECRET KEY object for stateful signature schemes * 
  */
-
 typedef struct OQS_SECRET_KEY OQS_SECRET_KEY;
 
 typedef struct OQS_SECRET_KEY {
@@ -111,10 +110,10 @@ OQS_SECRET_KEY *OQS_SECRET_KEY_new(const char *method_name);
 
 void OQS_SECRET_KEY_free(OQS_SECRET_KEY *sk);	
 
-
+OQS_SECRET_KEY *OQS_SECRET_KEY_derive_subkey(OQS_SECRET_KEY *master_sk, const unsigned long long number_of_signatures);
 
 /**
- * Signature schemes object
+ * Stateful signature scheme object
  */
 typedef struct OQS_SIG_STFL {
 
