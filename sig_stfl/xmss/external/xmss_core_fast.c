@@ -106,6 +106,11 @@ static void xmssmt_deserialize_state(const xmss_params *params,
     unsigned int i, j;
 
     /* Skip past the 'regular' sk */
+
+    printf("sk_before_des=");
+    for (i = 0; i < 32 ;i++) printf("%02x", sk[i]); 
+    printf("\n");
+
     #ifdef FORWARD_SECURE
     sk += params->index_bytes + (2 + 2*params->d)*params->n;
     #else
@@ -854,7 +859,10 @@ int xmss_core_sign(const xmss_params *params,
 
 int xmssmt_core_increment_authpath(const xmss_params *params, uint8_t *sk, unsigned long long amount) {
     unsigned long long i = 0;
+    
     bds_state state;
+    treehash_inst treehash[params->tree_height - params->bds_k];
+    state.treehash = treehash;
 
     xmss_deserialize_state(params, &state, sk);
     
@@ -866,15 +874,17 @@ int xmssmt_core_increment_authpath(const xmss_params *params, uint8_t *sk, unsig
     uint8_t pub_seed[params->n];
     memcpy(pub_seed, sk + params->index_bytes + 3*params->n, params->n);
 
-    // Init working params
+    // Init working params;
     uint32_t ots_addr[8] = {0};
 
+    /* Check if we can still sign with this sk, return -2 if not: */
     // Extract index
     unsigned long long idx = bytes_to_ull(sk, params->index_bytes);
-
-    /* Check if we can still sign with this sk, return -2 if not: */
     // Extract the max_sigs
     unsigned long long max = bytes_to_ull(sk + params->sk_bytes - params->bytes_for_max, params->bytes_for_max);
+    if (idx >= max) {
+        return -2;
+    }
 
     // Update SK
     sk[0] = ((idx + amount) >> 24) & 255;

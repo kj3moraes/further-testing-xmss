@@ -38,7 +38,7 @@ int do_nothing_save(OQS_SECRET_KEY *sk) {
 
 int sk_file_write(const OQS_SECRET_KEY *sk) {
 
-    const char filename[MAX_LENGTH_FILENAME];
+    char filename[MAX_LENGTH_FILENAME];
     strcpy(filename, "./keys/opps_xmss16_sha256.prv");
 
     #ifdef CUSTOM_NAME
@@ -76,7 +76,7 @@ int test_case(const char *name) {
     int ret = 0;
     unsigned int i;
 
-    printf("\n\t===== Complete Testing %s ===== \n", name);
+    printf("\n\t===== Subkey Testing %s ===== \n\n\n", name);
     
     // Defining the secret key
     OQS_SECRET_KEY *master_key = OQS_SECRET_KEY_new(name);
@@ -86,17 +86,6 @@ int test_case(const char *name) {
 
     // Defining all the subkeys
     OQS_SECRET_KEY *subkeys[NUM_SUBKEYS];
-    for (i = 0; i < NUM_SUBKEYS; i++) {
-        
-        unsigned long long number_sigs = 0;
-        printf("\nEnter the number of signatures to be generated for subkey %d>", i);
-        scanf("%llu", &number_sigs);
-
-        subkeys[i] = OQS_SECRET_KEY_derive_subkey(master_key, number_sigs);
-        subkeys[i]->lock_key = lock_sk_key;
-        subkeys[i]->release_key = release_sk_key;
-        subkeys[i]->oqs_save_updated_sk_key = sk_file_write;
-    }
     
     // Defining the stateful signature object
     OQS_SIG_STFL *signature_gen = OQS_SIG_STFL_new(name);
@@ -111,8 +100,9 @@ int test_case(const char *name) {
     unsigned long long smlen = 0;
 
     OQS_randombytes(m, MESSAGE_LENGTH);
-    printf("\nmsg="); hexdump(m, MESSAGE_LENGTH);
 
+    printf("==== BOOK KEEPING INFORMATION =====\n");
+    printf("\nmsg="); hexdump(m, MESSAGE_LENGTH);
     printf("sk_bytes=%llu + oid\n", (unsigned long long)master_key->length_secret_key);
     printf("pk_bytes=%llu\n", (unsigned long long)signature_gen->length_public_key);
     printf("sig_bytes=%llu\n", (unsigned long long)signature_gen->length_signature);
@@ -190,6 +180,30 @@ int test_case(const char *name) {
     printf("\nPublic key="); hexdump(pk, signature_gen->length_public_key);
     printf("\nSecret key="); hexdump(master_key->secret_key, master_key->length_secret_key);
 
+    printf("\n\n === Generating %d %s subkeys... === \n", NUM_SUBKEYS, name);
+    for (i = 0; i < NUM_SUBKEYS; i++) {
+        
+        unsigned long long number_sigs = 0;
+        printf("\nEnter the number of signatures to be generated for subkey %d>", i);
+        scanf("%llu", &number_sigs);
+
+        subkeys[i] = OQS_SECRET_KEY_derive_subkey(master_key, number_sigs);
+
+        printf("\nsubkey %d:=", i + 1);
+        hexdump(subkeys[i]->secret_key, subkeys[i]->length_secret_key);
+        printf("\n");
+
+        printf("\nmaster key after %d^th subkey:=", i + 1);
+        hexdump(subkeys[i]->secret_key, subkeys[i]->length_secret_key);
+        printf("\n");
+
+        subkeys[i]->lock_key = lock_sk_key;
+        subkeys[i]->release_key = release_sk_key;
+        subkeys[i]->oqs_save_updated_sk_key = sk_file_write;
+    }
+    return 0;
+
+
     printf("Do you want to test? (1/0)>");
     scanf("%d", &decision);
     if (decision == 0) return -1;
@@ -242,6 +256,9 @@ int test_case(const char *name) {
     }
 
     OQS_SECRET_KEY_free(master_key);
+    for (i = 0; i < NUM_SUBKEYS; i++) {
+        OQS_SECRET_KEY_free(subkeys[i]);
+    }
     OQS_SIG_STFL_free(signature_gen);
     free(m);
     free(pk);

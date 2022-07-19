@@ -27,7 +27,7 @@ XMSS_OBJ_BUILD_SRC_FILES = $(wildcard $(XMSS_OBJ_BUILD_DIR)/*.c)
 XMSS_OBJ_BUILD_HDR_FILES = $(wildcard $(XMSS_OBJ_BUILD_DIR)/*.h)
 
 # Tests to performs
-TESTS = $(EXEC_DIR)/test_struct # $(BUILD_DIR)/test_fast $(BUILD_DIR)/test_multi  $(BUILD_DIR)/test_subkeys
+TESTS = $(EXEC_DIR)/test_struct $(EXEC_DIR)/test_subkeys # $(BUILD_DIR)/test_fast $(BUILD_DIR)/test_multi  $(BUILD_DIR)/test_subkeys
 
 tests: $(TESTS)
 
@@ -37,12 +37,12 @@ tests: $(TESTS)
 $(EXEC_DIR)/test_struct: tests/new_structure_tester.c $(XMSS_IMPL_SRC_FILES) $(XMSS_IMPL_HDR_FILES) $(XMSS_OBJ_BUILD_SRC_FILES)  $(XMSS_OBJ_BUILD_HDR_FILES) $(SIG_STFL_SRC_FILES)  $(SIG_STFL_HDR_FILES) 
 	$(CXX) $(CXX_FLAGS) -o $@ $(SIG_STFL_SRC_FILES) $(XMSS_IMPL_SRC_FILES) $(XMSS_OBJ_BUILD_SRC_FILES) $< $(LDLIBS) $(LDFLAGS) $(INC_FLAGS) 
 
+# Derving subkeys tester
+$(EXEC_DIR)/test_subkeys: tests/subkeys_tester.c $(XMSS_IMPL_SRC_FILES) $(XMSS_IMPL_HDR_FILES) $(XMSS_OBJ_BUILD_SRC_FILES)  $(XMSS_OBJ_BUILD_HDR_FILES) $(SIG_STFL_SRC_FILES)  $(SIG_STFL_HDR_FILES) 
+	$(CXX) $(CXX_FLAGS) -o $@ $(SIG_STFL_SRC_FILES) $(XMSS_IMPL_SRC_FILES) $(XMSS_OBJ_BUILD_SRC_FILES) $< $(LDLIBS) $(LDFLAGS) $(INC_FLAGS) 
 
 # Regular test executables (now defunct cause no secret_key.h and secret_key.c)
 $(EXEC_DIR)/test_fast: tests/full_tester.c $(XMSS_IMPL_SRC_FILES) $(OBJS) $(XMSS_IMPL_HDR_FILES)
-	$(CXX) $(CXX_FLAGS) -o $@ $(XMSS_IMPL_SRC_FILES) $< $(LDLIBS) $(LDFLAGS) $(INC_FLAGS) 
-
-$(EXEC_DIR)/test_subkeys: tests/subkeys_tester.c $(XMSS_IMPL_SRC_FILES) $(OBJS) $(XMSS_IMPL_HDR_FILES)
 	$(CXX) $(CXX_FLAGS) -o $@ $(XMSS_IMPL_SRC_FILES) $< $(LDLIBS) $(LDFLAGS) $(INC_FLAGS) 
 
 $(EXEC_DIR)/test_multi: tests/multithreaded_tester.c $(XMSS_IMPL_SRC_FILES) $(OBJS) $(XMSS_IMPL_HDR_FILES)

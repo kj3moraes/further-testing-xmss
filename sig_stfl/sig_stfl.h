@@ -50,7 +50,7 @@ extern "C" {
 #define OQS_SIG_STFL_algs_length 12
 
 /**
- * Returns identifiers for available signature schemes in liboqs.  Used with OQS_SIG_new.
+ * Returns identifiers for available signature schemes in liboqs.  Used with OQS_SIG_STFL_new.
  *
  * Note that algorithm identifiers are present in this list even when the algorithm is disabled
  * at compile time.

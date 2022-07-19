@@ -62,8 +62,8 @@ int xmss_core_sign_open(const xmss_params *params,
  */
 int 
 xmssmt_core_increment_authpath(const xmss_params *params,
-                            uint8_t *sk,
-                            unsigned long long amount);
+                               uint8_t *sk,
+                               unsigned long long amount);
 
 /*
  * Generates a XMSSMT key pair for a given parameter set.
