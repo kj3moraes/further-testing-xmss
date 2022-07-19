@@ -17,7 +17,7 @@
  */
 unsigned long long t[XMSS_SIGNATURES];
 
-#if DEBUG
+
 static void print_hex(const unsigned char *a, int length, const char *string)
 {
     printf("%s[%d] = \n", string, length);
@@ -27,7 +27,7 @@ static void print_hex(const unsigned char *a, int length, const char *string)
     }
     printf("\n");
 }
-#endif
+
 
 static int cmp_llu(const void *a, const void *b)
 {
@@ -216,6 +216,9 @@ int main(void)
 
     ret = test_keygen(pk, sk);
 
+    print_hex(pk, CRYPTO_PUBLIC_KEY, "pk");
+    print_hex(sk, CRYPTO_SECRET_KEY, "sk");
+
     if (ret)
     {
         printf("    Unable to generate keypair\n");
@@ -254,7 +257,7 @@ int main(void)
     {
         printf("    Unable to check remaining signature\n");
         return 1;
-    }
+    } 
 
     free(sm);
     free(mout);

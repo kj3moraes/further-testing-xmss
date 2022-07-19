@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <string.h>
+#include <stdio.h>
 
 #include "utils.h"
 #include "hash.h"
@@ -117,11 +118,21 @@ void wots_pkgen(const xmss_params *params,
 
     /* The WOTS+ private key is derived from the seed. */
     expand_seed(params, pk, seed);
-
+    // printf("addr = %p\n", pk);
     for (i = 0; i < params->wots_len; i++) {
+        // Lock address 
         set_chain_addr(addr, i);
+        // This ready to go after lock `addr` variable
         gen_chain(params, pk + i*params->n, pk + i*params->n,
                   0, params->wots_w - 1, pub_seed, addr);
+        
+
+        // printf("addr = %p, i = %d, n = %d |", addr, i, i*params->n);
+        // for (int j = 0; j < i*params->n; j++)
+        // {
+        //     printf("%02x", *(pk + j));
+        // }
+        // printf("\n");
     }
 }
 

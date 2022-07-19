@@ -4,38 +4,41 @@ This code was taken from the SPHINCS reference implementation and is public doma
 
 #include <fcntl.h>
 #include <unistd.h>
+#include <oqs/common.h>
+#include <oqs/rand.h>
+#include <stdio.h>
 
-static int fd = -1;
+int runonce(void)
+{
+    unsigned char buf[48] = {0};
+    // OQS_randombytes(buf, 48);
 
+    /* Using AES as random generator */
+    if (OQS_randombytes_switch_algorithm("NIST-KAT") != OQS_SUCCESS)
+    {
+        return OQS_ERROR;
+    }
+
+    /* Initialize NIST KAT, this time it reads from /dev/urandom */
+    OQS_randombytes_nist_kat_init_256bit(buf, NULL);
+    return OQS_SUCCESS;
+}
+
+
+static initialized = 0;
 void randombytes(unsigned char *x, unsigned long long xlen)
 {
-    int i;
-
-    if (fd == -1) {
-        for (;;) {
-            fd = open("/dev/urandom", O_RDONLY);
-            if (fd != -1) {
-                break;
-            }
-            sleep(1);
+    if (!initialized)
+    {
+        if(runonce() == OQS_SUCCESS)
+        {
+            initialized = 1;
         }
     }
-
-    while (xlen > 0) {
-        if (xlen < 1048576) {
-            i = xlen;
-        }
-        else {
-            i = 1048576;
-        }
-
-        i = read(fd, x, i);
-        if (i < 1) {
-            sleep(1);
-            continue;
-        }
-
-        x += i;
-        xlen -= i;
+    OQS_randombytes(x, xlen);
+    for (int i = 0; i < xlen; i++)
+    {
+        printf("%02x", x[i]);
     }
+    printf("\n");
 }
