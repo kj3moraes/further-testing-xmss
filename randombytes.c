@@ -25,7 +25,7 @@ int runonce(void)
 }
 
 
-static initialized = 0;
+static int initialized = 0;
 void randombytes(unsigned char *x, unsigned long long xlen)
 {
     if (!initialized)
@@ -36,9 +36,9 @@ void randombytes(unsigned char *x, unsigned long long xlen)
         }
     }
     OQS_randombytes(x, xlen);
-    for (int i = 0; i < xlen; i++)
-    {
-        printf("%02x", x[i]);
-    }
-    printf("\n");
+    // for (int i = 0; i < xlen; i++)
+    // {
+    //     printf("%02x", x[i]);
+    // }
+    // printf("\n");
 }
