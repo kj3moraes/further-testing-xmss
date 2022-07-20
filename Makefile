@@ -7,7 +7,7 @@ BUILD_DIR 					:= build
 EXEC_DIR 					:= bin
 
 # Stateful signatures directory 
-SIG_STFL_DIR 				:= sig_stfl/
+SIG_STFL_DIR 				:= sig_stfl
 
 # Library details and flags
 LDFLAGS 					:= -L../liboqs/build/lib
@@ -30,14 +30,14 @@ SIG_STFL_SRC_FILES 			:= $(wildcard $(SIG_STFL_DIR)/*.c)
 SIG_STFL_HDR_FILES 			:= $(wildcard $(SIG_STFL_DIR)/*.h)
 
 # XMSS Source code files
-XMSS_IMPL_SRC_FILES = $(wildcard $(XMSS_IMPL_DIR)/*.c)
-XMSS_IMPL_HDR_FILES = $(wildcard $(XMSS_IMPL_DIR)/*.h)
+XMSS_IMPL_SRC_FILES 		:= $(wildcard $(XMSS_IMPL_DIR)/*.c)
+XMSS_IMPL_HDR_FILES 		:= $(wildcard $(XMSS_IMPL_DIR)/*.h)
 
-XMSS_OBJ_BUILD_SRC_FILES = $(wildcard $(XMSS_OBJ_BUILD_DIR)/*.c)
-XMSS_OBJ_BUILD_HDR_FILES = $(wildcard $(XMSS_OBJ_BUILD_DIR)/*.h)
+XMSS_OBJ_BUILD_SRC_FILES 	:= $(wildcard $(XMSS_OBJ_BUILD_DIR)/*.c)
+XMSS_OBJ_BUILD_HDR_FILES 	:= $(wildcard $(XMSS_OBJ_BUILD_DIR)/*.h)
 
 # Tests to performs
-TESTS = $(EXEC_DIR)/test_struct # $(BUILD_DIR)/test_fast $(BUILD_DIR)/test_multi  $(BUILD_DIR)/test_subkeys
+TESTS 						:= $(EXEC_DIR)/test_struct # $(BUILD_DIR)/test_fast $(BUILD_DIR)/test_multi  $(BUILD_DIR)/test_subkeys
 
 tests: $(TESTS)
 
