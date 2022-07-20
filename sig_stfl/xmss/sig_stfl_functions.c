@@ -4,10 +4,10 @@
 #include "./external/params.h"
 #include "./external/xmss.h"
 
-int OQS_SIG_STFL_alg_xmss_keypair(uint8_t *public_key, OQS_SECRET_KEY *secret_key) {
+int OQS_SIG_STFL_alg_xmss_keypair(uint8_t *public_key, OQS_SECRET_KEY *secret_key, const uint32_t oid) {
     if (secret_key == NULL || public_key == NULL) return -1;
     
-    return xmss_keypair(public_key, secret_key, secret_key->oid);
+    return xmss_keypair(public_key, secret_key, oid);
 }
 
 int OQS_SIG_STFL_alg_xmss_sign(uint8_t *signature, size_t *signature_length, const uint8_t *message, size_t message_len, OQS_SECRET_KEY *secret_key) {
@@ -44,11 +44,12 @@ unsigned long long OQS_SIG_STFL_alg_xmss_xmssmt_sigs_left(const OQS_SECRET_KEY *
     if (secret_key == NULL) return -1;
     
     xmss_params params;
-    if (secret_key->is_xmssmt) {
-        xmssmt_parse_oid(&params, secret_key->oid);
-    } else {
-        xmss_parse_oid(&params, secret_key->oid);
+    unsigned int i;
+    uint32_t oid = 0;
+    for (i = 0; i < XMSS_OID_LEN; i++) {
+        oid |= secret_key->secret_key[XMSS_OID_LEN - i - 1] << (i * 8);
     }
+    xmss_params_init(&params, oid);
 
     unsigned long long max = OQS_SIG_STFL_alg_xmss_xmssmt_sigs_total(secret_key);
     unsigned long long idx = 0;
@@ -62,11 +63,12 @@ unsigned long long OQS_SIG_STFL_alg_xmss_xmssmt_sigs_total(const OQS_SECRET_KEY 
     if (secret_key == NULL) return -1;
     
     xmss_params params;
-    if (secret_key->is_xmssmt) {
-        xmssmt_parse_oid(&params, secret_key->oid);
-    } else {
-        xmss_parse_oid(&params, secret_key->oid);
+    unsigned int i;
+    uint32_t oid = 0;
+    for (i = 0; i < XMSS_OID_LEN; i++) {
+        oid |= secret_key->secret_key[XMSS_OID_LEN - i - 1] << (i * 8);
     }
+    xmss_parse_oid(&params, oid);
 
     unsigned long long max = 0;
     for (int j = params.bytes_for_max; j > 0; j--) {

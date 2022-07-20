@@ -180,7 +180,7 @@ int OQS_SIG_STFL_alg_xmss_shake512_h20_verify(const uint8_t *message, size_t mes
 
 // ---------------------------- FUNCTIONS INDEPENDENT OF VARIANT -----------------------------------------
 
-int OQS_SIG_STFL_alg_xmss_keypair(uint8_t *public_key, OQS_SECRET_KEY *secret_key);
+int OQS_SIG_STFL_alg_xmss_keypair(uint8_t *public_key, OQS_SECRET_KEY *secret_key. const uint32_t oid);
 
 int OQS_SIG_STFL_alg_xmss_sign(uint8_t *signature, size_t *signature_length, const uint8_t *message, size_t message_len, OQS_SECRET_KEY *secret_key);
 

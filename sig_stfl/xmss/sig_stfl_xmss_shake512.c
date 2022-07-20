@@ -38,9 +38,6 @@ OQS_SECRET_KEY *OQS_SECRET_KEY_xmss_shake512_H10_new(void) {
     if (sk == NULL) return NULL;
     memset(sk, 0, sizeof(OQS_SECRET_KEY));
 
-    sk->oid = 0x0000000a;
-    sk->is_xmssmt = 0;
-
     sk->length_secret_key = OQS_SIG_STFL_alg_xmss_shake512_h10_length_sk;
     
     perform_key_allocation(sk);
@@ -81,8 +78,6 @@ OQS_SECRET_KEY *OQS_SECRET_KEY_xmss_shake512_H16_new(void) {
     OQS_SECRET_KEY *sk = malloc(sizeof(OQS_SECRET_KEY));
     if (sk == NULL) return NULL;
     memset(sk, 0, sizeof(OQS_SECRET_KEY));
-    sk->oid = 0x0000000b;
-    sk->is_xmssmt = 0;
 
     sk->length_secret_key = OQS_SIG_STFL_alg_xmss_shake512_h16_length_sk;
 
@@ -124,9 +119,7 @@ OQS_SECRET_KEY *OQS_SECRET_KEY_xmss_shake512_H20_new(void) {
     OQS_SECRET_KEY *sk = malloc(sizeof(OQS_SECRET_KEY));
     if (sk == NULL) return NULL;
     memset(sk, 0, sizeof(OQS_SECRET_KEY));
-    sk->oid = 0x0000000c;
-    sk->is_xmssmt = 0;
-
+    
     sk->length_secret_key = OQS_SIG_STFL_alg_xmss_shake512_h20_length_sk ;
 
     perform_key_allocation(sk);

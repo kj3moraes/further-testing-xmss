@@ -90,10 +90,6 @@ typedef struct OQS_SECRET_KEY {
 	/** The (maximum) length, in bytes, of secret keys for this signature scheme. */
 	unsigned long long length_secret_key;
 
-	uint32_t oid;
-
-	bool is_xmssmt;
-
 	/** The physical secret key stored in memory as an array of bytes*/
 	uint8_t *secret_key;
 
