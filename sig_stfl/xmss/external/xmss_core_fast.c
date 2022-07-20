@@ -858,7 +858,7 @@ int xmss_core_sign(const xmss_params *params,
 }
 
 int xmssmt_core_increment_authpath(const xmss_params *params, uint8_t *sk, unsigned long long amount) {
-    unsigned long long i = 0;
+    unsigned long long i, j = 0;
     
     bds_state state;
     treehash_inst treehash[params->tree_height - params->bds_k];
@@ -898,7 +898,7 @@ int xmssmt_core_increment_authpath(const xmss_params *params, uint8_t *sk, unsig
         
         #ifdef FORWARD_SECURE
             // move forward next seeds for all tree hash instances
-            for (i = 0; i < params->tree_height-params->bds_k-1; i++) {
+            for (j = 0; j < params->tree_height-params->bds_k-1; j++) {
                 set_ots_addr(ots_addr, 1+3*(1<<i)+idx);
                 hash_prg(params, NULL, state.treehash[i].seed_next, state.treehash[i].seed_next, pub_seed, ots_addr);
             }

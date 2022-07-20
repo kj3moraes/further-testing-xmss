@@ -12,7 +12,10 @@
 
 static void hexdump(const uint8_t *d, const unsigned long long l) {
     printf("length=%llu\n", l);
-    for(unsigned long long i=0; i<l ;i++) printf("%02x", d[i]);
+    for(unsigned long long i=0; i<l ;i++) {
+        if (i % 16 == 0) printf("\n");
+        printf("%02x", d[i]);
+    }
     printf("\n");
 }
 
@@ -201,8 +204,7 @@ int test_case(const char *name) {
         subkeys[i]->release_key = release_sk_key;
         subkeys[i]->oqs_save_updated_sk_key = sk_file_write;
     }
-    return 0;
-
+    return 0;    
 
     printf("Do you want to test? (1/0)>");
     scanf("%d", &decision);
@@ -212,9 +214,9 @@ int test_case(const char *name) {
     printf("\nEnter the number of tests you want to run>");
     scanf("%u", &NUM_TESTS);
     
-    printf("\n\n === Testing %d %s signatures.. === \n", NUM_TESTS, name);
+    printf("\n\n === Testing signatures for %d %s subkeys + master key testing.. === \n", NUM_SUBKEYS, name);
 
-    for (i = 0; i < NUM_TESTS; i++) {
+    for (i = 0; i < NUM_SUBKEYS; i++) {
         printf("\n\n=========  - iteration #%d: ==============\n", i);
 
         /* ========================== SIGNING ================================= */
