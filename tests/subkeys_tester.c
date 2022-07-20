@@ -4,7 +4,6 @@
 #include <stdlib.h>
 
 #include "../sig_stfl/sig_stfl.h"
-#include "../sig_stfl/xmss/external/randombytes.h"
 
 #define XMSS_IMPLEMENTATION "XMSS-SHA2_16_256"
 #define MAX_LENGTH_FILENAME 60

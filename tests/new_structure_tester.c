@@ -106,7 +106,7 @@ int test_case(const char *name) {
     unsigned int decision;
     char filename[MAX_LENGTH_FILENAME];
     printf("\nDo you want to generate a new key? (1/0)>");
-    scanf("%d", &decision);
+    scanf("%u", &decision);
 
     if (decision == 1) {
         printf("Generating keys ...\n");
@@ -114,7 +114,7 @@ int test_case(const char *name) {
         printf("\nGenerated a new key\n");
 
         printf("\nDo you want to save the key? (1/0)>");
-        scanf("%d", &decision);
+        scanf("%u", &decision);
 
         if (decision == 1) {
             printf("Saving the key ...\n");
@@ -177,7 +177,7 @@ int test_case(const char *name) {
     printf("\nSecret key="); hexdump(sk->secret_key, sk->length_secret_key);
 
     printf("Do you want to test? (1/0)>");
-    scanf("%d", &decision);
+    scanf("%u", &decision);
     if (decision == 0) return -1;
 
     unsigned int NUM_TESTS;
