@@ -111,28 +111,40 @@ static void chain_lengths(const xmss_params *params,
  *
  * Writes the computed public key to 'pk'.
  */
-#define NUM_CORES 1
+#define NUM_CORES 4
+#define DEBUG 0
 
 typedef struct wots_pkgen_args
 {
     const xmss_params *params;
-    unsigned char *pk;
     const unsigned char *pub_seed;
+    unsigned char *pk;
+    unsigned char *none;
+    unsigned char *none1;
+    uint32_t bla; 
     uint32_t *addr;
-    int start; 
-    int end;
-    int num;
+    unsigned int start; 
+    unsigned int end;
+    unsigned int num;
 } wots_pkgen_args_t;
 
 void *wots_pkgen_sub(void *arg)
 {
     wots_pkgen_args_t *args = arg;
-    for (int i = args->start; i < args->end; i++)
+    for (unsigned i = args->start; i < args->end; i++)
     {
         set_chain_addr(args->addr, i);
         gen_chain(args->params, args->pk + i*(args->params->n), args->pk + i*(args->params->n),
                 0, args->params->wots_w - 1, args->pub_seed, args->addr);
     }
+#if DEBUG
+    printf("%d: ", args->num);
+    for (int i = 0; i < 8; i++)
+    {
+        printf("%02x", args->addr[i]);
+    }
+    printf("\n");
+#endif
     return NULL;
 }
 
@@ -140,24 +152,23 @@ void wots_pkgen(const xmss_params *params,
                 unsigned char *pk, const unsigned char *seed,
                 const unsigned char *pub_seed, uint32_t addr[8])
 {
-    uint32_t i;
     const uint32_t length = params->wots_len/NUM_CORES;
     const uint32_t leftover = params->wots_len % NUM_CORES; 
 
     /* The WOTS+ private key is derived from the seed. */
     expand_seed(params, pk, seed);
-    uint32_t thread_addr[5][8];
+    uint32_t thread_addr[NUM_CORES + 1][8];
     
     pthread_t thread[NUM_CORES + 1]; 
 
-    for (int j = 0; j < 5; j++)
+    for (int j = 0; j < NUM_CORES + 1; j++)
     {
         memcpy(thread_addr[j], addr, sizeof(uint32_t) * 8);
     }
 
     wots_pkgen_args_t args[NUM_CORES + 1]; 
 
-    for (int j = 0; j < NUM_CORES + 1; j++)
+    for (int j = NUM_CORES; j >= 0; j--)
     {
         args[j].addr = thread_addr[j]; 
         args[j].params = params; 
@@ -177,7 +188,8 @@ void wots_pkgen(const xmss_params *params,
         
         int status = pthread_create(&thread[j], NULL, wots_pkgen_sub, (void *) &args[j]);
         if (status != 0) printf("status = %d\n", status);
-        
+
+        // wots_pkgen_sub(&args[j]);
     }
     
     for (int j = 0; j < NUM_CORES + 1; j++) 
