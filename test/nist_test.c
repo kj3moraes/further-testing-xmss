@@ -114,7 +114,7 @@ int test_sign(unsigned char *sm, unsigned long long *smlen,
             break;
         }
     }
-    print_results(t, XMSS_SIGNATURES);
+    // print_results(t, XMSS_SIGNATURES);
 
     return ret;
 }
@@ -157,7 +157,7 @@ int test_verify(unsigned char *mout, unsigned long long *moutlen,
             break;
         }
     }
-    print_results(t, XMSS_SIGNATURES);
+    // print_results(t, XMSS_SIGNATURES);
 
     return ret;
 }
@@ -217,7 +217,7 @@ int main(void)
     ret = test_keygen(pk, sk);
 
     print_hex(pk, CRYPTO_PUBLIC_KEY, "pk");
-    print_hex(sk, CRYPTO_SECRET_KEY, "sk");
+    // print_hex(sk, CRYPTO_SECRET_KEY, "sk");
 
     if (ret)
     {

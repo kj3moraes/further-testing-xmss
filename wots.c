@@ -7,6 +7,7 @@
 #include "wots.h"
 #include "hash_address.h"
 #include "params.h"
+#include <pthread.h>
 
 /**
  * Helper method for pseudorandom key generation.
@@ -110,31 +111,151 @@ static void chain_lengths(const xmss_params *params,
  *
  * Writes the computed public key to 'pk'.
  */
+#define NUM_CORES 1
+
+typedef struct wots_pkgen_args
+{
+    const xmss_params *params;
+    unsigned char *pk;
+    const unsigned char *pub_seed;
+    uint32_t *addr;
+    int start; 
+    int end;
+    int num;
+} wots_pkgen_args_t;
+
+void *wots_pkgen_sub(void *arg)
+{
+    wots_pkgen_args_t *args = arg;
+    for (int i = args->start; i < args->end; i++)
+    {
+        set_chain_addr(args->addr, i);
+        gen_chain(args->params, args->pk + i*(args->params->n), args->pk + i*(args->params->n),
+                0, args->params->wots_w - 1, args->pub_seed, args->addr);
+    }
+    return NULL;
+}
+
 void wots_pkgen(const xmss_params *params,
                 unsigned char *pk, const unsigned char *seed,
                 const unsigned char *pub_seed, uint32_t addr[8])
 {
     uint32_t i;
+    const uint32_t length = params->wots_len/NUM_CORES;
+    const uint32_t leftover = params->wots_len % NUM_CORES; 
 
     /* The WOTS+ private key is derived from the seed. */
     expand_seed(params, pk, seed);
-    // printf("addr = %p\n", pk);
-    for (i = 0; i < params->wots_len; i++) {
-        // Lock address 
-        set_chain_addr(addr, i);
-        // This ready to go after lock `addr` variable
-        gen_chain(params, pk + i*params->n, pk + i*params->n,
-                  0, params->wots_w - 1, pub_seed, addr);
-        
+    uint32_t thread_addr[5][8];
+    
+    pthread_t thread[NUM_CORES + 1]; 
 
-        // printf("addr = %p, i = %d, n = %d |", addr, i, i*params->n);
-        // for (int j = 0; j < i*params->n; j++)
-        // {
-        //     printf("%02x", *(pk + j));
-        // }
-        // printf("\n");
+    for (int j = 0; j < 5; j++)
+    {
+        memcpy(thread_addr[j], addr, sizeof(uint32_t) * 8);
+    }
+
+    wots_pkgen_args_t args[NUM_CORES + 1]; 
+
+    for (int j = 0; j < NUM_CORES + 1; j++)
+    {
+        args[j].addr = thread_addr[j]; 
+        args[j].params = params; 
+        args[j].pk = pk;
+        args[j].pub_seed = pub_seed; 
+        if (j == NUM_CORES)
+        {
+            args[j].start = params->wots_len - leftover; 
+            args[j].end = params->wots_len;    
+        }
+        else
+        {
+            args[j].start = j*length; 
+            args[j].end = (j+1)*length;
+        }
+        args[j].num = j;
+        
+        int status = pthread_create(&thread[j], NULL, wots_pkgen_sub, (void *) &args[j]);
+        if (status != 0) printf("status = %d\n", status);
+        
+    }
+    
+    for (int j = 0; j < NUM_CORES + 1; j++) 
+    {
+        pthread_join(thread[j], NULL);
     }
 }
+
+
+// void wots_pkgen(const xmss_params *params,
+//                 unsigned char *pk, const unsigned char *seed,
+//                 const unsigned char *pub_seed, uint32_t addr[8])
+// {
+//     uint32_t i;
+
+//     /* The WOTS+ private key is derived from the seed. */
+//     expand_seed(params, pk, seed);
+
+//     for (i = 0; i < params->wots_len; i++) {
+//         // Lock address 
+//         set_chain_addr(addr, i);
+//         // This ready to go after lock `addr` variable
+//         gen_chain(params, pk + i*params->n, pk + i*params->n,
+//                   0, params->wots_w - 1, pub_seed, addr);
+//     } 
+
+    // uint32_t thread_addr[NUM_CORES][8];
+
+
+    // uint32_t length = params->wots_len/NUM_CORES;
+    // uint32_t leftover = params->wots_len % NUM_CORES; 
+
+    // for (i = 0; i < leftover; i++)
+    // {
+    //     set_chain_addr(addr, i);
+    //     gen_chain(params, pk + i*params->n, pk + i*params->n,
+    //               0, params->wots_w - 1, pub_seed, addr);
+    // }
+
+    // for (int j = 0; j < NUM_CORES; j++)
+    // {
+    //     // memcpy(thread_addr[j], addr, sizeof(uint32_t) * 8);
+    //     for (int k = 0; k < 8; k++)
+    //     {
+    //         thread_addr[j][k] = addr[k];
+    //     }
+    // }
+
+    // for (; i < leftover + length; i++)
+    // {
+    //     // 1st thread
+    //     set_chain_addr(thread_addr[0], i);
+    //     gen_chain(params, pk + i*params->n, pk + i*params->n,
+    //               0, params->wots_w - 1, pub_seed, addr);
+    // }
+
+    // for (; i < leftover + 2*length; i++)
+    // {
+    //     set_chain_addr(thread_addr[1], i);
+    //     gen_chain(params, pk + i*params->n, pk + i*params->n,
+    //               0, params->wots_w - 1, pub_seed, addr);
+    // }
+
+    // for (; i < leftover + 3*length; i++)
+    // {
+    //     set_chain_addr(thread_addr[2], i);
+    //     gen_chain(params, pk + i*params->n, pk + i*params->n,
+    //               0, params->wots_w - 1, pub_seed, addr);
+    // }
+
+    // for (; i < leftover + 4*length; i++)
+    // {
+    //     set_chain_addr(thread_addr[3], i);
+    //     gen_chain(params, pk + i*params->n, pk + i*params->n,
+    //               0, params->wots_w - 1, pub_seed, addr);
+    // }
+    // printf("i = %d, %d\n", i, params->wots_len);
+// }
 
 /**
  * Takes a n-byte message and the 32-byte seed for the private key to compute a
