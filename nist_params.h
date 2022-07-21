@@ -113,7 +113,7 @@
     #define XMSS_KEYPAIR xmssmt_keypair
     #define XMSS_SIGN xmssmt_sign
     #define XMSS_SIGN_OPEN xmssmt_sign_open
-    #define XMSS_REMAIN_SIG xmssmt_remain_signatures
+    #define XMSS_REMAIN_SIG xmssmt_remaining_signatures
 
     #define XMSS_KEYPAIR_MP xmssmt_keypair_mp
     #define XMSS_SIGN_MP xmssmt_sign_mp
@@ -124,7 +124,7 @@
     #define XMSS_KEYPAIR xmss_keypair
     #define XMSS_SIGN xmss_sign
     #define XMSS_SIGN_OPEN xmss_sign_open
-    #define XMSS_REMAIN_SIG xmss_remain_signatures
+    #define XMSS_REMAIN_SIG xmss_remaining_signatures
 
     #define XMSS_KEYPAIR_MP xmss_keypair_mp
     #define XMSS_SIGN_MP xmss_sign_mp
