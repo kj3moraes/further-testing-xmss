@@ -9,8 +9,13 @@ HEADERS = params.h hash.h fips202.h hash_address.h randombytes.h wots.h xmss.h x
 SOURCES_FAST = $(subst xmss_core.c,xmss_core_fast.c,$(SOURCES))
 HEADERS_FAST = $(subst xmss_core.c,xmss_core_fast.c,$(HEADERS))
 
-TESTS = test/test_fast test/nist_xmss_test test/nist_xmssmt_test
+MULTI_THREAD = test/nist_xmss_test_mp test/nist_xmssmt_test_mp
+SINGLE_THREAD = test/nist_xmss_test test/nist_xmssmt_test
+TESTS = test/test_fast
 
+all: $(MULTI_THREAD) $(SINGLE_THREAD)
+mp: $(MULTI_THREAD)
+sp: $(SINGLE_THREAD)
 tests: $(TESTS)
 
 .PHONY: clean test
@@ -22,9 +27,17 @@ test/nist_xmss_test: test/nist_test.c nist_params.h api.h $(SOURCES_FAST) $(OBJS
 	$(CC) $(CFLAGS) -o $@ $(SOURCES_FAST) $< $(LDLIBS) -DXMSSMT=0 -DLEVEL=1 $(OPENSSL)	
 	test/nist_xmss_test
 
+test/nist_xmss_test_mp: test/nist_test.c nist_params.h api.h $(SOURCES_FAST) $(OBJS) $(HEADERS_FAST)
+	$(CC) $(CFLAGS) -o $@ $(SOURCES_FAST) $< $(LDLIBS) -DXMSSMT=0 -DLEVEL=1 -DMP=1 $(OPENSSL)	
+	test/nist_xmss_test_mp
+
 test/nist_xmssmt_test: test/nist_test.c nist_params.h api.h $(SOURCES_FAST) $(OBJS) $(HEADERS_FAST)
 	$(CC) $(CFLAGS) -o $@ $(SOURCES_FAST) $< $(LDLIBS) -DXMSSMT=1 -DLEVEL=1 $(OPENSSL)
 	test/nist_xmssmt_test
+
+test/nist_xmssmt_test_mp: test/nist_test.c nist_params.h api.h $(SOURCES_FAST) $(OBJS) $(HEADERS_FAST)
+	$(CC) $(CFLAGS) -o $@ $(SOURCES_FAST) $< $(LDLIBS) -DXMSSMT=1 -DLEVEL=1 -DMP=1 $(OPENSSL)
+	test/nist_xmssmt_test_mp
 
 clean:
 	-$(RM) $(TESTS)

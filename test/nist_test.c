@@ -76,9 +76,13 @@ int test_keygen(unsigned char *pk, unsigned char *sk)
 
     printf("Generating keypair.. %s\n", XMSS_OID);
 
-    clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start);
+    clock_gettime(CLOCK_REALTIME, &start);
+#if MP == 0
     ret = crypto_sign_keypair(pk, sk);
-    clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &stop);
+#else
+    ret = crypto_sign_keypair_mp(pk, sk);
+#endif
+    clock_gettime(CLOCK_REALTIME, &stop);
 
     result = CALC(start, stop);
     printf("took %lf us (%.2lf sec)\n", result, result / 1e6);
@@ -98,9 +102,13 @@ int test_sign(unsigned char *sm, unsigned long long *smlen,
     printf("Creating %d signatures..\n", XMSS_SIGNATURES);
     for (int i = 0; i < XMSS_SIGNATURES; i++)
     {
-        clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start);
+        clock_gettime(CLOCK_REALTIME, &start);
+#if MP == 0
         ret = crypto_sign(sm, smlen, m, mlen, sk);
-        clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &stop);
+#else
+        ret = crypto_sign_mp(sm, smlen, m, mlen, sk);
+#endif
+        clock_gettime(CLOCK_REALTIME, &stop);
 
         t[i] = CALC(start, stop);
 
@@ -114,7 +122,7 @@ int test_sign(unsigned char *sm, unsigned long long *smlen,
             break;
         }
     }
-    // print_results(t, XMSS_SIGNATURES);
+    print_results(t, XMSS_SIGNATURES);
 
     return ret;
 }
@@ -132,9 +140,13 @@ int test_verify(unsigned char *mout, unsigned long long *moutlen,
     printf("Verifying %d signatures..\n", XMSS_SIGNATURES);
     for (int i = 0; i < XMSS_SIGNATURES; i++)
     {
-        clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start);
+        clock_gettime(CLOCK_REALTIME, &start);
+#if MP == 0
         ret = crypto_sign_open(mout, moutlen, sm, smlen, pk);
-        clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &stop);
+#else
+        ret = crypto_sign_open_mp(mout, moutlen, sm, smlen, pk);
+#endif
+        clock_gettime(CLOCK_REALTIME, &stop);
 
         t[i] = CALC(start, stop);
 
@@ -157,7 +169,7 @@ int test_verify(unsigned char *mout, unsigned long long *moutlen,
             break;
         }
     }
-    // print_results(t, XMSS_SIGNATURES);
+    print_results(t, XMSS_SIGNATURES);
 
     return ret;
 }
