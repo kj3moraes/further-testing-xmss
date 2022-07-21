@@ -39,7 +39,7 @@ int do_nothing_save(OQS_SECRET_KEY *sk) {
 int sk_file_write(const OQS_SECRET_KEY *sk) {
 
     const char filename[MAX_LENGTH_FILENAME];
-    strcpy(filename, "./keys/opps_xmss16_sha256.prv");
+    strcpy(filename, "./keys/sub3_xmss16_sha256.prv");
 
     #ifdef CUSTOM_NAME
         printf("\nEnter the filename that you want written to>");

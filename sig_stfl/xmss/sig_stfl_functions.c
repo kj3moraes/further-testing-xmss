@@ -25,7 +25,7 @@ int OQS_SIG_STFL_alg_xmss_verify(const uint8_t *message, size_t message_len, con
 int OQS_SIG_STFL_alg_xmssmt_keypair(uint8_t *public_key, OQS_SECRET_KEY *secret_key) {
     if (secret_key == NULL || public_key == NULL) return -1;
     
-    return xmssmt_keypair(public_key, secret_key, secret_key->oid);
+    
 }
 
 int OQS_SIG_STFL_alg_xmssmt_sign(uint8_t *signature, size_t *signature_length, const uint8_t *message, size_t message_len, OQS_SECRET_KEY *secret_key) {
