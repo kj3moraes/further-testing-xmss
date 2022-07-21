@@ -2,6 +2,7 @@
 CXX 						:= gcc
 CXX_FLAGS 					:= --std=c11 -g -Wall -Wextra -Wpedantic
 
+
 # Executable details and flags
 BUILD_DIR 					:= build
 EXEC_DIR 					:= bin
@@ -45,11 +46,12 @@ tests: $(TESTS)
 $(EXEC_DIR)/test_struct: tests/new_structure_tester.c $(XMSS_IMPL_SRC_FILES) $(XMSS_IMPL_HDR_FILES) $(XMSS_OBJ_BUILD_SRC_FILES)  $(XMSS_OBJ_BUILD_HDR_FILES) $(SIG_STFL_SRC_FILES)  $(SIG_STFL_HDR_FILES) 
 	$(CXX) $(CXX_FLAGS) -o $@ $(SIG_STFL_SRC_FILES) $(XMSS_IMPL_SRC_FILES) $(XMSS_OBJ_BUILD_SRC_FILES) $< $(LDLIBS) $(LDFLAGS) $(INC_FLAGS) 
 
+# Derving subkeys tester
+$(EXEC_DIR)/test_subkeys: tests/subkeys_tester.c $(XMSS_IMPL_SRC_FILES) $(XMSS_IMPL_HDR_FILES) $(XMSS_OBJ_BUILD_SRC_FILES)  $(XMSS_OBJ_BUILD_HDR_FILES) $(SIG_STFL_SRC_FILES)  $(SIG_STFL_HDR_FILES) 
+	$(CXX) $(CXX_FLAGS) -o $@ $(SIG_STFL_SRC_FILES) $(XMSS_IMPL_SRC_FILES) $(XMSS_OBJ_BUILD_SRC_FILES) $< $(LDLIBS) $(LDFLAGS) $(INC_FLAGS) 
+
 # Regular test executables (now defunct cause no secret_key.h and secret_key.c)
 $(EXEC_DIR)/test_fast: tests/full_tester.c $(XMSS_IMPL_SRC_FILES) $(OBJS) $(XMSS_IMPL_HDR_FILES)
-	$(CXX) $(CXX_FLAGS) -o $@ $(XMSS_IMPL_SRC_FILES) $< $(LDLIBS) $(LDFLAGS) $(INC_FLAGS) 
-
-$(EXEC_DIR)/test_subkeys: tests/subkeys_tester.c $(XMSS_IMPL_SRC_FILES) $(OBJS) $(XMSS_IMPL_HDR_FILES)
 	$(CXX) $(CXX_FLAGS) -o $@ $(XMSS_IMPL_SRC_FILES) $< $(LDLIBS) $(LDFLAGS) $(INC_FLAGS) 
 
 $(EXEC_DIR)/test_multi: tests/multithreaded_tester.c $(XMSS_IMPL_SRC_FILES) $(OBJS) $(XMSS_IMPL_HDR_FILES)

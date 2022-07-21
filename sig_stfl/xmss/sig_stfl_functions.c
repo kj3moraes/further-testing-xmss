@@ -25,7 +25,7 @@ int OQS_SIG_STFL_alg_xmss_verify(const uint8_t *message, size_t message_len, con
 int OQS_SIG_STFL_alg_xmssmt_keypair(uint8_t *public_key, OQS_SECRET_KEY *secret_key) {
     if (secret_key == NULL || public_key == NULL) return -1;
     
-    return xmssmt_keypair(public_key, secret_key, secret_key->oid);
+    
 }
 
 int OQS_SIG_STFL_alg_xmssmt_sign(uint8_t *signature, size_t *signature_length, const uint8_t *message, size_t message_len, OQS_SECRET_KEY *secret_key) {
@@ -86,4 +86,23 @@ void perform_key_allocation(OQS_SECRET_KEY *sk) {
     // Initialize the key with length_secret_key amount of bytes.
     sk->secret_key = (uint8_t *)malloc(sk->length_secret_key * sizeof(uint8_t));
     memset(sk->secret_key, 0, sk->length_secret_key);   
+}
+
+OQS_SECRET_KEY *OQS_SECRET_KEY_alg_derive_subkey(OQS_SECRET_KEY *master_key, const unsigned long long number_of_sigs) { 
+    OQS_SECRET_KEY *subkey = (OQS_SECRET_KEY *)malloc(sizeof(OQS_SECRET_KEY));
+
+    // Copy all the essential details of the master key to the subkey.
+    subkey->oid = master_key->oid;
+    subkey->is_xmssmt = master_key->is_xmssmt;
+    subkey->length_secret_key = master_key->length_secret_key;
+
+    // Allocate the memory for the secret key.
+    perform_key_allocation(subkey);
+
+    // Derive the subkey.
+    if (xmss_derive_subkey(master_key, subkey, number_of_sigs) != 0) {
+        OQS_SECRET_KEY_free(subkey);
+        return NULL;
+    }
+    return subkey;
 }

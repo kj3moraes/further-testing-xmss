@@ -6,6 +6,13 @@
 
 // ======================== XMSS10-SHAKE256 ======================== //
 
+int OQS_SIG_STFL_alg_xmss_shake256_h10_keypair(uint8_t *public_key, OQS_SECRET_KEY *secret_key) {
+    if (secret_key == NULL || public_key == NULL) return -1;
+
+    uint32_t oid = 0x00000007;
+    return xmss_keypair(public_key, secret_key, oid);
+}
+
 OQS_SIG_STFL *OQS_SIG_STFL_alg_xmss_shake256_h10_new(void) {
     
     OQS_SIG_STFL *sig = (OQS_SIG_STFL *)malloc(sizeof(OQS_SIG_STFL));
@@ -24,7 +31,7 @@ OQS_SIG_STFL *OQS_SIG_STFL_alg_xmss_shake256_h10_new(void) {
     sig->length_public_key = OQS_SIG_STFL_alg_xmss_shake256_h10_length_pk;
     sig->length_signature = OQS_SIG_STFL_alg_xmss_shake256_h10_length_signature;
 
-    sig->keypair = OQS_SIG_STFL_alg_xmss_keypair;
+    sig->keypair = OQS_SIG_STFL_alg_xmss_shake256_h10_keypair;
     sig->sign = OQS_SIG_STFL_alg_xmss_sign;
     sig->verify = OQS_SIG_STFL_alg_xmss_verify;
 
@@ -49,6 +56,13 @@ OQS_SECRET_KEY *OQS_SECRET_KEY_xmss_shake256_H10_new(void) {
 
 // ======================== XMSS16-SHAKE256 ======================== //
 
+int OQS_SIG_STFL_alg_xmss_shake256_h16_keypair(uint8_t *public_key, OQS_SECRET_KEY *secret_key) {
+    if (secret_key == NULL || public_key == NULL) return -1;
+
+    uint32_t oid = 0x00000008;
+    return xmss_keypair(public_key, secret_key, oid);
+}
+
 OQS_SIG_STFL *OQS_SIG_STFL_alg_xmss_shake256_h16_new(void) {
     
     OQS_SIG_STFL *sig = (OQS_SIG_STFL *)malloc(sizeof(OQS_SIG_STFL));
@@ -65,7 +79,7 @@ OQS_SIG_STFL *OQS_SIG_STFL_alg_xmss_shake256_h16_new(void) {
     sig->length_public_key = OQS_SIG_STFL_alg_xmss_shake256_h16_length_pk;
     sig->length_signature = OQS_SIG_STFL_alg_xmss_shake256_h16_length_signature;
 
-    sig->keypair = OQS_SIG_STFL_alg_xmss_keypair;
+    sig->keypair = OQS_SIG_STFL_alg_xmss_shake256_h16_keypair;
     sig->sign = OQS_SIG_STFL_alg_xmss_sign;
     sig->verify = OQS_SIG_STFL_alg_xmss_verify;
 
@@ -90,6 +104,13 @@ OQS_SECRET_KEY *OQS_SECRET_KEY_xmss_shake256_H16_new(void) {
 
 // ======================== XMSS20-SHAKE256 ======================== //
 
+int OQS_SIG_STFL_alg_xmss_shake256_h20_keypair(uint8_t *public_key, OQS_SECRET_KEY *secret_key) {
+    if (secret_key == NULL || public_key == NULL) return -1;
+
+    uint32_t oid = 0x00000009;
+    return xmss_keypair(public_key, secret_key, oid);
+}
+
 OQS_SIG_STFL *OQS_SIG_STFL_alg_xmss_shake256_h20_new(void) {
     
     OQS_SIG_STFL *sig = (OQS_SIG_STFL *)malloc(sizeof(OQS_SIG_STFL));
@@ -106,7 +127,7 @@ OQS_SIG_STFL *OQS_SIG_STFL_alg_xmss_shake256_h20_new(void) {
     sig->length_public_key = OQS_SIG_STFL_alg_xmss_shake256_h20_length_pk;
     sig->length_signature = OQS_SIG_STFL_alg_xmss_shake256_h20_length_signature;
 
-    sig->keypair = OQS_SIG_STFL_alg_xmss_keypair;
+    sig->keypair = OQS_SIG_STFL_alg_xmss_shake256_h20_keypair;
     sig->sign = OQS_SIG_STFL_alg_xmss_sign;
     sig->verify = OQS_SIG_STFL_alg_xmss_verify;
 
