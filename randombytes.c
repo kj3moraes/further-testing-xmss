@@ -11,7 +11,7 @@ This code was taken from the SPHINCS reference implementation and is public doma
 int runonce(void)
 {
     unsigned char buf[48] = {0};
-    // OQS_randombytes(buf, 48);
+    OQS_randombytes(buf, 48);
 
     /* Using AES as random generator */
     if (OQS_randombytes_switch_algorithm("NIST-KAT") != OQS_SUCCESS)
@@ -36,9 +36,4 @@ void randombytes(unsigned char *x, unsigned long long xlen)
         }
     }
     OQS_randombytes(x, xlen);
-    // for (int i = 0; i < xlen; i++)
-    // {
-    //     printf("%02x", x[i]);
-    // }
-    // printf("\n");
 }
