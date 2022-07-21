@@ -32,12 +32,12 @@ test/nist_xmss_test_mp: test/nist_test.c nist_params.h api.h $(SOURCES_FAST) $(O
 	test/nist_xmss_test_mp
 
 test/nist_xmssmt_test: test/nist_test.c nist_params.h api.h $(SOURCES_FAST) $(OBJS) $(HEADERS_FAST)
-	$(CC) $(CFLAGS) -o $@ $(SOURCES_FAST) $< $(LDLIBS) -DXMSSMT=1 -DLEVEL=1 $(OPENSSL)
+	$(CC) $(CFLAGS) -o $@ $(SOURCES_FAST) $< $(LDLIBS) -DXMSSMT=1 -DLEVEL=0 $(OPENSSL)
 	test/nist_xmssmt_test
 
 test/nist_xmssmt_test_mp: test/nist_test.c nist_params.h api.h $(SOURCES_FAST) $(OBJS) $(HEADERS_FAST)
-	$(CC) $(CFLAGS) -o $@ $(SOURCES_FAST) $< $(LDLIBS) -DXMSSMT=1 -DLEVEL=1 -DMP=1 $(OPENSSL)
+	$(CC) $(CFLAGS) -o $@ $(SOURCES_FAST) $< $(LDLIBS) -DXMSSMT=1 -DLEVEL=0 -DMP=1 $(OPENSSL)
 	test/nist_xmssmt_test_mp
 
 clean:
-	-$(RM) $(TESTS)
+	-$(RM) $(TESTS) $(MULTI_THREAD) $(SINGLE_THREAD)
