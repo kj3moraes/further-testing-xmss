@@ -19,6 +19,10 @@
 #define RANDOM 1
 #endif
 
+#ifndef POSIX_THREAD
+#define POSIX_THREAD 1
+#endif
+
 #if XMSSMT == 0
     /* 
     * Maximum signatures: 2^h = 2^10

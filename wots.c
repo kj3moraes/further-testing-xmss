@@ -1,14 +1,13 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
-#include <pthread.h>
 
 #include "utils.h"
 #include "hash.h"
 #include "wots.h"
 #include "hash_address.h"
 #include "params.h"
-#include "nist_params.h"
+#include "thread_wrapper.h"
 
 /**
  * Helper method for pseudorandom key generation.
