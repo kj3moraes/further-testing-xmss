@@ -15,6 +15,10 @@
 #define NUM_CORES 4
 #endif
 
+#ifndef RANDOM
+#define RANDOM 1
+#endif
+
 #if XMSSMT == 0
     /* 
     * Maximum signatures: 2^h = 2^10
