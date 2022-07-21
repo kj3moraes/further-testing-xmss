@@ -499,7 +499,7 @@ static void treehash_update_mp(const xmss_params *params,
     hash_prg(params, ots_seed, treehash->seed_active, treehash->seed_active, pub_seed, ots_addr);
     gen_leaf_wots_mp(params, nodebuffer, ots_seed, pub_seed, ltree_addr, ots_addr);
     #else
-    gen_leaf_wots(params, nodebuffer, sk_seed, pub_seed, ltree_addr, ots_addr);
+    gen_leaf_wots_mp(params, nodebuffer, sk_seed, pub_seed, ltree_addr, ots_addr);
     #endif
     while (treehash->stackusage > 0 && state->stacklevels[state->stackoffset-1] == nodeheight) {
         memcpy(nodebuffer + params->n, nodebuffer, params->n);
@@ -726,7 +726,7 @@ static char bds_state_update_mp(const xmss_params *params,
     hash_prg(params, ots_seed, sk_seed, sk_seed, pub_seed, ots_addr);
     gen_leaf_wots_mp(params, state->stack+state->stackoffset*params->n, ots_seed, pub_seed, ltree_addr, ots_addr);
     #else
-    gen_leaf_wots(params, state->stack+state->stackoffset*params->n, sk_seed, pub_seed, ltree_addr, ots_addr);
+    gen_leaf_wots_mp(params, state->stack+state->stackoffset*params->n, sk_seed, pub_seed, ltree_addr, ots_addr);
     #endif
 
     state->stacklevels[state->stackoffset] = 0;
