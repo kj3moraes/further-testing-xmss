@@ -74,8 +74,11 @@ int test_keygen(unsigned char *pk, unsigned char *sk)
     int ret;
     double result;
 
+#if MP == 0
     printf("Generating keypair.. %s\n", XMSS_OID);
-
+#else
+    printf("Generating keypair MP.. %s\n", XMSS_OID);
+#endif
     clock_gettime(CLOCK_REALTIME, &start);
 #if MP == 0
     ret = crypto_sign_keypair(pk, sk);
@@ -98,8 +101,11 @@ int test_sign(unsigned char *sm, unsigned long long *smlen,
 {
     struct timespec start, stop;
     int ret;
-
+#if MP == 0
     printf("Creating %d signatures..\n", XMSS_SIGNATURES);
+#else
+    printf("Creating %d MP signatures..\n", XMSS_SIGNATURES);
+#endif
     for (int i = 0; i < XMSS_SIGNATURES; i++)
     {
         clock_gettime(CLOCK_REALTIME, &start);
@@ -136,8 +142,11 @@ int test_verify(unsigned char *mout, unsigned long long *moutlen,
 {
     struct timespec start, stop;
     int ret;
-
+#if MP == 0
     printf("Verifying %d signatures..\n", XMSS_SIGNATURES);
+#else
+    printf("Verifying %d MP signatures..\n", XMSS_SIGNATURES);
+#endif
     for (int i = 0; i < XMSS_SIGNATURES; i++)
     {
         clock_gettime(CLOCK_REALTIME, &start);
