@@ -172,7 +172,10 @@ void wots_pkgen_mp(const xmss_params *params,
         }
 
         pthread_create(&thread[i], NULL, wots_pkgen_sub, (void *)&args[i]);
-        // wots_pkgen_sub(&args[j]);
+        /* 
+         * When in doubt, run this function to check thread correctness
+         * wots_pkgen_sub(&args[j]);
+         */
     }
 
     for (int i = 0; i < NUM_CORES + 1; i++)
@@ -262,7 +265,10 @@ void wots_sign_mp(const xmss_params *params,
         args[i].pub_seed = pub_seed;
 
         pthread_create(&thread[i], NULL, wots_sign_sub, (void *)&args[i]);
-        // wots_sign_sub(&args[i]);
+        /* 
+         * When in doubt, run this function to check thread correctness
+         * wots_sign_sub(&args[i]);
+         */
     }
 
     for (int i = 0; i < NUM_CORES + 1; i++)
@@ -356,7 +362,10 @@ void wots_pk_from_sig_mp(const xmss_params *params, unsigned char *pk,
         args[i].pub_seed = pub_seed;
 
         pthread_create(&thread[i], NULL, wots_pk_from_sig_sub, (void *)&args[i]);
-        // wots_pk_from_sig_sub(&args[i]);
+        /* 
+         * When in doubt, run this function to check thread correctness
+         * wots_pk_from_sig_sub(&args[i]);
+         */
     }
 
     for (int i = 0; i < NUM_CORES + 1; i++)
