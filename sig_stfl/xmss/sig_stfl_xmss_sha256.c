@@ -93,12 +93,11 @@ OQS_SIG_STFL *OQS_SIG_STFL_alg_xmss_sha256_h16_new(void) {
 OQS_SECRET_KEY *OQS_SECRET_KEY_XMSS_SHA256_H16_new(void) {
 
     // Initialize the secret key in the heap with adequate memory
-    OQS_SECRET_KEY *sk = malloc(sizeof(OQS_SECRET_KEY));
+    OQS_SECRET_KEY *sk = (OQS_SECRET_KEY *)malloc(sizeof(OQS_SECRET_KEY));
     if (sk == NULL) return NULL;
     memset(sk, 0, sizeof(OQS_SECRET_KEY));
 
     sk->length_secret_key = OQS_SIG_STFL_alg_xmss_sha256_h16_length_sk;
-
     perform_key_allocation(sk);
 
     return sk;

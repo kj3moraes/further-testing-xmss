@@ -49,7 +49,7 @@ unsigned long long OQS_SIG_STFL_alg_xmss_xmssmt_sigs_left(const OQS_SECRET_KEY *
     for (i = 0; i < XMSS_OID_LEN; i++) {
         oid |= secret_key->secret_key[XMSS_OID_LEN - i - 1] << (i * 8);
     }
-    xmss_params_init(&params, oid);
+    xmss_parse_oid(&params, oid);
 
     unsigned long long max = OQS_SIG_STFL_alg_xmss_xmssmt_sigs_total(secret_key);
     unsigned long long idx = 0;
@@ -89,11 +89,10 @@ void perform_key_allocation(OQS_SECRET_KEY *sk) {
 }
 
 OQS_SECRET_KEY *OQS_SECRET_KEY_alg_derive_subkey(OQS_SECRET_KEY *master_key, const unsigned long long number_of_sigs) { 
+
     OQS_SECRET_KEY *subkey = (OQS_SECRET_KEY *)malloc(sizeof(OQS_SECRET_KEY));
 
     // Copy all the essential details of the master key to the subkey.
-    subkey->oid = master_key->oid;
-    subkey->is_xmssmt = master_key->is_xmssmt;
     subkey->length_secret_key = master_key->length_secret_key;
 
     // Allocate the memory for the secret key.

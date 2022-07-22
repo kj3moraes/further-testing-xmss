@@ -63,11 +63,12 @@ int xmss_modify_maximum(OQS_SECRET_KEY *sk, unsigned long long new_max) {
 int xmss_derive_subkey(OQS_SECRET_KEY *master, OQS_SECRET_KEY *subkey, unsigned long long number_of_sigs) {
     
     xmss_params params;
-    if (master->is_xmssmt) {
-        xmssmt_parse_oid(&params, master->oid);
-    } else {
-        xmss_parse_oid(&params, master->oid);
+    unsigned int i;
+    uint32_t oid = 0;
+    for (i = 0; i < XMSS_OID_LEN; i++) {
+        oid |= master->secret_key[XMSS_OID_LEN - i - 1] << (i * 8);
     }
+    xmss_parse_oid(&params, oid);
 
     unsigned long long master_idx = bytes_to_ull(master->secret_key + XMSS_OID_LEN, params.index_bytes);
     unsigned long long master_max = bytes_to_ull(master->secret_key + master->length_secret_key - params.bytes_for_max, params.bytes_for_max);
@@ -84,11 +85,7 @@ int xmss_derive_subkey(OQS_SECRET_KEY *master, OQS_SECRET_KEY *subkey, unsigned 
     memcpy(subkey->secret_key, master->secret_key, master->length_secret_key);
 
     // Increment the authentication path based on the BDS algorithm.
-    if (master->is_xmssmt) {
-        xmssmt_core_increment_authpath(&params, master->secret_key + XMSS_OID_LEN, number_of_sigs);
-    } else {
-        xmss_core_increment_authpath(&params, master->secret_key + XMSS_OID_LEN, number_of_sigs);
-    }
+    xmss_core_increment_authpath(&params, master->secret_key + XMSS_OID_LEN, number_of_sigs);
     
     // Set the subkey maximum to the master key index + the number of signatures
     ull_to_bytes(subkey->secret_key + subkey->length_secret_key - params.bytes_for_max, params.bytes_for_max, subkey_max);
