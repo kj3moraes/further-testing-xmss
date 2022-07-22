@@ -62,7 +62,7 @@ OQS_API const char *OQS_SIG_STFL_alg_identifier(size_t i);
 
 /**
  * Returns the number of signature mechanisms in liboqs.  They can be enumerated with
- * OQS_SIG_alg_identifier.
+ * OQS_SIG_STFL_alg_identifier.
  *
  * Note that some mechanisms may be disabled at compile time.
  *
@@ -73,7 +73,7 @@ OQS_API int OQS_SIG_STFL_alg_count(void);
 /**
  * Indicates whether the specified algorithm was enabled at compile-time or not.
  *
- * @param[in] method_name Name of the desired algorithm; one of the names in `OQS_SIG_algs`.
+ * @param[in] method_name Name of the desired algorithm; one of the names in `OQS_SIG_STFL_algs`.
  * @return 1 if enabled, 0 if disabled or not found
  */
 OQS_API int OQS_SIG_STFL_alg_is_enabled(const char *method_name);
@@ -141,10 +141,10 @@ typedef struct OQS_SIG_STFL {
 	 *
 	 * Caller is responsible for allocating sufficient memory for `public_key` and
 	 * `secret_key`, based on the `length_*` members in this object or the per-scheme
-	 * compile-time macros `OQS_SIG_*_length_*`.
+	 * compile-time macros `OQS_SIG_STFL_*_length_*`.
 	 *
 	 * @param[out] public_key The public key represented as a byte string.
-	 * @param[out] secret_key The secret key represented as a byte string.
+	 * @param[out] secret_key The secret key represented as OQS_SECRET_KEY object
 	 * @return OQS_SUCCESS or OQS_ERROR
 	 */
 	OQS_STATUS (*keypair)(uint8_t *public_key, OQS_SECRET_KEY *secret_key);
@@ -154,13 +154,13 @@ typedef struct OQS_SIG_STFL {
 	 *
 	 * Caller is responsible for allocating sufficient memory for `signature`,
 	 * based on the `length_*` members in this object or the per-scheme
-	 * compile-time macros `OQS_SIG_*_length_*`.
+	 * compile-time macros `OQS_SIG_STFL_*_length_*`.
 	 *
 	 * @param[out] signature The signature on the message represented as a byte string.
 	 * @param[out] signature_len The length of the signature.
 	 * @param[in] message The message to sign represented as a byte string.
 	 * @param[in] message_len The length of the message to sign.
-	 * @param[in] secret_key The secret key represented as a byte string.
+	 * @param[in] secret_key The secret key represented as OQS_SECRET_KEY object
 	 * @return OQS_SUCCESS or OQS_ERROR
 	 */
 	OQS_STATUS (*sign)(uint8_t *signature, size_t *signature_len, const uint8_t *message, size_t message_len, OQS_SECRET_KEY *secret_key);
