@@ -106,11 +106,6 @@ static void xmssmt_deserialize_state(const xmss_params *params,
     unsigned int i, j;
 
     /* Skip past the 'regular' sk */
-
-    printf("sk_before_des=");
-    for (i = 0; i < 32 ;i++) printf("%02x", sk[i]); 
-    printf("\n");
-
     #ifdef FORWARD_SECURE
     sk += params->index_bytes + (2 + 2*params->d)*params->n;
     #else
