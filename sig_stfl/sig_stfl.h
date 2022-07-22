@@ -58,7 +58,7 @@ extern "C" {
  * @param[in] i Index of the algorithm identifier to return, 0 <= i < OQS_SIG_algs_length
  * @return Algorithm identifier as a string, or NULL.
  */
-const char *OQS_SIG_STFL_alg_identifier(size_t i);
+OQS_API const char *OQS_SIG_STFL_alg_identifier(size_t i);
 
 /**
  * Returns the number of signature mechanisms in liboqs.  They can be enumerated with
@@ -68,7 +68,7 @@ const char *OQS_SIG_STFL_alg_identifier(size_t i);
  *
  * @return The number of signature mechanisms.
  */
-int OQS_SIG_STFL_alg_count(void);
+OQS_API int OQS_SIG_STFL_alg_count(void);
 
 /**
  * Indicates whether the specified algorithm was enabled at compile-time or not.
@@ -76,7 +76,7 @@ int OQS_SIG_STFL_alg_count(void);
  * @param[in] method_name Name of the desired algorithm; one of the names in `OQS_SIG_algs`.
  * @return 1 if enabled, 0 if disabled or not found
  */
-int OQS_SIG_STFL_alg_is_enabled(const char *method_name);
+OQS_API int OQS_SIG_STFL_alg_is_enabled(const char *method_name);
 
 
 /**
@@ -102,11 +102,11 @@ typedef struct OQS_SECRET_KEY {
 
 } OQS_SECRET_KEY;
 
-OQS_SECRET_KEY *OQS_SECRET_KEY_new(const char *method_name);
+OQS_API OQS_SECRET_KEY *OQS_SECRET_KEY_new(const char *method_name);
 
-void OQS_SECRET_KEY_free(OQS_SECRET_KEY *sk);	
+OQS_API void OQS_SECRET_KEY_free(OQS_SECRET_KEY *sk);	
 
-OQS_SECRET_KEY *OQS_SECRET_KEY_derive_subkey(OQS_SECRET_KEY *master_sk, const unsigned long long number_of_signatures);
+OQS_API OQS_SECRET_KEY *OQS_SECRET_KEY_derive_subkey(OQS_SECRET_KEY *master_sk, const unsigned long long number_of_signatures);
 
 /**
  * Stateful signature scheme object
@@ -147,7 +147,7 @@ typedef struct OQS_SIG_STFL {
 	 * @param[out] secret_key The secret key represented as a byte string.
 	 * @return OQS_SUCCESS or OQS_ERROR
 	 */
-	int (*keypair)(uint8_t *public_key, OQS_SECRET_KEY *secret_key);
+	OQS_STATUS (*keypair)(uint8_t *public_key, OQS_SECRET_KEY *secret_key);
 
 	/**
 	 * Signature generation algorithm.
@@ -163,7 +163,7 @@ typedef struct OQS_SIG_STFL {
 	 * @param[in] secret_key The secret key represented as a byte string.
 	 * @return OQS_SUCCESS or OQS_ERROR
 	 */
-	int (*sign)(uint8_t *signature, size_t *signature_len, const uint8_t *message, size_t message_len, OQS_SECRET_KEY *secret_key);
+	OQS_STATUS (*sign)(uint8_t *signature, size_t *signature_len, const uint8_t *message, size_t message_len, OQS_SECRET_KEY *secret_key);
 
 	/**
 	 * Signature verification algorithm.
@@ -175,19 +175,19 @@ typedef struct OQS_SIG_STFL {
 	 * @param[in] public_key The public key represented as a byte string.
 	 * @return OQS_SUCCESS or OQS_ERROR
 	 */
-	int (*verify)(const uint8_t *message, size_t message_len, const uint8_t *signature, size_t signature_len, const uint8_t *public_key);
+	OQS_STATUS (*verify)(const uint8_t *message, size_t message_len, const uint8_t *signature, size_t signature_len, const uint8_t *public_key);
 
 } OQS_SIG_STFL;
 
-OQS_SIG_STFL *OQS_SIG_STFL_new(const char *method_name);
+OQS_API OQS_SIG_STFL *OQS_SIG_STFL_new(const char *method_name);
 
-int OQS_SIG_STFL_keypair(const OQS_SIG_STFL *sig, uint8_t *pk, OQS_SECRET_KEY *sk);
+OQS_API OQS_STATUS OQS_SIG_STFL_keypair(const OQS_SIG_STFL *sig, uint8_t *pk, OQS_SECRET_KEY *sk);
 
-int OQS_SIG_STFL_sign(const OQS_SIG_STFL *sig, uint8_t *signature, size_t *signature_len, const uint8_t *message, size_t message_len, OQS_SECRET_KEY *secret_key);
+OQS_API OQS_STATUS OQS_SIG_STFL_sign(const OQS_SIG_STFL *sig, uint8_t *signature, size_t *signature_len, const uint8_t *message, size_t message_len, OQS_SECRET_KEY *secret_key);
 
-int OQS_SIG_STFL_verify(const OQS_SIG_STFL *sig, const uint8_t *message, size_t message_len, const uint8_t *signature, size_t signature_len, const uint8_t *public_key);
+OQS_API OQS_STATUS OQS_SIG_STFL_verify(const OQS_SIG_STFL *sig, const uint8_t *message, size_t message_len, const uint8_t *signature, size_t signature_len, const uint8_t *public_key);
 
-void OQS_SIG_STFL_free(OQS_SIG_STFL *sig);
+OQS_API void OQS_SIG_STFL_free(OQS_SIG_STFL *sig);
 
 #if defined(__cplusplus)
 } // extern "C"

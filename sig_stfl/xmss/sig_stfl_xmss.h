@@ -147,42 +147,6 @@ OQS_SIG_STFL *OQS_SIG_STFL_alg_xmss_shake512_h20_new(void);
 int OQS_SIG_STFL_alg_xmss_shake512_h20_keypair(uint8_t *public_key, OQS_SECRET_KEY *secret_key);
 #endif
 
-#ifdef OQS_ENABLE_SIG_STFL_xmss_shake512_H10
-
-#define OQS_SIG_STFL_alg_xmss_shake512_h10_length_signature 9092
-#define OQS_SIG_STFL_alg_xmss_shake512_h10_length_pk 128 + XMSS_OID_LEN
-#define OQS_SIG_STFL_alg_xmss_shake512_h10_length_sk 3999 + XMSS_OID_LEN
-
-OQS_SECRET_KEY *OQS_SECRET_KEY_xmss_shake512_H10_new();
-
-OQS_SIG_STFL *OQS_SIG_STFL_alg_xmss_shake512_h10_new(void);
-int OQS_SIG_STFL_alg_xmss_shake512_h10_keypair(uint8_t *public_key, OQS_SECRET_KEY *secret_key);
-#endif
-
-#ifdef OQS_ENABLE_SIG_STFL_xmss_shake512_H16
-
-#define OQS_SIG_STFL_alg_xmss_shake512_h16_length_signature 9476
-#define OQS_SIG_STFL_alg_xmss_shake512_h16_length_pk 128 + XMSS_OID_LEN 
-#define OQS_SIG_STFL_alg_xmss_shake512_h16_length_sk 6159 + XMSS_OID_LEN
-
-OQS_SECRET_KEY *OQS_SECRET_KEY_xmss_shake512_H16_new();
-
-OQS_SIG_STFL *OQS_SIG_STFL_alg_xmss_shake512_h16_new(void);
-int OQS_SIG_STFL_alg_xmss_shake512_h16_keypair(uint8_t *public_key, OQS_SECRET_KEY *secret_key);
-#endif
-
-#ifdef OQS_ENABLE_SIG_STFL_xmss_shake512_H20
-
-#define OQS_SIG_STFL_alg_xmss_shake512_h20_length_signature 9732
-#define OQS_SIG_STFL_alg_xmss_shake512_h20_length_pk 128 + XMSS_OID_LEN
-#define OQS_SIG_STFL_alg_xmss_shake512_h20_length_sk 7601 + XMSS_OID_LEN
-
-OQS_SECRET_KEY *OQS_SECRET_KEY_xmss_shake512_H20_new();
-
-OQS_SIG_STFL *OQS_SIG_STFL_alg_xmss_shake512_h20_new(void);
-int OQS_SIG_STFL_alg_xmss_shake512_h20_keypair(uint8_t *public_key, OQS_SECRET_KEY *secret_key);
-#endif
-
 
 /* ===
     ADD THE XMSS^MT VARIANTS HERE
