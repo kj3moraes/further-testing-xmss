@@ -9,6 +9,7 @@
  * Format pk: [OID || root || PUB_SEED]
  */
 int xmss_keypair(unsigned char *pk, unsigned char *sk, const uint32_t oid);
+int xmss_keypair_mp(unsigned char *pk, unsigned char *sk, const uint32_t oid);
 
 /**
  * Signs a message using an XMSS secret key.
@@ -17,6 +18,9 @@ int xmss_keypair(unsigned char *pk, unsigned char *sk, const uint32_t oid);
  * 2. an updated secret key!
  */
 int xmss_sign(unsigned char *sk,
+              unsigned char *sm, unsigned long long *smlen,
+              const unsigned char *m, unsigned long long mlen);
+int xmss_sign_mp(unsigned char *sk,
               unsigned char *sm, unsigned long long *smlen,
               const unsigned char *m, unsigned long long mlen);
 
@@ -30,12 +34,15 @@ int xmss_sign(unsigned char *sk,
 int xmss_sign_open(unsigned char *m, unsigned long long *mlen,
                    const unsigned char *sm, unsigned long long smlen,
                    const unsigned char *pk);
+int xmss_sign_open_mp(unsigned char *m, unsigned long long *mlen,
+                   const unsigned char *sm, unsigned long long smlen,
+                   const unsigned char *pk);
 
 /* 
  * Returns:
  * The number of remaining signatures
  */
-int xmss_remain_signatures(unsigned long long *remain, const unsigned  char *sk);
+int xmss_remaining_signatures(unsigned long long *remain, const unsigned  char *sk);
 
 /*
  * Generates a XMSSMT key pair for a given parameter set.
@@ -43,7 +50,7 @@ int xmss_remain_signatures(unsigned long long *remain, const unsigned  char *sk)
  * Format pk: [OID || root || PUB_SEED]
  */
 int xmssmt_keypair(unsigned char *pk, unsigned char *sk, const uint32_t oid);
-
+int xmssmt_keypair_mp(unsigned char *pk, unsigned char *sk, const uint32_t oid);
 /**
  * Signs a message using an XMSSMT secret key.
  * Returns
@@ -53,7 +60,9 @@ int xmssmt_keypair(unsigned char *pk, unsigned char *sk, const uint32_t oid);
 int xmssmt_sign(unsigned char *sk,
                 unsigned char *sm, unsigned long long *smlen,
                 const unsigned char *m, unsigned long long mlen);
-
+int xmssmt_sign_mp(unsigned char *sk,
+                unsigned char *sm, unsigned long long *smlen,
+                const unsigned char *m, unsigned long long mlen);
 /**
  * Verifies a given message signature pair using a given public key.
  *
@@ -64,11 +73,14 @@ int xmssmt_sign(unsigned char *sk,
 int xmssmt_sign_open(unsigned char *m, unsigned long long *mlen,
                      const unsigned char *sm, unsigned long long smlen,
                      const unsigned char *pk);
+int xmssmt_sign_open_mp(unsigned char *m, unsigned long long *mlen,
+                     const unsigned char *sm, unsigned long long smlen,
+                     const unsigned char *pk);
 
 /* 
  * Returns:
  * The number of remaining signatures
  */
-int xmssmt_remain_signatures(unsigned long long *remain, const unsigned  char *sk);
+int xmssmt_remaining_signatures(unsigned long long *remain, const unsigned  char *sk);
 
 #endif

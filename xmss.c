@@ -60,7 +60,59 @@ int xmss_sign_open(unsigned char *m, unsigned long long *mlen,
     return xmss_core_sign_open(&params, m, mlen, sm, smlen, pk + XMSS_OID_LEN);
 }
 
-int xmss_remain_signatures(unsigned long long *remain, const unsigned  char *sk)
+int xmss_keypair_mp(unsigned char *pk, unsigned char *sk, const uint32_t oid)
+{
+    xmss_params params;
+    unsigned int i;
+
+    if (xmss_parse_oid(&params, oid)) {
+        return -1;
+    }
+    for (i = 0; i < XMSS_OID_LEN; i++) {
+        pk[XMSS_OID_LEN - i - 1] = (oid >> (8 * i)) & 0xFF;
+        /* For an implementation that uses runtime parameters, it is crucial
+        that the OID is part of the secret key as well;
+        i.e. not just for interoperability, but also for internal use. */
+        sk[XMSS_OID_LEN - i - 1] = (oid >> (8 * i)) & 0xFF;
+    }
+    return xmss_core_keypair_mp(&params, pk + XMSS_OID_LEN, sk + XMSS_OID_LEN);
+}
+
+int xmss_sign_mp(unsigned char *sk,
+              unsigned char *sm, unsigned long long *smlen,
+              const unsigned char *m, unsigned long long mlen)
+{
+    xmss_params params;
+    uint32_t oid = 0;
+    unsigned int i;
+
+    for (i = 0; i < XMSS_OID_LEN; i++) {
+        oid |= sk[XMSS_OID_LEN - i - 1] << (i * 8);
+    }
+    if (xmss_parse_oid(&params, oid)) {
+        return -1;
+    }
+    return xmss_core_sign_mp(&params, sk + XMSS_OID_LEN, sm, smlen, m, mlen);
+}
+
+int xmss_sign_open_mp(unsigned char *m, unsigned long long *mlen,
+                   const unsigned char *sm, unsigned long long smlen,
+                   const unsigned char *pk)
+{
+    xmss_params params;
+    uint32_t oid = 0;
+    unsigned int i;
+
+    for (i = 0; i < XMSS_OID_LEN; i++) {
+        oid |= pk[XMSS_OID_LEN - i - 1] << (i * 8);
+    }
+    if (xmss_parse_oid(&params, oid)) {
+        return -1;
+    }
+    return xmss_core_sign_open_mp(&params, m, mlen, sm, smlen, pk + XMSS_OID_LEN);
+}
+
+int xmss_remaining_signatures(unsigned long long *remain, const unsigned  char *sk)
 {
     xmss_params params;
     uint32_t oid = 0;
@@ -132,7 +184,56 @@ int xmssmt_sign_open(unsigned char *m, unsigned long long *mlen,
     return xmssmt_core_sign_open(&params, m, mlen, sm, smlen, pk + XMSS_OID_LEN);
 }
 
-int xmssmt_remain_signatures(unsigned long long *remain, const unsigned  char *sk)
+int xmssmt_keypair_mp(unsigned char *pk, unsigned char *sk, const uint32_t oid)
+{
+    xmss_params params;
+    unsigned int i;
+
+    if (xmssmt_parse_oid(&params, oid)) {
+        return -1;
+    }
+    for (i = 0; i < XMSS_OID_LEN; i++) {
+        pk[XMSS_OID_LEN - i - 1] = (oid >> (8 * i)) & 0xFF;
+        sk[XMSS_OID_LEN - i - 1] = (oid >> (8 * i)) & 0xFF;
+    }
+    return xmssmt_core_keypair_mp(&params, pk + XMSS_OID_LEN, sk + XMSS_OID_LEN);
+}
+
+int xmssmt_sign_mp(unsigned char *sk,
+                unsigned char *sm, unsigned long long *smlen,
+                const unsigned char *m, unsigned long long mlen)
+{
+    xmss_params params;
+    uint32_t oid = 0;
+    unsigned int i;
+
+    for (i = 0; i < XMSS_OID_LEN; i++) {
+        oid |= sk[XMSS_OID_LEN - i - 1] << (i * 8);
+    }
+    if (xmssmt_parse_oid(&params, oid)) {
+        return -1;
+    }
+    return xmssmt_core_sign_mp(&params, sk + XMSS_OID_LEN, sm, smlen, m, mlen);
+}
+
+int xmssmt_sign_open_mp(unsigned char *m, unsigned long long *mlen,
+                     const unsigned char *sm, unsigned long long smlen,
+                     const unsigned char *pk)
+{
+    xmss_params params;
+    uint32_t oid = 0;
+    unsigned int i;
+
+    for (i = 0; i < XMSS_OID_LEN; i++) {
+        oid |= pk[XMSS_OID_LEN - i - 1] << (i * 8);
+    }
+    if (xmssmt_parse_oid(&params, oid)) {
+        return -1;
+    }
+    return xmssmt_core_sign_open_mp(&params, m, mlen, sm, smlen, pk + XMSS_OID_LEN);
+}
+
+int xmssmt_remaining_signatures(unsigned long long *remain, const unsigned  char *sk)
 {
     xmss_params params;
     uint32_t oid = 0;

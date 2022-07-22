@@ -17,7 +17,7 @@
  */
 unsigned long long t[XMSS_SIGNATURES];
 
-#if DEBUG
+
 static void print_hex(const unsigned char *a, int length, const char *string)
 {
     printf("%s[%d] = \n", string, length);
@@ -27,7 +27,7 @@ static void print_hex(const unsigned char *a, int length, const char *string)
     }
     printf("\n");
 }
-#endif
+
 
 static int cmp_llu(const void *a, const void *b)
 {
@@ -74,11 +74,18 @@ int test_keygen(unsigned char *pk, unsigned char *sk)
     int ret;
     double result;
 
+#if MP == 0
     printf("Generating keypair.. %s\n", XMSS_OID);
-
-    clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start);
+#else
+    printf("Generating keypair MP.. %s\n", XMSS_OID);
+#endif
+    clock_gettime(CLOCK_REALTIME, &start);
+#if MP == 0
     ret = crypto_sign_keypair(pk, sk);
-    clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &stop);
+#else
+    ret = crypto_sign_keypair_mp(pk, sk);
+#endif
+    clock_gettime(CLOCK_REALTIME, &stop);
 
     result = CALC(start, stop);
     printf("took %lf us (%.2lf sec)\n", result, result / 1e6);
@@ -94,13 +101,20 @@ int test_sign(unsigned char *sm, unsigned long long *smlen,
 {
     struct timespec start, stop;
     int ret;
-
+#if MP == 0
     printf("Creating %d signatures..\n", XMSS_SIGNATURES);
+#else
+    printf("Creating %d MP signatures..\n", XMSS_SIGNATURES);
+#endif
     for (int i = 0; i < XMSS_SIGNATURES; i++)
     {
-        clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start);
+        clock_gettime(CLOCK_REALTIME, &start);
+#if MP == 0
         ret = crypto_sign(sm, smlen, m, mlen, sk);
-        clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &stop);
+#else
+        ret = crypto_sign_mp(sm, smlen, m, mlen, sk);
+#endif
+        clock_gettime(CLOCK_REALTIME, &stop);
 
         t[i] = CALC(start, stop);
 
@@ -128,13 +142,20 @@ int test_verify(unsigned char *mout, unsigned long long *moutlen,
 {
     struct timespec start, stop;
     int ret;
-
+#if MP == 0
     printf("Verifying %d signatures..\n", XMSS_SIGNATURES);
+#else
+    printf("Verifying %d MP signatures..\n", XMSS_SIGNATURES);
+#endif
     for (int i = 0; i < XMSS_SIGNATURES; i++)
     {
-        clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start);
+        clock_gettime(CLOCK_REALTIME, &start);
+#if MP == 0
         ret = crypto_sign_open(mout, moutlen, sm, smlen, pk);
-        clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &stop);
+#else
+        ret = crypto_sign_open_mp(mout, moutlen, sm, smlen, pk);
+#endif
+        clock_gettime(CLOCK_REALTIME, &stop);
 
         t[i] = CALC(start, stop);
 
@@ -216,6 +237,9 @@ int main(void)
 
     ret = test_keygen(pk, sk);
 
+    print_hex(pk, CRYPTO_PUBLIC_KEY, "pk");
+    // print_hex(sk, CRYPTO_SECRET_KEY, "sk");
+
     if (ret)
     {
         printf("    Unable to generate keypair\n");
@@ -254,7 +278,7 @@ int main(void)
     {
         printf("    Unable to check remaining signature\n");
         return 1;
-    }
+    } 
 
     free(sm);
     free(mout);

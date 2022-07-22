@@ -19,7 +19,8 @@ unsigned long long xmss_xmssmt_core_sk_bytes(const xmss_params *params);
  */
 int xmss_core_keypair(const xmss_params *params,
                       unsigned char *pk, unsigned char *sk);
-
+int xmss_core_keypair_mp(const xmss_params *params,
+                      unsigned char *pk, unsigned char *sk);
 /**
  * Signs a message. Returns an array containing the signature followed by the
  * message and an updated secret key.
@@ -28,12 +29,19 @@ int xmss_core_sign(const xmss_params *params,
                    unsigned char *sk,
                    unsigned char *sm, unsigned long long *smlen,
                    const unsigned char *m, unsigned long long mlen);
-
+int xmss_core_sign_mp(const xmss_params *params,
+                   unsigned char *sk,
+                   unsigned char *sm, unsigned long long *smlen,
+                   const unsigned char *m, unsigned long long mlen);
 /**
  * Verifies a given message signature pair under a given public key.
  * Note that this assumes a pk without an OID, i.e. [root || PUB_SEED]
  */
 int xmss_core_sign_open(const xmss_params *params,
+                        unsigned char *m, unsigned long long *mlen,
+                        const unsigned char *sm, unsigned long long smlen,
+                        const unsigned char *pk);
+int xmss_core_sign_open_mp(const xmss_params *params,
                         unsigned char *m, unsigned long long *mlen,
                         const unsigned char *sm, unsigned long long smlen,
                         const unsigned char *pk);
@@ -45,12 +53,17 @@ int xmss_core_sign_open(const xmss_params *params,
  */
 int xmssmt_core_keypair(const xmss_params *params,
                         unsigned char *pk, unsigned char *sk);
-
+int xmssmt_core_keypair_mp(const xmss_params *params,
+                        unsigned char *pk, unsigned char *sk);
 /**
  * Signs a message. Returns an array containing the signature followed by the
  * message and an updated secret key.
  */
 int xmssmt_core_sign(const xmss_params *params,
+                     unsigned char *sk,
+                     unsigned char *sm, unsigned long long *smlen,
+                     const unsigned char *m, unsigned long long mlen);
+int xmssmt_core_sign_mp(const xmss_params *params,
                      unsigned char *sk,
                      unsigned char *sm, unsigned long long *smlen,
                      const unsigned char *m, unsigned long long mlen);
@@ -60,6 +73,10 @@ int xmssmt_core_sign(const xmss_params *params,
  * Note that this assumes a pk without an OID, i.e. [root || PUB_SEED]
  */
 int xmssmt_core_sign_open(const xmss_params *params,
+                          unsigned char *m, unsigned long long *mlen,
+                          const unsigned char *sm, unsigned long long smlen,
+                          const unsigned char *pk);
+int xmssmt_core_sign_open_mp(const xmss_params *params,
                           unsigned char *m, unsigned long long *mlen,
                           const unsigned char *sm, unsigned long long smlen,
                           const unsigned char *pk);

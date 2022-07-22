@@ -14,6 +14,7 @@
  * Returns 0 (success), -1 otherwise
  **************************************************/
 int crypto_sign_keypair(unsigned char *pk, unsigned char *sk);
+int crypto_sign_keypair_mp(unsigned char *pk, unsigned char *sk);
 
 /*************************************************
  * Name:        XMSS_crypto_sign
@@ -29,6 +30,8 @@ int crypto_sign_keypair(unsigned char *pk, unsigned char *sk);
  * Returns 0 (success), -1 otherwise
  **************************************************/
 int crypto_sign(unsigned char *sm, unsigned long long *smlen,
+                const unsigned char *m, unsigned long long mlen, unsigned char *sk);
+int crypto_sign_mp(unsigned char *sm, unsigned long long *smlen,
                 const unsigned char *m, unsigned long long mlen, unsigned char *sk);
 
 /*************************************************
@@ -47,6 +50,8 @@ int crypto_sign(unsigned char *sm, unsigned long long *smlen,
  * Returns 0 if signed message could be verified correctly and -1 otherwise
  **************************************************/
 int crypto_sign_open(unsigned char *m, unsigned long long *mlen,
+                     const unsigned char *sm, unsigned long long smlen, const unsigned char *pk);
+int crypto_sign_open_mp(unsigned char *m, unsigned long long *mlen,
                      const unsigned char *sm, unsigned long long smlen, const unsigned char *pk);
 
 /*************************************************
