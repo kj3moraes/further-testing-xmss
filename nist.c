@@ -75,7 +75,7 @@ int crypto_sign_open(unsigned char *m, unsigned long long *mlen,
 
 int crypto_remaining_signatures(unsigned long long *remain, const unsigned char *sk)
 {
-    if (XMSS_REMAIN_SIG(remain, sk))
+    if (XMSS_REMAINING_SIG(remain, sk))
     {
 #if DEBUG
         printf("Error counting remaining signatures\n");
