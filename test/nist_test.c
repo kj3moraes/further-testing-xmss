@@ -237,9 +237,6 @@ int main(void)
 
     ret = test_keygen(pk, sk);
 
-    print_hex(pk, CRYPTO_PUBLIC_KEY, "pk");
-    // print_hex(sk, CRYPTO_SECRET_KEY, "sk");
-
     if (ret)
     {
         printf("    Unable to generate keypair\n");
