@@ -25,13 +25,12 @@ int runonce(void)
     return OQS_SUCCESS;
 }
 
-
 static int initialized = 0;
 void randombytes(unsigned char *x, unsigned long long xlen)
 {
     if (!initialized)
     {
-        if(runonce() == OQS_SUCCESS)
+        if (runonce() == OQS_SUCCESS)
         {
             initialized = 1;
         }
