@@ -19,9 +19,10 @@ static void expand_seed(const xmss_params *params,
     uint32_t i;
     unsigned char ctr[32];
 
-    for (i = 0; i < params->wots_len; i++) {
+    for (i = 0; i < params->wots_len; i++)
+    {
         ull_to_bytes(ctr, 32, i);
-        prf(params, outseeds + i*params->n, ctr, inseed);
+        prf(params, outseeds + i * params->n, ctr, inseed);
     }
 }
 
@@ -43,7 +44,8 @@ static void gen_chain(const xmss_params *params,
     memcpy(out, in, params->n);
 
     /* Iterate 'steps' calls to the hash function. */
-    for (i = start; i < (start+steps) && i < params->wots_w; i++) {
+    for (i = start; i < (start + steps) && i < params->wots_w; i++)
+    {
         set_hash_addr(addr, i);
         thash_f(params, out, out, pub_seed, addr);
     }
@@ -63,8 +65,10 @@ static void base_w(const xmss_params *params,
     int bits = 0;
     int consumed;
 
-    for (consumed = 0; consumed < out_len; consumed++) {
-        if (bits == 0) {
+    for (consumed = 0; consumed < out_len; consumed++)
+    {
+        if (bits == 0)
+        {
             total = input[in];
             in++;
             bits += 8;
@@ -84,7 +88,8 @@ static void wots_checksum(const xmss_params *params,
     unsigned int i;
 
     /* Compute checksum. */
-    for (i = 0; i < params->wots_len1; i++) {
+    for (i = 0; i < params->wots_len1; i++)
+    {
         csum += params->wots_w - 1 - msg_base_w[i];
     }
 
@@ -112,6 +117,10 @@ static void chain_lengths(const xmss_params *params,
  * Writes the computed public key to 'pk'.
  */
 
+/*
+ * Parameter wrapper for thread arguments
+ * For function wots_pkgen_sub
+ */
 typedef struct wots_pkgen_args
 {
     const xmss_params *params;
@@ -138,19 +147,19 @@ static void *wots_pkgen_sub(void *vars)
 }
 
 void wots_pkgen_mp(const xmss_params *params,
-                unsigned char *pk, const unsigned char *seed,
-                const unsigned char *pub_seed, uint32_t addr[8])
+                   unsigned char *pk, const unsigned char *seed,
+                   const unsigned char *pub_seed, uint32_t addr[8])
 {
     /* The WOTS+ private key is derived from the seed. */
     expand_seed(params, pk, seed);
 
     const uint32_t block = params->wots_len / NUM_CORES;
     const uint32_t remain = (params->wots_len % NUM_CORES);
-    uint32_t thread_addr[NUM_CORES + 1][8];
-    pthread_t thread[NUM_CORES + 1];
-    wots_pkgen_args_t args[NUM_CORES + 1];
+    uint32_t thread_addr[THREAD_NUMBERS][8];
+    pthread_t thread[THREAD_NUMBERS];
+    wots_pkgen_args_t args[THREAD_NUMBERS];
 
-    for (int i = 0; i < NUM_CORES + 1; i++)
+    for (unsigned i = 0; i < THREAD_NUMBERS; i++)
     {
         memcpy(thread_addr[i], addr, sizeof(uint32_t) * 8);
         args[i].addr = thread_addr[i];
@@ -171,13 +180,13 @@ void wots_pkgen_mp(const xmss_params *params,
         }
 
         pthread_create(&thread[i], NULL, wots_pkgen_sub, (void *)&args[i]);
-        /* 
+        /*
          * When in doubt, run this function to check thread correctness
          * wots_pkgen_sub(&args[j]);
          */
     }
 
-    for (int i = 0; i < NUM_CORES + 1; i++)
+    for (unsigned i = 0; i < THREAD_NUMBERS; i++)
     {
         pthread_join(thread[i], NULL);
     }
@@ -192,9 +201,10 @@ void wots_pkgen(const xmss_params *params,
     /* The WOTS+ private key is derived from the seed. */
     expand_seed(params, pk, seed);
 
-    for (i = 0; i < params->wots_len; i++) {
+    for (i = 0; i < params->wots_len; i++)
+    {
         set_chain_addr(addr, i);
-        gen_chain(params, pk + i*params->n, pk + i*params->n,
+        gen_chain(params, pk + i * params->n, pk + i * params->n,
                   0, params->wots_w - 1, pub_seed, addr);
     }
 }
@@ -202,6 +212,11 @@ void wots_pkgen(const xmss_params *params,
 /**
  * Takes a n-byte message and the 32-byte seed for the private key to compute a
  * signature that is placed at 'sig'.
+ */
+
+/*
+ * Parameter wrapper for thread arguments
+ * For function wots_sign_sub
  */
 typedef struct wots_sign_args
 {
@@ -229,9 +244,9 @@ static void *wots_sign_sub(void *vars)
 }
 
 void wots_sign_mp(const xmss_params *params,
-               unsigned char *sig, const unsigned char *msg,
-               const unsigned char *seed, const unsigned char *pub_seed,
-               uint32_t addr[8])
+                  unsigned char *sig, const unsigned char *msg,
+                  const unsigned char *seed, const unsigned char *pub_seed,
+                  uint32_t addr[8])
 {
     int lengths[params->wots_len];
     chain_lengths(params, lengths, msg);
@@ -240,11 +255,11 @@ void wots_sign_mp(const xmss_params *params,
 
     const uint32_t block = params->wots_len / NUM_CORES;
     const uint32_t remain = (params->wots_len % NUM_CORES);
-    pthread_t thread[NUM_CORES + 1];
-    uint32_t thread_addr[NUM_CORES + 1][8];
-    wots_sign_args_t args[NUM_CORES + 1];
+    pthread_t thread[THREAD_NUMBERS];
+    uint32_t thread_addr[THREAD_NUMBERS][8];
+    wots_sign_args_t args[THREAD_NUMBERS];
 
-    for (int i = 0; i < NUM_CORES + 1; i++)
+    for (unsigned i = 0; i < THREAD_NUMBERS; i++)
     {
         memcpy(thread_addr[i], addr, sizeof(uint32_t) * 8);
         args[i].addr = thread_addr[i];
@@ -264,13 +279,13 @@ void wots_sign_mp(const xmss_params *params,
         args[i].pub_seed = pub_seed;
 
         pthread_create(&thread[i], NULL, wots_sign_sub, (void *)&args[i]);
-        /* 
+        /*
          * When in doubt, run this function to check thread correctness
          * wots_sign_sub(&args[i]);
          */
     }
 
-    for (int i = 0; i < NUM_CORES + 1; i++)
+    for (unsigned i = 0; i < THREAD_NUMBERS; i++)
     {
         pthread_join(thread[i], NULL);
     }
@@ -289,9 +304,10 @@ void wots_sign(const xmss_params *params,
     /* The WOTS+ private key is derived from the seed. */
     expand_seed(params, sig, seed);
 
-    for (i = 0; i < params->wots_len; i++) {
+    for (i = 0; i < params->wots_len; i++)
+    {
         set_chain_addr(addr, i);
-        gen_chain(params, sig + i*params->n, sig + i*params->n,
+        gen_chain(params, sig + i * params->n, sig + i * params->n,
                   0, lengths[i], pub_seed, addr);
     }
 }
@@ -300,6 +316,11 @@ void wots_sign(const xmss_params *params,
  * Takes a WOTS signature and an n-byte message, computes a WOTS public key.
  *
  * Writes the computed public key to 'pk'.
+ */
+
+/*
+ * Parameter wrapper for thread arguments
+ * For function wots_pk_from_sig_sub
  */
 typedef struct wots_pk_sig
 {
@@ -327,8 +348,8 @@ static void *wots_pk_from_sig_sub(void *vars)
 }
 
 void wots_pk_from_sig_mp(const xmss_params *params, unsigned char *pk,
-                      const unsigned char *sig, const unsigned char *msg,
-                      const unsigned char *pub_seed, uint32_t addr[8])
+                         const unsigned char *sig, const unsigned char *msg,
+                         const unsigned char *pub_seed, uint32_t addr[8])
 {
     const uint32_t block = params->wots_len / NUM_CORES;
     const uint32_t remain = (params->wots_len % NUM_CORES);
@@ -336,11 +357,11 @@ void wots_pk_from_sig_mp(const xmss_params *params, unsigned char *pk,
 
     chain_lengths(params, lengths, msg);
 
-    pthread_t thread[NUM_CORES + 1];
-    uint32_t thread_addr[NUM_CORES + 1][8];
-    wots_pk_sig_t args[NUM_CORES + 1];
+    pthread_t thread[THREAD_NUMBERS];
+    uint32_t thread_addr[THREAD_NUMBERS][8];
+    wots_pk_sig_t args[THREAD_NUMBERS];
 
-    for (int i = 0; i < NUM_CORES + 1; i++)
+    for (unsigned i = 0; i < THREAD_NUMBERS; i++)
     {
         memcpy(thread_addr[i], addr, sizeof(uint32_t) * 8);
         args[i].addr = thread_addr[i];
@@ -361,13 +382,13 @@ void wots_pk_from_sig_mp(const xmss_params *params, unsigned char *pk,
         args[i].pub_seed = pub_seed;
 
         pthread_create(&thread[i], NULL, wots_pk_from_sig_sub, (void *)&args[i]);
-        /* 
+        /*
          * When in doubt, run this function to check thread correctness
          * wots_pk_from_sig_sub(&args[i]);
          */
     }
 
-    for (int i = 0; i < NUM_CORES + 1; i++)
+    for (unsigned i = 0; i < THREAD_NUMBERS; i++)
     {
         pthread_join(thread[i], NULL);
     }
@@ -382,9 +403,10 @@ void wots_pk_from_sig(const xmss_params *params, unsigned char *pk,
 
     chain_lengths(params, lengths, msg);
 
-    for (i = 0; i < params->wots_len; i++) {
+    for (i = 0; i < params->wots_len; i++)
+    {
         set_chain_addr(addr, i);
-        gen_chain(params, pk + i*params->n, sig + i*params->n,
+        gen_chain(params, pk + i * params->n, sig + i * params->n,
                   lengths[i], params->wots_w - 1 - lengths[i], pub_seed, addr);
     }
 }
