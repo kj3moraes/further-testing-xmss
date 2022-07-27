@@ -60,4 +60,7 @@ $(EXEC_DIR)/test_multi: tests/multithreaded_tester.c $(XMSS_IMPL_SRC_FILES) $(OB
 clean:
 	-$(RM) $(TESTS)
 
-.PHONY: clean test
+directories:
+	mkdir $(BUILD_DIR) $(EXEC_DIR)
+
+.PHONY: clean test directories

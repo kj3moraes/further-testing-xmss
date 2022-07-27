@@ -3,8 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "../sig_stfl/sig_stfl.h"
-#include "../sig_stfl/xmss/external/randombytes.h"
+#include <oqs/oqs.h>
 
 
 #define XMSS_IMPLEMENTATION "XMSS-SHA2_16_256"
@@ -25,20 +24,26 @@ void prepend(char* s, const char* t) {
 /** =========== FUNCTIONS THAT GET ASSIGNED TO THE POINTERS IN THE OBJECT ===== */
 
 int lock_sk_key(OQS_SECRET_KEY *sk) {
+    uint8_t s = sk->secret_key[0];
+    s += 2 - 2;
     return 0;
 }
 
 int release_sk_key(OQS_SECRET_KEY *sk) {
+    uint8_t s = sk->secret_key[0];
+    s += 2 - 2;
     return 0;
 }
 
 int do_nothing_save(OQS_SECRET_KEY *sk) {
+    uint8_t s = sk->secret_key[0];
+    s += 2 - 2;
     return 0;
 }
 
 int sk_file_write(const OQS_SECRET_KEY *sk) {
 
-    const char filename[MAX_LENGTH_FILENAME];
+    char filename[MAX_LENGTH_FILENAME];
     strcpy(filename, "./keys/sub3_xmss16_sha256.prv");
 
     #ifdef CUSTOM_NAME
@@ -190,7 +195,7 @@ int test_case(const char *name) {
         printf("\n\n=========  - iteration #%d: ==============\n", i);
 
         /* ========================== SIGNING ================================= */
-        randombytes(m, MESSAGE_LENGTH);
+        OQS_randombytes(m, MESSAGE_LENGTH);
         if (signature_gen->sign(sm, (size_t *)&smlen, m, MESSAGE_LENGTH, sk) != 0) {
             printf("ERROR!! Signature generation failed\n");
             ret = -1;
