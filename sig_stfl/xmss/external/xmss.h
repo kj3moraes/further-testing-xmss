@@ -2,7 +2,10 @@
 #define XMSS_H
 
 #include <stdint.h>
-#include "../../sig_stfl.h"
+#include <oqs/oqs.h>
+
+#include "xmss_namespace.h"
+
 
 /**
  * @brief Populates a subkey object with a key that is valid for a certain number of signatures.
@@ -13,13 +16,6 @@
  * @return int - Returns 0 on success, -1 on failure.
  */
 int xmss_derive_subkey(OQS_SECRET_KEY *master, OQS_SECRET_KEY *subkey, unsigned long long number_of_sigs);
-
-/*
- * Generates a XMSS key pair for a given parameter set.
- * Format sk: [OID || (32bit) idx || SK_SEED || SK_PRF || PUB_SEED || root]
- * Format pk: [OID || root || PUB_SEED]
- */
-int xmss_keypair(uint8_t *pk, OQS_SECRET_KEY *sk, const uint32_t oid);
 
 #ifdef MAX_MOD
 
