@@ -131,7 +131,7 @@ void gen_leaf_wots_mp(const xmss_params *params, unsigned char *leaf,
     #ifdef FORWARD_SECURE
     unsigned int i;
 
-    // in a forward secure setting, the sk_seed already contains the current seed
+    // In a forward secure setting, the sk_seed already contains the current seed
     for(i =0; i < params->n; i++) {
         seed[i] = sk_seed[i];
     }
