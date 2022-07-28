@@ -3,6 +3,19 @@
 
 #include "nist_params.h"
 
+extern unsigned int XMSS_num_cores;
+extern unsigned int XMSS_num_cores_max;
+
+int XMSS_search_cpu(void);
+
+/*
+ * Because the last iteration of WOTS chain only run with small iterations, 
+ * so we can spend extra thread to handle small iterations,
+ * let the main thread to be free to wait for child threads
+ */
+#define NUM_CORES XMSS_num_cores
+#define THREAD_NUMBERS (NUM_CORES + 1)
+
 #if POSIX_THREAD == 1
     #include <pthread.h>
 
@@ -10,7 +23,6 @@
 
     /*
     * Simple thread wrapper for Window API
-    * https://nachtimwald.com/2019/04/05/cross-platform-thread-wrapper/
     */
     #include <windows.h>
 
