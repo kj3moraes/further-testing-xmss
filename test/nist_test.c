@@ -1,12 +1,13 @@
+// SPDX-License-Identifier: Public domain
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
 #include "../api.h"
-#include "../nist_params.h" // Include NIST parameter header
-#include "../xmss.h"        // Include NIST XMSS header, to test no. of remaining signature
-#include "../params.h"
-#include "../thread_wrapper.h"
+#include "../nist_params.h"    // Include NIST parameter header
+#include "../xmss.h"           // Include NIST XMSS header, to test no. of remaining signature
+#include "../params.h"         // Incnlude predefined params
+#include "../thread_wrapper.h" // Include thread to CPU cores at run time: XMSS_search_cpu()
 
 #define XMSS_SIGNATURES 64
 

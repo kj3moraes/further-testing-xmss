@@ -1,7 +1,8 @@
-/*
-This code was taken from the SPHINCS reference implementation and is public domain.
-*/
-
+/*=============================================================================
+ * Copyright (c) 2022 by SandboxAQ Inc
+ * Author: Duc Tri Nguyen
+ * SPDX-License-Identifier: MIT
+=============================================================================*/
 #include <oqs/common.h>
 #include <oqs/rand.h>
 
