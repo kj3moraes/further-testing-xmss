@@ -5,8 +5,8 @@ OPENSSL = -L/opt/homebrew/opt/openssl@1.1/lib -I/opt/homebrew/opt/openssl@1.1/in
 LEVEL = 0
 POSIX_THREAD = 1
 
-SOURCES = params.c hash.c fips202.c hash_address.c randombytes.c wots.c xmss.c xmss_core.c xmss_commons.c utils.c nist.c
-HEADERS = params.h hash.h fips202.h hash_address.h randombytes.h wots.h xmss.h xmss_core.h xmss_commons.h utils.h nist_params.h
+SOURCES = thread_wrapper.c params.c hash.c fips202.c hash_address.c randombytes.c wots.c xmss.c xmss_core.c xmss_commons.c utils.c nist.c
+HEADERS = thread_wrapper.h params.h hash.h fips202.h hash_address.h randombytes.h wots.h xmss.h xmss_core.h xmss_commons.h utils.h nist_params.h
 
 SOURCES_FAST = $(subst xmss_core.c,xmss_core_fast.c,$(SOURCES))
 HEADERS_FAST = $(subst xmss_core.c,xmss_core_fast.c,$(HEADERS))
