@@ -2,18 +2,14 @@
 This code was taken from the SPHINCS reference implementation and is public domain.
 */
 
-#include <fcntl.h>
-#include <unistd.h>
 #include <oqs/common.h>
 #include <oqs/rand.h>
-#include <stdio.h>
 
 int runonce(void)
 {
     unsigned char buf[48] = {0};
-#if RANDOM
     OQS_randombytes(buf, 48);
-#endif
+
     /* Using AES as random generator */
     if (OQS_randombytes_switch_algorithm("NIST-KAT") != OQS_SUCCESS)
     {
@@ -25,9 +21,9 @@ int runonce(void)
     return OQS_SUCCESS;
 }
 
-static int initialized = 0;
 void randombytes(unsigned char *x, unsigned long long xlen)
 {
+    static int initialized = 0;
     if (!initialized)
     {
         if (runonce() == OQS_SUCCESS)
