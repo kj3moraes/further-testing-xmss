@@ -6,6 +6,7 @@
 #include "../nist_params.h" // Include NIST parameter header
 #include "../xmss.h"        // Include NIST XMSS header, to test no. of remaining signature
 #include "../params.h"
+#include "../thread_wrapper.h"
 
 #define XMSS_SIGNATURES 64
 
@@ -17,7 +18,7 @@
  */
 unsigned long long t[XMSS_SIGNATURES];
 
-
+#if DEBUG
 static void print_hex(const unsigned char *a, int length, const char *string)
 {
     printf("%s[%d] = \n", string, length);
@@ -27,7 +28,7 @@ static void print_hex(const unsigned char *a, int length, const char *string)
     }
     printf("\n");
 }
-
+#endif
 
 static int cmp_llu(const void *a, const void *b)
 {
@@ -234,6 +235,9 @@ int main(void)
     // Verify test
     unsigned char *sm = malloc(CRYPTO_BYTES + mlen);
     unsigned char *mout = malloc(CRYPTO_BYTES + mlen);
+
+    XMSS_search_cpu();
+    printf("core, max = %d, %d\n", XMSS_num_cores, XMSS_num_cores_max);
 
     ret = test_keygen(pk, sk);
 
