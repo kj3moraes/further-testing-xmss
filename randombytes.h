@@ -1,3 +1,8 @@
+/*=============================================================================
+ * Copyright (c) 2022 by SandboxAQ Inc
+ * Author: Duc Tri Nguyen
+ * SPDX-License-Identifier: MIT
+=============================================================================*/
 #ifndef XMSS_RANDOMBYTES_H
 #define XMSS_RANDOMBYTES_H
 

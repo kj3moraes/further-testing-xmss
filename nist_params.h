@@ -1,3 +1,8 @@
+/*=============================================================================
+ * Copyright (c) 2022 by SandboxAQ Inc
+ * Author: Duc Tri Nguyen
+ * SPDX-License-Identifier: MIT
+=============================================================================*/
 #ifndef NIST_PARAM_H
 #define NIST_PARAM_H
 
@@ -9,6 +14,14 @@
 
 #ifndef LEVEL
 #define LEVEL 0
+#endif
+
+#ifndef RANDOM
+#define RANDOM 1
+#endif
+
+#ifndef POSIX_THREAD
+#define POSIX_THREAD 1
 #endif
 
 #if XMSSMT == 0
@@ -109,14 +122,22 @@
     #define XMSS_KEYPAIR xmssmt_keypair
     #define XMSS_SIGN xmssmt_sign
     #define XMSS_SIGN_OPEN xmssmt_sign_open
-    #define XMSS_REMAIN_SIG xmssmt_remain_signatures
+    #define XMSS_REMAINING_SIG xmssmt_remaining_signatures
+
+    #define XMSS_KEYPAIR_MP xmssmt_keypair_mp
+    #define XMSS_SIGN_MP xmssmt_sign_mp
+    #define XMSS_SIGN_OPEN_MP xmssmt_sign_open_mp
 #else
     #define XMSS_PARSE_OID xmss_parse_oid
     #define XMSS_STR_TO_OID xmss_str_to_oid
     #define XMSS_KEYPAIR xmss_keypair
     #define XMSS_SIGN xmss_sign
     #define XMSS_SIGN_OPEN xmss_sign_open
-    #define XMSS_REMAIN_SIG xmss_remain_signatures
+    #define XMSS_REMAINING_SIG xmss_remaining_signatures
+
+    #define XMSS_KEYPAIR_MP xmss_keypair_mp
+    #define XMSS_SIGN_MP xmss_sign_mp
+    #define XMSS_SIGN_OPEN_MP xmss_sign_open_mp
 #endif
 
 #define CRYPTO_PUBLIC_KEY (XMSS_PUBLICKEYBYTES + XMSS_OID_LEN)

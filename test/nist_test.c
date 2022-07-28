@@ -1,11 +1,13 @@
+// SPDX-License-Identifier: Public domain
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
 #include "../api.h"
-#include "../nist_params.h" // Include NIST parameter header
-#include "../xmss.h"        // Include NIST XMSS header, to test no. of remaining signature
-#include "../params.h"
+#include "../nist_params.h"    // Include NIST parameter header
+#include "../xmss.h"           // Include NIST XMSS header, to test no. of remaining signature
+#include "../params.h"         // Incnlude predefined params
+#include "../thread_wrapper.h" // Include thread to CPU cores at run time: XMSS_search_cpu()
 
 #define XMSS_SIGNATURES 64
 
@@ -74,11 +76,18 @@ int test_keygen(unsigned char *pk, unsigned char *sk)
     int ret;
     double result;
 
+#if MP == 0
     printf("Generating keypair.. %s\n", XMSS_OID);
-
-    clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start);
+#else
+    printf("Generating keypair MP.. %s\n", XMSS_OID);
+#endif
+    clock_gettime(CLOCK_REALTIME, &start);
+#if MP == 0
     ret = crypto_sign_keypair(pk, sk);
-    clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &stop);
+#else
+    ret = crypto_sign_keypair_mp(pk, sk);
+#endif
+    clock_gettime(CLOCK_REALTIME, &stop);
 
     result = CALC(start, stop);
     printf("took %lf us (%.2lf sec)\n", result, result / 1e6);
@@ -94,13 +103,20 @@ int test_sign(unsigned char *sm, unsigned long long *smlen,
 {
     struct timespec start, stop;
     int ret;
-
+#if MP == 0
     printf("Creating %d signatures..\n", XMSS_SIGNATURES);
+#else
+    printf("Creating %d MP signatures..\n", XMSS_SIGNATURES);
+#endif
     for (int i = 0; i < XMSS_SIGNATURES; i++)
     {
-        clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start);
+        clock_gettime(CLOCK_REALTIME, &start);
+#if MP == 0
         ret = crypto_sign(sm, smlen, m, mlen, sk);
-        clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &stop);
+#else
+        ret = crypto_sign_mp(sm, smlen, m, mlen, sk);
+#endif
+        clock_gettime(CLOCK_REALTIME, &stop);
 
         t[i] = CALC(start, stop);
 
@@ -128,13 +144,20 @@ int test_verify(unsigned char *mout, unsigned long long *moutlen,
 {
     struct timespec start, stop;
     int ret;
-
+#if MP == 0
     printf("Verifying %d signatures..\n", XMSS_SIGNATURES);
+#else
+    printf("Verifying %d MP signatures..\n", XMSS_SIGNATURES);
+#endif
     for (int i = 0; i < XMSS_SIGNATURES; i++)
     {
-        clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start);
+        clock_gettime(CLOCK_REALTIME, &start);
+#if MP == 0
         ret = crypto_sign_open(mout, moutlen, sm, smlen, pk);
-        clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &stop);
+#else
+        ret = crypto_sign_open_mp(mout, moutlen, sm, smlen, pk);
+#endif
+        clock_gettime(CLOCK_REALTIME, &stop);
 
         t[i] = CALC(start, stop);
 
@@ -213,6 +236,9 @@ int main(void)
     // Verify test
     unsigned char *sm = malloc(CRYPTO_BYTES + mlen);
     unsigned char *mout = malloc(CRYPTO_BYTES + mlen);
+
+    XMSS_search_cpu();
+    printf("core, max = %d, %d\n", XMSS_num_cores, XMSS_num_cores_max);
 
     ret = test_keygen(pk, sk);
 
