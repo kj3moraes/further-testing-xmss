@@ -11,10 +11,6 @@
 #define LEVEL 0
 #endif
 
-#ifndef NUM_CORES
-#define NUM_CORES 4
-#endif
-
 #ifndef RANDOM
 #define RANDOM 1
 #endif
