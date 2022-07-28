@@ -279,7 +279,7 @@ int main(void)
     {
         printf("    Unable to check remaining signature\n");
         return 1;
-    } 
+    }
 
     free(sm);
     free(mout);
