@@ -123,15 +123,13 @@ static void chain_lengths(const xmss_params *params,
  */
 typedef struct wots_pkgen_args
 {
-    const xmss_params *params;
-    uint32_t *addr;
-    uint32_t start;
-    uint32_t end;
-    uint32_t num;
-    const unsigned char *pub_seed;
-    unsigned char *pk;
-    uint16_t padding16;
-    uint32_t padding32;
+    const xmss_params *params;     // Pointer to constant XMSS settting
+    uint32_t *addr;                // Pointer to duplicate array of uint32_t addr[8]
+    uint32_t start;                // Start of iteration
+    uint32_t end;                  // End of iteration
+    const unsigned char *pub_seed; // Pointer to constant public seed array
+    unsigned char *pk;             // Write to output public key
+    uint16_t padding16;            // Padding for 8-byte alignment
 } wots_pkgen_args_t;
 
 static void *wots_pkgen_sub(void *vars)
@@ -166,7 +164,6 @@ void wots_pkgen_mp(const xmss_params *params,
         args[i].params = params;
         args[i].pk = pk;
         args[i].pub_seed = pub_seed;
-        args[i].num = i;
 
         if (i == NUM_CORES)
         {
@@ -220,14 +217,14 @@ void wots_pkgen(const xmss_params *params,
  */
 typedef struct wots_sign_args
 {
-    const xmss_params *params;
-    uint32_t *addr;
-    const unsigned char *pub_seed;
-    unsigned char *sig;
-    uint16_t padding16;
-    int *lengths;
-    uint32_t start;
-    uint32_t end;
+    const xmss_params *params;     // Pointer to constant XMSS settting
+    uint32_t *addr;                // Pointer to duplicate array of uint32_t addr[8]
+    const unsigned char *pub_seed; // Pointer to constant public seed array
+    unsigned char *sig;            // Write to output signature
+    uint16_t padding16;            // Padding for 8-byte alignment
+    int *lengths;                  // Pointer to length array
+    uint32_t start;                // Start of iteration
+    uint32_t end;                  // End of iteration
 } wots_sign_args_t;
 
 static void *wots_sign_sub(void *vars)
@@ -324,14 +321,14 @@ void wots_sign(const xmss_params *params,
  */
 typedef struct wots_pk_sig
 {
-    const xmss_params *params;
-    unsigned char *pk;
-    const unsigned char *sig;
-    const unsigned char *pub_seed;
-    uint32_t *addr;
-    uint32_t start;
-    uint32_t end;
-    int *lengths;
+    const xmss_params *params;     // Pointer to constant XMSS settting
+    unsigned char *pk;             // Write to output public key
+    const unsigned char *sig;      // Pointer to constant signature array
+    const unsigned char *pub_seed; // Pointer to constant public seed array
+    uint32_t *addr;                // Pointer to duplicate array of uint32_t addr[8]
+    uint32_t start;                // Start of iteration
+    uint32_t end;                  // End of iteration
+    int *lengths;                  // Pointer to length array
 } wots_pk_sig_t;
 
 static void *wots_pk_from_sig_sub(void *vars)
