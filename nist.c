@@ -1,9 +1,13 @@
 #include <oqs/common.h>
 #include <stdio.h>
+
 #include "api.h"
 #include "params.h"
 #include "nist_params.h"
 #include "xmss.h"
+#include "thread_wrapper.h"
+
+int XMSS_search_cpu (void) __attribute__((constructor));
 
 int crypto_sign_keypair(unsigned char *pk, unsigned char *sk)
 {
