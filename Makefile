@@ -7,6 +7,10 @@ CXX_FLAGS 					:= --std=c11 -g -Wall -Wextra -Wpedantic
 BUILD_DIR 					:= build
 EXEC_DIR 					:= bin
 
+# File extensions
+SRC_EXT := c
+HDR_EXT := h
+
 # Stateful signatures directory 
 SIG_STFL_DIR 				:= sig_stfl
 
@@ -27,15 +31,15 @@ XMSS_OBJ_BUILD_DIR 			:= $(SIG_STFL_DIR)/xmss
 # ------------------------------------------------------------------------------
 
 # All Stateful signature files (Object / Secret Key definitions)
-SIG_STFL_SRC_FILES 			:= $(wildcard $(SIG_STFL_DIR)/*.c)
-SIG_STFL_HDR_FILES 			:= $(wildcard $(SIG_STFL_DIR)/*.h)
+SIG_STFL_SRC_FILES 			:= $(wildcard $(SIG_STFL_DIR)/*.$(SRC_EXT))
+SIG_STFL_HDR_FILES 			:= $(wildcard $(SIG_STFL_DIR)/*.$(HDR_EXT))
 
 # XMSS Source code files
-XMSS_IMPL_SRC_FILES 		:= $(wildcard $(XMSS_IMPL_DIR)/*.c)
-XMSS_IMPL_HDR_FILES 		:= $(wildcard $(XMSS_IMPL_DIR)/*.h)
+XMSS_IMPL_SRC_FILES 		:= $(wildcard $(XMSS_IMPL_DIR)/*.$(SRC_EXT))
+XMSS_IMPL_HDR_FILES 		:= $(wildcard $(XMSS_IMPL_DIR)/*.$(HDR_EXT))
 
-XMSS_OBJ_BUILD_SRC_FILES 	:= $(wildcard $(XMSS_OBJ_BUILD_DIR)/*.c)
-XMSS_OBJ_BUILD_HDR_FILES 	:= $(wildcard $(XMSS_OBJ_BUILD_DIR)/*.h)
+XMSS_OBJ_BUILD_SRC_FILES 	:= $(wildcard $(XMSS_OBJ_BUILD_DIR)/*.$(SRC_EXT))
+XMSS_OBJ_BUILD_HDR_FILES 	:= $(wildcard $(XMSS_OBJ_BUILD_DIR)/*.$(HDR_EXT))
 
 # Tests to performs
 TESTS 						:= $(EXEC_DIR)/test_struct # $(BUILD_DIR)/test_fast $(BUILD_DIR)/test_multi  $(BUILD_DIR)/test_subkeys
