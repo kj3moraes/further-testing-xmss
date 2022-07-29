@@ -42,7 +42,22 @@ extern "C" {
 #define OQS_SIG_STFL_alg_xmss_shake512_h16 "XMSS-SHAKE_16_512"
 /* Algorithm identifier for XMSS-SHAKE_20_512 */
 #define OQS_SIG_STFL_alg_xmss_shake512_h20 "XMSS-SHAKE_20_512"
-
+/* Algorithm identifier for XMSSMT-SHA2_20/2_256 */
+#define OQS_SIG_STFL_alg_xmssmt_sha256_2_20 "XMSSMT-SHA2_20/2_256"
+/* Algorithm identifier for XMSSMT-SHA2_20/4_256 */
+#define OQS_SIG_STFL_alg_xmssmt_sha256_4_20 "XMSSMT-SHA2_20/4_256"
+/* Algorithm identifier for XMSSMT-SHA2_40/2_256 */
+#define OQS_SIG_STFL_alg_xmssmt_sha256_2_40 "XMSSMT-SHA2_40/2_256"
+/* Algorithm identifier for XMSSMT-SHA2_40/4_256 */
+#define OQS_SIG_STFL_alg_xmssmt_sha256_2_40 "XMSSMT-SHA2_40/4_256"
+/* Algorithm identifier for XMSSMT-SHA2_40/4_256 */
+#define OQS_SIG_STFL_alg_xmssmt_sha256_2_40 "XMSSMT-SHA2_40/8_256"
+/* Algorithm identifier for XMSSMT-SHA2_40/4_256 */
+#define OQS_SIG_STFL_alg_xmssmt_sha256_2_40 "XMSSMT-SHA2_60/3_256"
+/* Algorithm identifier for XMSSMT-SHA2_40/4_256 */
+#define OQS_SIG_STFL_alg_xmssmt_sha256_2_40 "XMSSMT-SHA2_60/6_256"
+/* Algorithm identifier for XMSSMT-SHA2_40/4_256 */
+#define OQS_SIG_STFL_alg_xmssmt_sha256_2_40 "XMSSMT-SHA2_60/12_256"
 /**
  * LMS and XMSS^MT will be added later. So far its only XMSS
  *

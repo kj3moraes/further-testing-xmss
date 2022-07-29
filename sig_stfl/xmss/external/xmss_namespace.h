@@ -8,7 +8,17 @@
 #define hash_prg oqs_sig_stfl_xmss_hash_prg
 
 // hash_address.h - ALL THE HASH ADDRESSING FUNCTIONS
-
+#define set_layer_addr oqs_sig_stfl_xmss_set_layer_addr
+#define set_tree_addr oqs_sig_stfl_xmss_set_tree_addr
+#define set_type oqs_sig_stfl_xmss_set_type
+#define set_key_and_mask oqs_sig_stfl_xmss_set_key_and_mask
+#define copy_subtree_addr oqs_sig_stfl_xmss_copy_subtree_addr
+#define set_ots_addr oqs_sig_stfl_xmss_set_ots_addr
+#define set_chain_addr oqs_sig_stfl_xmss_set_chain_addr
+#define set_hash_addr oqs_sig_stfl_xmss_set_hash_addr
+#define set_ltree_addr oqs_sig_stfl_xmss_set_ltree_addr
+#define set_tree_height oqs_sig_stfl_xmss_set_tree_height
+#define set_tree_index oqs_sig_stfl_xmss_set_tree_index
 
 // params.h - ALL THE PARAMETER FUNCTIONS
 #define xmss_str_to_oid oqs_sig_stfl_xmss_xmss_str_to_oid
