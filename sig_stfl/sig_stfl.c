@@ -260,6 +260,12 @@ OQS_API OQS_SIG_STFL *OQS_SIG_STFL_new(const char *method_name) {
 #else
 		return NULL;
 #endif
+	} else if (0 == strcasecmp(method_name, OQS_SIG_STFL_alg_xmssmt_sha256_2_h20)) {
+#ifdef OQS_ENABLE_SIG_STFL_XMSSMT_SHA256_2_H20
+		return OQS_SIG_STFL_alg_xmssmt_sha256_2_h20_new();
+#else
+		return NULL;
+#endif
 	} else {
 		return NULL;
 	}
@@ -385,6 +391,12 @@ OQS_API OQS_SECRET_KEY *OQS_SECRET_KEY_new(const char *method_name) {
 #else
 		return NULL;
 #endif
+	} else if (0 == strcasecmp(method_name, OQS_SIG_STFL_alg_xmssmt_sha256_2_h20)) {
+//#ifdef OQS_ENABLE_SIG_STFL_XMSS_SHA256_2_H20
+		return OQS_SECRET_KEY_XMSSMT_SHA256_2_H20_new();
+//#else
+		return NULL;
+//#endif
 	} else {
 		return NULL;
 	}

@@ -1076,13 +1076,9 @@ int xmssmt_core_sign(const xmss_params *params,
     /* ========= CHECKING AGAINST MAX =========== */
     // Check if we can still sign with this sk, return -2 if not: */
     if (idx >= max) {
-        printf("ERROR! Exceeded maximum number of sigs");
+        printf("ERROR! Exceeded maximum number of sigs\n");
         return -2;
     }
-
-    // // Check if we can still sign with this sk, return -2 if not:
-    // if (idx >= ((1ULL << params->full_height) - 1))
-    //     return -2;
 
     memcpy(sk_seed, sk+params->index_bytes, params->n);
     #ifdef FORWARD_SECURE

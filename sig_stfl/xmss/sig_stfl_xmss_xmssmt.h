@@ -154,7 +154,7 @@ OQS_API OQS_STATUS OQS_SIG_STFL_alg_xmss_shake512_h20_keypair(uint8_t *public_ke
 
 #define OQS_SIG_STFL_alg_xmssmt_sha256_2_h20_length_signature 4963
 #define OQS_SIG_STFL_alg_xmssmt_sha256_2_h20_length_pk 64 + XMSS_OID_LEN
-#define OQS_SIG_STFL_alg_xmssmt_sha256_2_h20_length_sk 8082 + XMSS_OID_LEN
+#define OQS_SIG_STFL_alg_xmssmt_sha256_2_h20_length_sk 8086 + XMSS_OID_LEN
 
 OQS_SECRET_KEY *OQS_SECRET_KEY_XMSSMT_SHA256_2_H20_new(void);
 

@@ -6,7 +6,7 @@
 #include <oqs/oqs.h>
 
 
-#define XMSS_IMPLEMENTATION "XMSS-SHA2_16_256"
+#define XMSS_IMPLEMENTATION "XMSSMT-SHA2_20/2_256"
 #define MAX_LENGTH_FILENAME 60
 
 static void hexdump(const uint8_t *d, const unsigned long long l) {
@@ -195,6 +195,7 @@ int test_case(const char *name) {
         printf("\n\n=========  - iteration #%d: ==============\n", i);
 
         /* ========================== SIGNING ================================= */
+        
         OQS_randombytes(m, MESSAGE_LENGTH);
         if (signature_gen->sign(sm, (size_t *)&smlen, m, MESSAGE_LENGTH, sk) != 0) {
             printf("ERROR!! Signature generation failed\n");
