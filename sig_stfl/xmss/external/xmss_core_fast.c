@@ -1113,13 +1113,24 @@ int xmssmt_core_sign(const xmss_params *params,
     ull_to_bytes(idx_bytes_32, 32, idx);
     prf(params, R, idx_bytes_32, sk_prf);
 
-    /* Already put the message in the right place, to make it easier to prepend
-     * things when computing the hash over the message. */
-    memcpy(sm + params->sig_bytes, m, mlen);
-
+    uint8_t *buffer = (uint8_t*)malloc((mlen + 4 * params->n) * sizeof(uint8_t));
+    
+    memcpy(buffer + 4* params->n, m, mlen);
+    
     /* Compute the message hash. */
     hash_message(params, msg_h, R, pub_root, idx,
-                 sm + params->sig_bytes - 4*params->n, mlen);
+                buffer, mlen);
+
+    free(buffer);
+
+
+    // /* Already put the message in the right place, to make it easier to prepend
+    //  * things when computing the hash over the message. */
+    // memcpy(sm + params->sig_bytes, m, mlen);
+
+    // /* Compute the message hash. */
+    // hash_message(params, msg_h, R, pub_root, idx,
+    //              sm + params->sig_bytes - 4*params->n, mlen);
 
     // Start collecting signature
     *smlen = 0;

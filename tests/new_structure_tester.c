@@ -181,7 +181,7 @@ int test_case(const char *name) {
     printf("\nPublic key="); hexdump(pk, signature_gen->length_public_key);
     printf("\nSecret key="); hexdump(sk->secret_key, sk->length_secret_key);
 
-    printf("Do you want to test? (1/0)>");
+    printf("\nDo you want to test? (1/0)>");
     scanf("%u", &decision);
     if (decision == 0) return -1;
 
