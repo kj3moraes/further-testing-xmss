@@ -1,6 +1,6 @@
 # Compiler detials and flags
 CXX 						:= gcc
-CXX_FLAGS 					:= --std=c11 -g -Wall # -Wextra -Wpedantic
+CXX_FLAGS 					:= --std=c11 -g -Wall -Wextra -Wpedantic
 
 
 # Executable details and flags

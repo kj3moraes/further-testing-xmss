@@ -6,7 +6,7 @@
 #include <oqs/oqs.h>
 
 
-#define XMSS_IMPLEMENTATION "XMSSMT-SHA2_20/2_256"
+#define XMSS_IMPLEMENTATION "XMSSMT-SHA2_60/6_256"
 #define MAX_LENGTH_FILENAME 60
 
 static void hexdump(const uint8_t *d, const unsigned long long l) {
