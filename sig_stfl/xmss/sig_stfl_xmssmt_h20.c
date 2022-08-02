@@ -38,12 +38,12 @@ OQS_SIG_STFL *OQS_SIG_STFL_alg_xmssmt_sha256_2_h20_new(void) {
 
 	sig->keypair = OQS_SIG_STFL_alg_xmssmt_sha256_2_h20_keypair;
 	sig->sign = OQS_SIG_STFL_alg_xmssmt_sign;
-	sig->verify = OQS_SIG_STFL_alg_xmssmt_verify;
+	sig->verify = OQS_SIG_STFL_alg_xmssmt_verify;	
 
 	return sig;
 }
 
-OQS_SECRET_KEY *OQS_SECRET_KEY_XMSS_SHA256_H10_new(void) {
+OQS_SECRET_KEY *OQS_SECRET_KEY_XMSS_SHA256_2_H20_new(void) {
 
 	// Initialize the secret key in the heap with adequate memory
 	OQS_SECRET_KEY *sk = malloc(sizeof(OQS_SECRET_KEY));

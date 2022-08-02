@@ -127,6 +127,54 @@ OQS_API int OQS_SIG_STFL_alg_is_enabled(const char *method_name) {
 #else
 		return 0;
 #endif
+	} else if (0 == strcasecmp(method_name, OQS_SIG_STFL_alg_xmssmt_sha256_2_h20)) {
+#ifdef OQS_ENABLE_SIG_STFL_XMSSMT_SHA256_2_H20
+		return 1;
+#else
+		return 0;
+#endif
+	} else if (0 == strcasecmp(method_name, OQS_SIG_STFL_alg_xmssmt_sha256_4_h20)) {
+#ifdef OQS_ENABLE_SIG_STFL_XMSSMT_SHA256_4_H20
+		return 1;
+#else
+		return 0;
+#endif
+	} else if (0 == strcasecmp(method_name, OQS_SIG_STFL_alg_xmssmt_sha256_2_h40)) {
+#ifdef OQS_ENABLE_SIG_STFL_XMSSMT_SHA256_2_H40
+		return 1;
+#else
+		return 0;
+#endif
+	} else if (0 == strcasecmp(method_name, OQS_SIG_STFL_alg_xmssmt_sha256_4_h40)) {
+#ifdef OQS_ENABLE_SIG_STFL_XMSSMT_SHA256_4_H40
+		return 1;
+#else
+		return 0;
+#endif 
+	} else if (0 == strcasecmp(method_name, OQS_SIG_STFL_alg_xmssmt_sha256_8_h40)) {
+#ifdef OQS_ENABLE_SIG_STFL_XMSSMT_SHA256_8_H40
+		return 1;
+#else
+		return 0;
+#endif 
+	} else if (0 == strcasecmp(method_name, OQS_SIG_STFL_alg_xmssmt_sha256_3_h60)) {
+#ifdef OQS_ENABLE_SIG_STFL_XMSSMT_SHA256_3_H60
+		return 1;
+#else
+		return 0;
+#endif 
+	} else if (0 == strcasecmp(method_name, OQS_SIG_STFL_alg_xmssmt_sha256_6_h60)) {
+#ifdef OQS_ENABLE_SIG_STFL_XMSSMT_SHA256_6_H60
+		return 1;
+#else
+		return 0;
+#endif 
+	} else if (0 == strcasecmp(method_name, OQS_SIG_STFL_alg_xmssmt_sha256_12_h60)) {
+#ifdef OQS_ENABLE_SIG_STFL_XMSSMT_SHA256_12_H60
+		return 1;
+#else
+		return 0;
+#endif 
 	}
 	// EDIT-WHEN ADDING MORE XMSS/XMSS^MT ALGS
 	else {
