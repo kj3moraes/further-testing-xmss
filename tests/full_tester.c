@@ -299,13 +299,13 @@ int main() {
     unsigned char xmss_impl[50] = {0};
     printf("\nEnter the implementation to test (xmss, xmssmt)> ");
     scanf("%49s", xmss_impl);
-    bool is_xmss = false;
+    bool is_xmssmt = false;
 
-    if (strstr("XMSSMT", xmss_impl) != NULL) {
-        is_xmss = true;
+    if (strstr(xmss_impl, "XMSSMT") != NULL) {
+        is_xmssmt = true;
     }
 
-    int rc = test_case(xmss_impl, is_xmss);
+    int rc = test_case(xmss_impl, is_xmssmt);
     if(rc != 0) return rc;
     return 0;
 }
