@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: MIT
 
 if(CMAKE_C_COMPILER_ID STREQUAL "GNU" OR
 CMAKE_C_COMPILER_ID MATCHES "Clang")
@@ -19,6 +20,9 @@ set(SRCS sig_stfl_xmss_sha256.c
          sig_stfl_xmss_sha512.c
          sig_stfl_xmss_shake256.c
          sig_stfl_xmss_shake512.c
+         sig_stfl_xmssmt_h20.c
+         sig_stfl_xmssmt_h40.c
+         sig_stfl_xmssmt_h60.c
          sig_stfl_functions.c
          external/hash_address.c
          external/hash.c

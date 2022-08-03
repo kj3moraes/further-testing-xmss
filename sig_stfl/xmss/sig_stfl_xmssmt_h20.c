@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -41,7 +43,7 @@ OQS_SIG_STFL *OQS_SIG_STFL_alg_xmssmt_sha256_2_h20_new(void) {
 
 	sig->keypair = OQS_SIG_STFL_alg_xmssmt_sha256_2_h20_keypair;
 	sig->sign = OQS_SIG_STFL_alg_xmssmt_sign;
-	sig->verify = OQS_SIG_STFL_alg_xmssmt_verify;	
+	sig->verify = OQS_SIG_STFL_alg_xmssmt_verify;
 
 	return sig;
 }
@@ -99,7 +101,7 @@ OQS_SIG_STFL *OQS_SIG_STFL_alg_xmssmt_sha256_4_h20_new(void) {
 
 	sig->keypair = OQS_SIG_STFL_alg_xmssmt_sha256_4_h20_keypair;
 	sig->sign = OQS_SIG_STFL_alg_xmssmt_sign;
-	sig->verify = OQS_SIG_STFL_alg_xmssmt_verify;	
+	sig->verify = OQS_SIG_STFL_alg_xmssmt_verify;
 
 	return sig;
 }
