@@ -860,19 +860,9 @@ int xmssmt_core_increment_authpath(const xmss_params *params, uint8_t *sk, unsig
     treehash_inst treehash[params->tree_height - params->bds_k];
     state.treehash = treehash;
 
-    xmss_deserialize_state(params, &state, sk);
-    
     // Extract remaining SK
-    uint8_t sk_seed[params->n];
-    memcpy(sk_seed, sk + params->index_bytes, params->n);
-    uint8_t sk_prf[params->n];
-    memcpy(sk_prf, sk + params->index_bytes + params->n, params->n);
-    uint8_t pub_seed[params->n];
-    memcpy(pub_seed, sk + params->index_bytes + 3*params->n, params->n);
-
-    // Init working params;
-    uint32_t ots_addr[8] = {0};
-
+    uint8_t sk_seed[params->n], sk_prf[params->n], pub_seed[params->n];
+    
     /* Check if we can still sign with this sk, return -2 if not: */
     // Extract index
     unsigned long long idx = bytes_to_ull(sk, params->index_bytes);
@@ -889,6 +879,15 @@ int xmssmt_core_increment_authpath(const xmss_params *params, uint8_t *sk, unsig
     sk[3] = (idx + amount) & 255;
 
     for (i = 0; i < amount; i++) {
+        xmss_deserialize_state(params, &state, sk);
+
+        memcpy(sk_seed, sk + params->index_bytes, params->n);
+        memcpy(sk_prf, sk + params->index_bytes + params->n, params->n);
+        memcpy(pub_seed, sk + params->index_bytes + 3*params->n, params->n);
+
+        // Init working params;
+        uint32_t ots_addr[8] = {0};
+
         bds_round(params, &state, idx, sk_seed, pub_seed, ots_addr);
         bds_treehash_update(params, &state, (params->tree_height - params->bds_k) >> 1, sk_seed, pub_seed, ots_addr);
         
@@ -899,10 +898,9 @@ int xmssmt_core_increment_authpath(const xmss_params *params, uint8_t *sk, unsig
                 hash_prg(params, NULL, state.treehash[i].seed_next, state.treehash[i].seed_next, pub_seed, ots_addr);
             }
         #endif
-    }
-    
-    xmss_serialize_state(params, sk, &state);
-    
+
+        xmss_serialize_state(params, sk, &state);
+    }    
     return 0;
 }
 

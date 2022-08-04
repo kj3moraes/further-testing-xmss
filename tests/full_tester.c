@@ -130,7 +130,7 @@ int test_case(const char *name, int xmssmt) {
 
     unsigned int decision;
     printf("Do you want to generate keys (0) or use stored ones (1) ? >");
-    scanf("%d", &decision);
+    scanf("%ud", &decision);
 
     
     if (decision == 0) {

@@ -42,7 +42,7 @@ XMSS_OBJ_BUILD_SRC_FILES 	:= $(wildcard $(XMSS_OBJ_BUILD_DIR)/*.$(SRC_EXT))
 XMSS_OBJ_BUILD_HDR_FILES 	:= $(wildcard $(XMSS_OBJ_BUILD_DIR)/*.$(HDR_EXT))
 
 # Tests to performs
-TESTS 						:= $(EXEC_DIR)/test_struct # $(BUILD_DIR)/test_fast $(BUILD_DIR)/test_multi  $(BUILD_DIR)/test_subkeys
+TESTS 						:= $(EXEC_DIR)/test_struct $(EXEC_DIR)/test_subkeys # $(BUILD_DIR)/test_fast $(BUILD_DIR)/test_multi  $(BUILD_DIR)/test_subkeys
 
 tests: $(TESTS)
 

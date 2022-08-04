@@ -3,7 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "../sig_stfl/sig_stfl.h"
+#include <oqs/oqs.h>
 
 #define XMSS_IMPLEMENTATION "XMSS-SHA2_16_256"
 #define MAX_LENGTH_FILENAME 60
@@ -120,7 +120,7 @@ int test_case(const char *name) {
         printf("\nGenerated a new key\n");
 
         printf("\nDo you want to save the key? (1/0)>");
-        scanf("%d", &decision);
+        scanf("%du", &decision);
 
         if (decision == 1) {
             printf("Saving the key ...\n");
@@ -189,7 +189,7 @@ int test_case(const char *name) {
         printf("\nEnter the number of signatures to be generated for subkey %d>", i);
         scanf("%llu", &number_sigs);
 
-        subkeys[i] = OQS_SECRET_KEY_derive_subkey(master_key, number_sigs);
+        subkeys[i] = signature_gen->derive_subkey(master_key, number_sigs);
 
         printf("\nsubkey %d:=", i + 1);
         hexdump(subkeys[i]->secret_key, subkeys[i]->length_secret_key);

@@ -103,18 +103,42 @@ void perform_key_allocation(OQS_SECRET_KEY *sk) {
 	memset(sk->secret_key, 0, sk->length_secret_key);
 }
 
-OQS_SECRET_KEY *OQS_SECRET_KEY_alg_derive_subkey(OQS_SECRET_KEY *master_key, const unsigned long long number_of_sigs) {
+OQS_SECRET_KEY *OQS_SIG_STFL_alg_xmss_derive_subkey(OQS_SECRET_KEY *master_key, const unsigned long long number_of_sigs) {
 
 	OQS_SECRET_KEY *subkey = (OQS_SECRET_KEY *)malloc(sizeof(OQS_SECRET_KEY));
 
 	// Copy all the essential details of the master key to the subkey.
 	subkey->length_secret_key = master_key->length_secret_key;
+	subkey->lock_key = master_key->lock_key;
+	subkey->release_key = master_key->release_key;
+	subkey->oqs_save_updated_sk_key = master_key->oqs_save_updated_sk_key;
 
 	// Allocate the memory for the secret key.
 	perform_key_allocation(subkey);
 
 	// Derive the subkey.
 	if (xmss_derive_subkey(master_key, subkey, number_of_sigs) != 0) {
+		OQS_SECRET_KEY_free(subkey);
+		return NULL;
+	}
+	return subkey;
+}
+
+OQS_SECRET_KEY *OQS_SIG_STFL_alg_xmssmt_derive_subkey(OQS_SECRET_KEY *master_key, const unsigned long long number_of_sigs) {
+
+	OQS_SECRET_KEY *subkey = (OQS_SECRET_KEY *)malloc(sizeof(OQS_SECRET_KEY));
+
+	// Copy all the essential details of the master key to the subkey.
+	subkey->length_secret_key = master_key->length_secret_key;
+	subkey->lock_key = master_key->lock_key;
+	subkey->release_key = master_key->release_key;
+	subkey->oqs_save_updated_sk_key = master_key->oqs_save_updated_sk_key;
+
+	// Allocate the memory for the secret key.
+	perform_key_allocation(subkey);
+
+	// Derive the subkey.
+	if (xmssmt_derive_subkey(master_key, subkey, number_of_sigs) != 0) {
 		OQS_SECRET_KEY_free(subkey);
 		return NULL;
 	}
