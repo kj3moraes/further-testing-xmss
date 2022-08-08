@@ -7,7 +7,7 @@
 
 #define XMSS_IMPLEMENTATION "XMSS-SHA2_16_256"
 #define MAX_LENGTH_FILENAME 60
-#define NUM_SUBKEYS 3
+#define NUM_SUBKEYS 1
 
 static void hexdump(const uint8_t *d, const unsigned long long l) {
     printf("length=%llu\n", l);
@@ -41,7 +41,7 @@ int do_nothing_save(OQS_SECRET_KEY *sk) {
 int sk_file_write(const OQS_SECRET_KEY *sk) {
 
     char filename[MAX_LENGTH_FILENAME];
-    strcpy(filename, "./keys/opps_xmss16_sha256.prv");
+    strcpy(filename, "./keys/mast2_xmss16_sha256_subkey.prv");
 
     #ifdef CUSTOM_NAME
         printf("\nEnter the filename that you want written to>");
@@ -72,6 +72,64 @@ int sk_file_write(const OQS_SECRET_KEY *sk) {
 
 /** =========================================================================== */
 
+int master_key_test(OQS_SIG_STFL *signature_gen, OQS_SECRET_KEY *master) {
+
+    int ret = 0;
+    const unsigned int MESSAGE_LENGTH = 32;
+    uint8_t *m = (uint8_t *)malloc( MESSAGE_LENGTH);
+    OQS_randombytes(m, MESSAGE_LENGTH);
+    // Defining the rest of the data needed for singing and verifying.
+    uint8_t *pk = (uint8_t *)malloc(signature_gen->length_public_key);
+    uint8_t *sm = (uint8_t *)malloc(signature_gen->length_signature);
+    unsigned long long smlen = 0;
+
+    unsigned int NUM_TESTS;
+    printf("\nEnter the number of tests you want to run for master key>");
+    scanf("%u", &NUM_TESTS);
+    
+    printf("\n\n === Testing %u signatures for master .. === \n", NUM_TESTS);
+
+    for (unsigned int j = 0; j < NUM_TESTS; j++) {
+        /* ========================== SIGNING ================================= */
+
+        OQS_randombytes(m, MESSAGE_LENGTH);
+        if (signature_gen->sign(sm, (size_t *)&smlen, m, MESSAGE_LENGTH, master) != 0) {
+            printf("ERROR!! Signature generation failed\n");
+            ret = -1;
+        }
+
+        printf("\nsignature_length=%llu\n", smlen);
+        printf("sm="); hexdump(sm, smlen);
+        // #ifdef DEBUGGING
+        //     printf("\nnew_sk="); hexdump(s->secret_key, master_key->length_secret_key);
+        // #endif
+
+        /* ===================== SIGNATURE LENGTH CHECK ======================= */
+
+
+        if (smlen != signature_gen->length_signature) {
+            printf("  X smlen incorrect [%llu != %u]!\n", smlen, (unsigned int)signature_gen->length_signature);
+            ret = -1;
+        }
+        else 
+            printf("    smlen as expected [%llu].\n", smlen);
+        
+
+        /* ========================= VERIFICATION ============================= */
+
+
+        ret = signature_gen->verify(m, MESSAGE_LENGTH, sm, smlen, pk);
+        if (ret) {
+            printf("  X verification failed!\n");
+        }
+        else {
+            printf("    verification succeeded.\n");
+        }
+
+        if(ret) return ret;
+    }
+    return ret;
+}
 
 int test_case(const char *name) {
 
@@ -112,7 +170,7 @@ int test_case(const char *name) {
     unsigned int decision;
     char filename[MAX_LENGTH_FILENAME];
     printf("\nDo you want to generate a new key? (1/0)>");
-    scanf("%d", &decision);
+    scanf("%u", &decision);
 
     if (decision == 1) {
         printf("Generating keys ...\n");
@@ -120,7 +178,7 @@ int test_case(const char *name) {
         printf("\nGenerated a new key\n");
 
         printf("\nDo you want to save the key? (1/0)>");
-        scanf("%du", &decision);
+        scanf("%u", &decision);
 
         if (decision == 1) {
             printf("Saving the key ...\n");
@@ -195,66 +253,82 @@ int test_case(const char *name) {
         hexdump(subkeys[i]->secret_key, subkeys[i]->length_secret_key);
         printf("\n");
 
-        printf("\nmaster key after %d^th subkey:=", i + 1);
-        hexdump(subkeys[i]->secret_key, subkeys[i]->length_secret_key);
+        printf("\nmaster key after %d^th subkey:=", i);
+        hexdump(master_key->secret_key, master_key->length_secret_key);
         printf("\n");
+
+        // if (master_key_test(signature_gen, master_key) != 0) {
+        //     printf("\n\n\t===== Master Key Testing Failed ===== \n\n\n");
+        //     exit(-1);
+        // }
+
+        sk_file_write(master_key);
 
         subkeys[i]->lock_key = lock_sk_key;
         subkeys[i]->release_key = release_sk_key;
         subkeys[i]->oqs_save_updated_sk_key = sk_file_write;
     }
-    return 0;    
+    return 0;
 
     printf("Do you want to test? (1/0)>");
-    scanf("%d", &decision);
+    scanf("%ud", &decision);
     if (decision == 0) return -1;
 
-    unsigned int NUM_TESTS;
-    printf("\nEnter the number of tests you want to run>");
-    scanf("%u", &NUM_TESTS);
-    
-    printf("\n\n === Testing signatures for %d %s subkeys + master key testing.. === \n", NUM_SUBKEYS, name);
-
     for (i = 0; i < NUM_SUBKEYS; i++) {
-        printf("\n\n=========  - iteration #%d: ==============\n", i);
-
-        /* ========================== SIGNING ================================= */
-        randombytes(m, MESSAGE_LENGTH);
-        if (signature_gen->sign(sm, (size_t *)&smlen, m, MESSAGE_LENGTH, master_key) != 0) {
-            printf("ERROR!! Signature generation failed\n");
-            ret = -1;
-        }
-
-        printf("\nsignature_length=%llu\n", smlen);
-        printf("sm="); hexdump(sm, smlen);
-        #ifdef DEBUGGING
-            printf("\nnew_sk="); hexdump(sk->secret_key, sk->length_secret_key);
-        #endif
-
-        /* ===================== SIGNATURE LENGTH CHECK ======================= */
-   
-
-        if (smlen != signature_gen->length_signature) {
-            printf("  X smlen incorrect [%llu != %u]!\n", smlen, (unsigned int)signature_gen->length_signature);
-            ret = -1;
-        }
-        else 
-            printf("    smlen as expected [%llu].\n", smlen);
+        printf("\n\n=========  - SUBKEY #%d: ==============\n", i);
         
+        unsigned int NUM_TESTS;
+        printf("\nEnter the number of tests you want to run for subkey #%u>", i);
+        scanf("%u", &NUM_TESTS);
+        
+        printf("\n\n === Testing %u signatures for subkey #%d .. === \n", NUM_TESTS, i);
 
-        /* ========================= VERIFICATION ============================= */
+        for (unsigned int j = 0; j < NUM_TESTS; j++) {
+            
+                printf("\n\n=========  - ITERATION #%d: ==============\n", j);
+            
+            /* ========================== SIGNING ================================= */
+
+            OQS_randombytes(m, MESSAGE_LENGTH);
+            if (signature_gen->sign(sm, (size_t *)&smlen, m, MESSAGE_LENGTH, subkeys[i]) != 0) {
+                printf("ERROR!! Signature generation failed\n");
+                ret = -1;
+                break;
+            }
+
+            printf("\nsignature_length=%llu\n", smlen);
+            printf("sm="); hexdump(sm, smlen);
+            // #ifdef DEBUGGING
+            //     printf("\nnew_sk="); hexdump(s->secret_key, master_key->length_secret_key);
+            // #endif
+
+            /* ===================== SIGNATURE LENGTH CHECK ======================= */
+    
+
+            if (smlen != signature_gen->length_signature) {
+                printf("  X smlen incorrect [%llu != %u]!\n", smlen, (unsigned int)signature_gen->length_signature);
+                ret = -1;
+            }
+            else 
+                printf("    smlen as expected [%llu].\n", smlen);
+            
+
+            /* ========================= VERIFICATION ============================= */
 
 
-        ret = signature_gen->verify(m, MESSAGE_LENGTH, sm, smlen, pk);
-        if (ret) {
-            printf("  X verification failed!\n");
+            ret = signature_gen->verify(m, MESSAGE_LENGTH, sm, smlen, pk);
+            if (ret) {
+                printf("  X verification failed!\n");
+            }
+            else {
+                printf("    verification succeeded.\n");
+            }
+
+            if(ret) return ret;
         }
-        else {
-            printf("    verification succeeded.\n");
-        }
-
-        if(ret) return ret;
     }
+
+    master_key_test(signature_gen, master_key);
 
     OQS_SECRET_KEY_free(master_key);
     for (i = 0; i < NUM_SUBKEYS; i++) {

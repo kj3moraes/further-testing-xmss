@@ -9,7 +9,7 @@
 
 OQS_API OQS_STATUS OQS_SIG_STFL_alg_xmss_sign(uint8_t *signature, size_t *signature_length, const uint8_t *message, size_t message_len, OQS_SECRET_KEY *secret_key) {
 	if (secret_key == NULL || message == NULL || signature == NULL) {
-		return -1;
+		return OQS_ERROR;
 	}
 
 	if (xmss_sign(secret_key, signature, (unsigned long long *)signature_length, message, (unsigned long long)message_len) != 0) {
@@ -20,7 +20,7 @@ OQS_API OQS_STATUS OQS_SIG_STFL_alg_xmss_sign(uint8_t *signature, size_t *signat
 
 OQS_API OQS_STATUS OQS_SIG_STFL_alg_xmss_verify(const uint8_t *message, size_t message_len, const uint8_t *signature, size_t signature_len, const uint8_t *public_key) {
 	if (message == NULL || signature == NULL || public_key == NULL) {
-		return -1;
+		return OQS_ERROR;
 	}
 
 	if (xmss_sign_open(message, (unsigned long long *)&message_len, signature, (unsigned long long)signature_len, public_key) != 0) {
@@ -31,7 +31,7 @@ OQS_API OQS_STATUS OQS_SIG_STFL_alg_xmss_verify(const uint8_t *message, size_t m
 
 OQS_API OQS_STATUS OQS_SIG_STFL_alg_xmssmt_sign(uint8_t *signature, size_t *signature_length, const uint8_t *message, size_t message_len, OQS_SECRET_KEY *secret_key) {
 	if (secret_key == NULL || message == NULL || signature == NULL) {
-		return -1;
+		return OQS_ERROR;
 	}
 
 	if (xmssmt_sign(secret_key, signature, (unsigned long long *)signature_length, message, (unsigned long long)message_len) != 0) {
@@ -42,7 +42,7 @@ OQS_API OQS_STATUS OQS_SIG_STFL_alg_xmssmt_sign(uint8_t *signature, size_t *sign
 
 OQS_API OQS_STATUS OQS_SIG_STFL_alg_xmssmt_verify(const uint8_t *message, size_t message_len, const uint8_t *signature, size_t signature_len, const uint8_t *public_key) {
 	if (message == NULL || signature == NULL || public_key == NULL) {
-		return -1;
+		return OQS_ERROR;
 	}
 
 	if (xmssmt_sign_open(message, (unsigned long long *)&message_len, signature, (unsigned long long)signature_len, public_key) != 0) {

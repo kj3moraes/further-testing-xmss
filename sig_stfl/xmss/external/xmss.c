@@ -72,7 +72,7 @@ int xmss_derive_subkey(OQS_SECRET_KEY *master, OQS_SECRET_KEY *subkey, unsigned 
     // Set the master key index to the master key index + the number of signatures
     master_idx = master_idx + number_of_sigs;
     ull_to_bytes(master->secret_key + XMSS_OID_LEN, params.index_bytes, master_idx);
-
+    
     return 0; 
 }
 

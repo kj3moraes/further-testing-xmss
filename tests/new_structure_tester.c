@@ -6,7 +6,7 @@
 #include <oqs/oqs.h>
 
 
-#define XMSS_IMPLEMENTATION "XMSSMT-SHA2_60/6_256"
+#define XMSS_IMPLEMENTATION "XMSS-SHA2_16_256"
 #define MAX_LENGTH_FILENAME 60
 
 static void hexdump(const uint8_t *d, const unsigned long long l) {
@@ -44,7 +44,7 @@ int do_nothing_save(OQS_SECRET_KEY *sk) {
 int sk_file_write(const OQS_SECRET_KEY *sk) {
 
     char filename[MAX_LENGTH_FILENAME];
-    strcpy(filename, "./keys/sub3_xmss16_sha256.prv");
+    strcpy(filename, "./keys/mast2_xmss16_sha256_reg.prv");
 
     #ifdef CUSTOM_NAME
         printf("\nEnter the filename that you want written to>");

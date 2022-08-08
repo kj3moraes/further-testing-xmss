@@ -637,7 +637,73 @@ unsigned long long xmss_xmssmt_core_sk_bytes(const xmss_params *params)
 }
 
 int xmss_core_increment_authpath(const xmss_params *params, uint8_t *sk, unsigned long long amount) {
-    return xmssmt_core_increment_authpath(params, sk, amount);
+    unsigned long long i, j = 0;
+    
+    bds_state state;
+    treehash_inst treehash[params->tree_height - params->bds_k];
+    state.treehash = treehash;
+
+    // Extract remaining SK
+    uint8_t sk_seed[params->n], sk_prf[params->n], pub_seed[params->n], ots_seed[params->n];
+    uint8_t tmp_sig[params->wots_sig_bytes], tmp_msg[params->n];
+    OQS_randombytes(tmp_msg, params->n);
+
+    memcpy(sk_seed, sk + params->index_bytes, params->n);
+    memcpy(sk_prf, sk + params->index_bytes + params->n, params->n);
+    memcpy(pub_seed, sk + params->index_bytes + 3*params->n, params->n);
+    
+    /* Check if we can still sign with this sk, return -2 if not: */
+    // Extract index
+    unsigned long long idx = bytes_to_ull(sk, params->index_bytes);
+    // Extract the max_sigs
+    unsigned long long max = bytes_to_ull(sk + params->sk_bytes - params->bytes_for_max, params->bytes_for_max);
+    if (idx >= max) {
+        return -2;
+    }
+
+    // Update SK
+    sk[0] = ((idx + amount) >> 24) & 255;
+    sk[1] = ((idx + amount) >> 16) & 255;
+    sk[2] = ((idx + amount) >> 8) & 255;
+    sk[3] = (idx + amount) & 255;
+
+    for (i = 0; i < amount; i++) {
+        xmss_deserialize_state(params, &state, sk);
+
+        memcpy(sk_seed, sk + params->index_bytes, params->n);
+        memcpy(sk_prf, sk + params->index_bytes + params->n, params->n);
+        memcpy(pub_seed, sk + params->index_bytes + 3*params->n, params->n);
+        
+        // Init working params;
+        uint32_t ots_addr[8] = {0};
+
+        // Prepare Address
+        set_type(ots_addr, 0);
+        set_ots_addr(ots_addr, idx);
+
+        // Compute seed for OTS key pair
+        #ifdef FORWARD_SECURE
+        hash_prg(params, ots_seed, sk + params->index_bytes, sk + params->index_bytes, pub_seed, ots_addr);
+        #else
+        get_seed(params, ots_seed, sk_seed, ots_addr);
+        #endif
+        
+        wots_sign(params, tmp_sig, tmp_msg, ots_seed, pub_seed, ots_addr);
+        bds_round(params, &state, idx, sk_seed, pub_seed, ots_addr);
+        bds_treehash_update(params, &state, (params->tree_height - params->bds_k) >> 1, sk_seed, pub_seed, ots_addr);
+        
+        #ifdef FORWARD_SECURE
+            // move forward next seeds for all tree hash instances
+            for (j = 0; j < params->tree_height-params->bds_k-1; j++) {
+                set_ots_addr(ots_addr, 1+3*(1<<j)+idx);
+                hash_prg(params, NULL, state.treehash[j].seed_next, state.treehash[j].seed_next, pub_seed, ots_addr);
+            }
+        #endif
+
+        xmss_serialize_state(params, sk, &state);
+        idx++;
+    }    
+    return 0;
 }
 
 /*
@@ -853,6 +919,7 @@ int xmss_core_sign(const xmss_params *params,
     return 0;
 }
 
+
 int xmssmt_core_increment_authpath(const xmss_params *params, uint8_t *sk, unsigned long long amount) {
     unsigned long long i, j = 0;
     
@@ -862,6 +929,7 @@ int xmssmt_core_increment_authpath(const xmss_params *params, uint8_t *sk, unsig
 
     // Extract remaining SK
     uint8_t sk_seed[params->n], sk_prf[params->n], pub_seed[params->n];
+
     
     /* Check if we can still sign with this sk, return -2 if not: */
     // Extract index
@@ -888,21 +956,27 @@ int xmssmt_core_increment_authpath(const xmss_params *params, uint8_t *sk, unsig
         // Init working params;
         uint32_t ots_addr[8] = {0};
 
+        // Prepare Address
+        set_type(ots_addr, 0);
+        set_ots_addr(ots_addr, idx);
+
         bds_round(params, &state, idx, sk_seed, pub_seed, ots_addr);
         bds_treehash_update(params, &state, (params->tree_height - params->bds_k) >> 1, sk_seed, pub_seed, ots_addr);
         
         #ifdef FORWARD_SECURE
             // move forward next seeds for all tree hash instances
             for (j = 0; j < params->tree_height-params->bds_k-1; j++) {
-                set_ots_addr(ots_addr, 1+3*(1<<i)+idx);
-                hash_prg(params, NULL, state.treehash[i].seed_next, state.treehash[i].seed_next, pub_seed, ots_addr);
+                set_ots_addr(ots_addr, 1+3*(1<<j)+idx);
+                hash_prg(params, NULL, state.treehash[j].seed_next, state.treehash[j].seed_next, pub_seed, ots_addr);
             }
         #endif
 
         xmss_serialize_state(params, sk, &state);
+        idx++;
     }    
     return 0;
 }
+
 
 /*
  * Generates a XMSSMT key pair for a given parameter set.
