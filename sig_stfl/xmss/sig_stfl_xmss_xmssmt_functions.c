@@ -109,9 +109,6 @@ OQS_SECRET_KEY *OQS_SIG_STFL_alg_xmss_derive_subkey(OQS_SECRET_KEY *master_key, 
 
 	// Copy all the essential details of the master key to the subkey.
 	subkey->length_secret_key = master_key->length_secret_key;
-	subkey->lock_key = master_key->lock_key;
-	subkey->release_key = master_key->release_key;
-	subkey->oqs_save_updated_sk_key = master_key->oqs_save_updated_sk_key;
 
 	// Allocate the memory for the secret key.
 	perform_key_allocation(subkey);
@@ -130,9 +127,6 @@ OQS_SECRET_KEY *OQS_SIG_STFL_alg_xmssmt_derive_subkey(OQS_SECRET_KEY *master_key
 
 	// Copy all the essential details of the master key to the subkey.
 	subkey->length_secret_key = master_key->length_secret_key;
-	subkey->lock_key = master_key->lock_key;
-	subkey->release_key = master_key->release_key;
-	subkey->oqs_save_updated_sk_key = master_key->oqs_save_updated_sk_key;
 
 	// Allocate the memory for the secret key.
 	perform_key_allocation(subkey);

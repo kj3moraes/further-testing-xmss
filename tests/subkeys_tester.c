@@ -7,13 +7,13 @@
 
 #define XMSS_IMPLEMENTATION "XMSS-SHA2_16_256"
 #define MAX_LENGTH_FILENAME 60
-#define NUM_SUBKEYS 1
+#define NUM_SUBKEYS 3
 
 static void hexdump(const uint8_t *d, const unsigned long long l) {
     printf("length=%llu\n", l);
     for(unsigned long long i=0; i<l ;i++) {
-        if (i % 16 == 0) printf("\n");
         printf("%02x", d[i]);
+        if (i % 32 == 31) printf("\n");
     }
     printf("\n");
 }
@@ -72,14 +72,13 @@ int sk_file_write(const OQS_SECRET_KEY *sk) {
 
 /** =========================================================================== */
 
-int master_key_test(OQS_SIG_STFL *signature_gen, OQS_SECRET_KEY *master) {
+int master_key_test(OQS_SIG_STFL *signature_gen, OQS_SECRET_KEY *master, uint8_t *pk) {
 
     int ret = 0;
     const unsigned int MESSAGE_LENGTH = 32;
     uint8_t *m = (uint8_t *)malloc( MESSAGE_LENGTH);
     OQS_randombytes(m, MESSAGE_LENGTH);
     // Defining the rest of the data needed for singing and verifying.
-    uint8_t *pk = (uint8_t *)malloc(signature_gen->length_public_key);
     uint8_t *sm = (uint8_t *)malloc(signature_gen->length_signature);
     unsigned long long smlen = 0;
 
@@ -128,6 +127,8 @@ int master_key_test(OQS_SIG_STFL *signature_gen, OQS_SECRET_KEY *master) {
 
         if(ret) return ret;
     }
+    free(sm);
+    free(m);
     return ret;
 }
 
@@ -257,10 +258,10 @@ int test_case(const char *name) {
         hexdump(master_key->secret_key, master_key->length_secret_key);
         printf("\n");
 
-        // if (master_key_test(signature_gen, master_key) != 0) {
-        //     printf("\n\n\t===== Master Key Testing Failed ===== \n\n\n");
-        //     exit(-1);
-        // }
+        if (master_key_test(signature_gen, master_key, pk) != 0) {
+            printf("\n\n\t===== Master Key Testing Failed ===== \n\n\n");
+            exit(-1);
+        }
 
         sk_file_write(master_key);
 
@@ -268,7 +269,7 @@ int test_case(const char *name) {
         subkeys[i]->release_key = release_sk_key;
         subkeys[i]->oqs_save_updated_sk_key = sk_file_write;
     }
-    return 0;
+    // return 0;
 
     printf("Do you want to test? (1/0)>");
     scanf("%ud", &decision);
@@ -328,7 +329,7 @@ int test_case(const char *name) {
         }
     }
 
-    master_key_test(signature_gen, master_key);
+    master_key_test(signature_gen, master_key, pk);
 
     OQS_SECRET_KEY_free(master_key);
     for (i = 0; i < NUM_SUBKEYS; i++) {

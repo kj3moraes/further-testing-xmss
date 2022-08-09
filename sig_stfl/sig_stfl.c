@@ -342,6 +342,9 @@ OQS_API OQS_SECRET_KEY *OQS_SIG_STFL_derive_subkey(const OQS_SIG_STFL *sig, OQS_
 	if (sig == NULL || master_key == NULL || number_of_signatures == 0L) {
 		return NULL;
 	};
+	if (sig->derive_subkey == NULL) {
+		return NULL;
+	}
 	return sig->derive_subkey(master_key, number_of_signatures);
 }	
 
