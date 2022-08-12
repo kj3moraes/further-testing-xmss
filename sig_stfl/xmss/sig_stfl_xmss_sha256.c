@@ -32,10 +32,7 @@ OQS_SIG_STFL *OQS_SIG_STFL_alg_xmss_sha256_h10_new(void) {
 	memset(sig, 0, sizeof(OQS_SIG_STFL));
 
 	sig->method_name = "XMSS-SHA2_10_256";
-	sig->alg_version = "...";
-
-	// Check how true this is
-	sig->claimed_nist_level = 2;
+	sig->alg_version = "https://datatracker.ietf.org/doc/html/rfc8391";
 	sig->euf_cma = true;
 
 	sig->length_public_key = OQS_SIG_STFL_alg_xmss_sha256_h10_length_pk;
@@ -60,7 +57,13 @@ OQS_SECRET_KEY *OQS_SECRET_KEY_XMSS_SHA256_H10_new(void) {
 
 	sk->length_secret_key = OQS_SIG_STFL_alg_xmss_sha256_h10_length_sk;
 
-	perform_key_allocation(sk);
+	// Assign the sigs_left and sigs_max functions
+	sk->sigs_left = OQS_SECRET_KEY_xmss_sigs_left;
+	sk->sigs_total = OQS_SECRET_KEY_xmss_sigs_total;
+
+	// Initialize the key with length_secret_key amount of bytes.
+	sk->secret_key = (uint8_t *)malloc(sk->length_secret_key * sizeof(uint8_t));
+	memset(sk->secret_key, 0, sk->length_secret_key);
 
 	return sk;
 }
@@ -91,10 +94,7 @@ OQS_SIG_STFL *OQS_SIG_STFL_alg_xmss_sha256_h16_new(void) {
 	memset(sig, 0, sizeof(OQS_SIG_STFL));
 
 	sig->method_name = "XMSS-SHA2_16_256";
-	sig->alg_version = "...";
-
-	// Check how true this is
-	sig->claimed_nist_level = 2;
+	sig->alg_version = "https://datatracker.ietf.org/doc/html/rfc8391";
 	sig->euf_cma = true;
 
 	sig->length_public_key = OQS_SIG_STFL_alg_xmss_sha256_h16_length_pk;
@@ -118,8 +118,14 @@ OQS_SECRET_KEY *OQS_SECRET_KEY_XMSS_SHA256_H16_new(void) {
 	memset(sk, 0, sizeof(OQS_SECRET_KEY));
 
 	sk->length_secret_key = OQS_SIG_STFL_alg_xmss_sha256_h16_length_sk;
-	perform_key_allocation(sk);
 
+	// Assign the sigs_left and sigs_max functions
+	sk->sigs_left = OQS_SECRET_KEY_xmss_sigs_left;
+	sk->sigs_total = OQS_SECRET_KEY_xmss_sigs_total;
+
+	// Initialize the key with length_secret_key amount of bytes.
+	sk->secret_key = (uint8_t *)malloc(sk->length_secret_key * sizeof(uint8_t));
+	memset(sk->secret_key, 0, sk->length_secret_key);
 	return sk;
 }
 
@@ -149,10 +155,7 @@ OQS_SIG_STFL *OQS_SIG_STFL_alg_xmss_sha256_h20_new(void) {
 	memset(sig, 0, sizeof(OQS_SIG_STFL));
 
 	sig->method_name = "XMSS-SHA2_20_256";
-	sig->alg_version = "...";
-
-	// Check how true this is
-	sig->claimed_nist_level = 2;
+	sig->alg_version = "https://datatracker.ietf.org/doc/html/rfc8391";
 	sig->euf_cma = true;
 
 	sig->length_public_key = OQS_SIG_STFL_alg_xmss_sha256_h20_length_pk;
@@ -176,8 +179,13 @@ OQS_SECRET_KEY *OQS_SECRET_KEY_XMSS_SHA256_H20_new(void) {
 	memset(sk, 0, sizeof(OQS_SECRET_KEY));
 
 	sk->length_secret_key = OQS_SIG_STFL_alg_xmss_sha256_h20_length_sk ;
+	// Assign the sigs_left and sigs_max functions
+	sk->sigs_left = OQS_SECRET_KEY_xmss_sigs_left;
+	sk->sigs_total = OQS_SECRET_KEY_xmss_sigs_total;
 
-	perform_key_allocation(sk);
+	// Initialize the key with length_secret_key amount of bytes.
+	sk->secret_key = (uint8_t *)malloc(sk->length_secret_key * sizeof(uint8_t));
+	memset(sk->secret_key, 0, sk->length_secret_key);
 
 	return sk;
 }

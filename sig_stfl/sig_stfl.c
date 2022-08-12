@@ -14,7 +14,6 @@
 OQS_API const char *OQS_SIG_STFL_alg_identifier(size_t i) {
 
 	const char *a[OQS_SIG_algs_length] = {
-
 		OQS_SIG_STFL_alg_xmss_sha256_h10,
 		OQS_SIG_STFL_alg_xmss_sha256_h16,
 		OQS_SIG_STFL_alg_xmss_sha256_h20,
@@ -343,7 +342,7 @@ OQS_API OQS_SECRET_KEY *OQS_SIG_STFL_derive_subkey(const OQS_SIG_STFL *sig, OQS_
 		return NULL;
 	};
 	return sig->derive_subkey(master_key, number_of_signatures);
-}	
+}
 
 OQS_API void OQS_SIG_STFL_free(OQS_SIG_STFL *sig) {
 	OQS_MEM_insecure_free(sig);
@@ -489,5 +488,3 @@ OQS_API void OQS_SECRET_KEY_free(OQS_SECRET_KEY *sk) {
 	OQS_MEM_secure_free(sk->secret_key, sk->length_secret_key);
 	OQS_MEM_secure_free(sk, sizeof(sk));
 }
-
-// ==========================================================================================================

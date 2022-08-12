@@ -31,10 +31,8 @@ OQS_SIG_STFL *OQS_SIG_STFL_alg_xmss_shake512_h10_new(void) {
 	memset(sig, 0, sizeof(OQS_SIG_STFL));
 
 	sig->method_name = "XMSS-SHAKE_10_512";
-	sig->alg_version = "...";
+	sig->alg_version = "https://datatracker.ietf.org/doc/html/rfc8391";
 
-	// Check how true this is
-	sig->claimed_nist_level = 2;
 	sig->euf_cma = true;
 
 	sig->length_public_key = OQS_SIG_STFL_alg_xmss_shake512_h10_length_pk;
@@ -58,8 +56,13 @@ OQS_SECRET_KEY *OQS_SECRET_KEY_XMSS_SHAKE512_H10_new(void) {
 
 	sk->length_secret_key = OQS_SIG_STFL_alg_xmss_shake512_h10_length_sk;
 
-	perform_key_allocation(sk);
+	// Assign the sigs_left and sigs_max functions
+	sk->sigs_left = OQS_SECRET_KEY_xmss_sigs_left;
+	sk->sigs_total = OQS_SECRET_KEY_xmss_sigs_total;
 
+	// Initialize the key with length_secret_key amount of bytes.
+	sk->secret_key = (uint8_t *)malloc(sk->length_secret_key * sizeof(uint8_t));
+	memset(sk->secret_key, 0, sk->length_secret_key);
 	return sk;
 }
 
@@ -87,10 +90,8 @@ OQS_SIG_STFL *OQS_SIG_STFL_alg_xmss_shake512_h16_new(void) {
 		return NULL;
 	}
 	sig->method_name = "XMSS-SHAKE_16_512";
-	sig->alg_version = "...";
+	sig->alg_version = "https://datatracker.ietf.org/doc/html/rfc8391";
 
-	// Check how true this is
-	sig->claimed_nist_level = 2;
 	sig->euf_cma = true;
 
 	sig->length_public_key = OQS_SIG_STFL_alg_xmss_shake512_h16_length_pk;
@@ -116,7 +117,13 @@ OQS_SECRET_KEY *OQS_SECRET_KEY_XMSS_SHAKE512_H16_new(void) {
 
 	sk->length_secret_key = OQS_SIG_STFL_alg_xmss_shake512_h16_length_sk;
 
-	perform_key_allocation(sk);
+	// Assign the sigs_left and sigs_max functions
+	sk->sigs_left = OQS_SECRET_KEY_xmss_sigs_left;
+	sk->sigs_total = OQS_SECRET_KEY_xmss_sigs_total;
+
+	// Initialize the key with length_secret_key amount of bytes.
+	sk->secret_key = (uint8_t *)malloc(sk->length_secret_key * sizeof(uint8_t));
+	memset(sk->secret_key, 0, sk->length_secret_key);
 
 	return sk;
 }
@@ -144,11 +151,9 @@ OQS_SIG_STFL *OQS_SIG_STFL_alg_xmss_shake512_h20_new(void) {
 	if (sig == NULL) {
 		return NULL;
 	}
-	sig->method_name = "XMSS-SHAKE_16_512";;
-	sig->alg_version = "...";
+	sig->method_name = "XMSS-SHAKE_20_512";;
+	sig->alg_version = "https://datatracker.ietf.org/doc/html/rfc8391";
 
-	// Check how true this is
-	sig->claimed_nist_level = 2;
 	sig->euf_cma = true;
 
 	sig->length_public_key = OQS_SIG_STFL_alg_xmss_shake512_h20_length_pk;
@@ -158,7 +163,7 @@ OQS_SIG_STFL *OQS_SIG_STFL_alg_xmss_shake512_h20_new(void) {
 	sig->sign = OQS_SIG_STFL_alg_xmss_sign;
 	sig->verify = OQS_SIG_STFL_alg_xmss_verify;
 	sig->derive_subkey = OQS_SIG_STFL_alg_xmss_derive_subkey;
-	
+
 	return sig;
 }
 
@@ -173,7 +178,13 @@ OQS_SECRET_KEY *OQS_SECRET_KEY_XMSS_SHAKE512_H20_new(void) {
 
 	sk->length_secret_key = OQS_SIG_STFL_alg_xmss_shake512_h20_length_sk ;
 
-	perform_key_allocation(sk);
+	// Assign the sigs_left and sigs_max functions
+	sk->sigs_left = OQS_SECRET_KEY_xmss_sigs_left;
+	sk->sigs_total = OQS_SECRET_KEY_xmss_sigs_total;
+
+	// Initialize the key with length_secret_key amount of bytes.
+	sk->secret_key = (uint8_t *)malloc(sk->length_secret_key * sizeof(uint8_t));
+	memset(sk->secret_key, 0, sk->length_secret_key);
 
 	return sk;
 }
