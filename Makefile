@@ -1,6 +1,7 @@
 CC = /usr/bin/gcc
 CFLAGS = -Wall -O3 -Wextra -Wpedantic
-LDLIBS = -loqs -lcrypto -lpthread
+LDLIBS = -lcrypto -lpthread -loqs
+INC_LIB = -I../liboqs/build/include -I.
 OPENSSL = -L/opt/homebrew/opt/openssl@1.1/lib -I/opt/homebrew/opt/openssl@1.1/include
 LEVEL = 0
 POSIX_THREAD = 1
@@ -23,22 +24,22 @@ tests: $(TESTS)
 .PHONY: clean test
 
 test/test_fast: test/test.c $(SOURCES_FAST) $(OBJS) $(HEADERS_FAST)
-	$(CC) $(CFLAGS) -o $@ $(SOURCES_FAST) $< $(LDLIBS) $(OPENSSL)
+	$(CC) $(CFLAGS) -o $@ $(SOURCES_FAST) $< $(INC_LIB) $(LDLIBS) $(OPENSSL) 
 
 test/nist_xmss_test: test/nist_test.c nist_params.h api.h $(SOURCES_FAST) $(OBJS) $(HEADERS_FAST)
-	$(CC) $(CFLAGS) -o $@ $(SOURCES_FAST) $< $(LDLIBS) -DXMSSMT=0 -DLEVEL=$(LEVEL) -DRANDOM=0  $(OPENSSL)	
+	$(CC) $(CFLAGS) -o $@ $(SOURCES_FAST) $< $(INC_LIB) $(LDLIBS) -DXMSSMT=0 -DLEVEL=$(LEVEL) -DRANDOM=0  $(OPENSSL)	
 	test/nist_xmss_test
 
 test/nist_xmss_test_mp: test/nist_test.c nist_params.h api.h $(SOURCES_FAST) $(OBJS) $(HEADERS_FAST)
-	$(CC) $(CFLAGS) -o $@ $(SOURCES_FAST) $< $(LDLIBS) -DXMSSMT=0 -DLEVEL=$(LEVEL) -DRANDOM=0  -DMP=1 -DPOSIX_THREAD=$(POSIX_THREAD) $(OPENSSL)	
+	$(CC) $(CFLAGS) -o $@ $(SOURCES_FAST) $< $(INC_LIB) $(LDLIBS) -DXMSSMT=0 -DLEVEL=$(LEVEL) -DRANDOM=0  -DMP=1 -DPOSIX_THREAD=$(POSIX_THREAD) $(OPENSSL)	 
 	test/nist_xmss_test_mp
 
 test/nist_xmssmt_test: test/nist_test.c nist_params.h api.h $(SOURCES_FAST) $(OBJS) $(HEADERS_FAST)
-	$(CC) $(CFLAGS) -o $@ $(SOURCES_FAST) $< $(LDLIBS) -DXMSSMT=1 -DLEVEL=$(LEVEL) -DRANDOM=0  $(OPENSSL)
+	$(CC) $(CFLAGS) -o $@ $(SOURCES_FAST) $< $(INC_LIB) $(LDLIBS) -DXMSSMT=1 -DLEVEL=$(LEVEL) -DRANDOM=0  $(OPENSSL) 
 	test/nist_xmssmt_test
 
 test/nist_xmssmt_test_mp: test/nist_test.c nist_params.h api.h $(SOURCES_FAST) $(OBJS) $(HEADERS_FAST)
-	$(CC) $(CFLAGS) -o $@ $(SOURCES_FAST) $< $(LDLIBS) -DXMSSMT=1 -DLEVEL=$(LEVEL) -DRANDOM=0  -DMP=1 -DPOSIX_THREAD=$(POSIX_THREAD) $(OPENSSL)
+	$(CC) $(CFLAGS) -o $@ $(SOURCES_FAST) $< $(INC_LIB) $(LDLIBS) -DXMSSMT=1 -DLEVEL=$(LEVEL) -DRANDOM=0  -DMP=1 -DPOSIX_THREAD=$(POSIX_THREAD) $(OPENSSL) 
 	test/nist_xmssmt_test_mp
 
 clean:

@@ -81,7 +81,7 @@ int XMSS_search_cpu(void)
         {
             fprintf(stderr, "Could not determine number of CPUs");
             found_cpu = 1;
-            return EBADARCH;
+            return EBADR;
         }
 #if DEBUG
         printf("[XMSS] - Use %d of %d processors online\n", XMSS_num_cores, XMSS_num_cores_max);

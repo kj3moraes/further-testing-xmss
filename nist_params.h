@@ -30,12 +30,12 @@
     */
     #if LEVEL == 0
 
-    #define XMSS_OID "XMSS-SHA2_10_256"
+    #define XMSS_OID "XMSS-SHA2_20_512"
 
     #define XMSS_PUBLICKEYBYTES 64
-    #define XMSS_SECRETKEYBYTES 2045
+    #define XMSS_SECRETKEYBYTES 7597
 
-    #define XMSS_SIGNBYTES 2500
+    #define XMSS_SIGNBYTES 9732
 
     /* 
     * Maximum signatures: 2^h = 2^16
