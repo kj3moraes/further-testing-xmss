@@ -16,8 +16,8 @@
  * By default, assume CPU has 2 core, 4 maximum threads, 
  * but we only use XMSS_num_cores parameter, so 1 threads in use
  */
-unsigned int XMSS_num_cores = 2, 
-             XMSS_num_cores_max = 4;
+unsigned int XMSS_num_cores = 4, 
+             XMSS_num_cores_max = 8;
 
 
 /* 

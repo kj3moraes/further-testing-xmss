@@ -1,7 +1,7 @@
 CC = /usr/bin/gcc
-CFLAGS = -Wall -O3 -Wextra -Wpedantic
-LDLIBS = -lcrypto -lpthread -loqs
-INC_LIB = -I../liboqs/build/include -I.
+CFLAGS = -Wall -O0 -Wextra -Wpedantic -g
+LDLIBS = -lcrypto  -loqs -lpthread
+INC_LIB = -I../liboqs/build/include -I. -I../liboqs/build/lib
 OPENSSL = -L/opt/homebrew/opt/openssl@1.1/lib -I/opt/homebrew/opt/openssl@1.1/include
 LEVEL = 0
 POSIX_THREAD = 1
@@ -23,23 +23,23 @@ tests: $(TESTS)
 
 .PHONY: clean test
 
-test/test_fast: test/test.c $(SOURCES_FAST) $(OBJS) $(HEADERS_FAST)
-	$(CC) $(CFLAGS) -o $@ $(SOURCES_FAST) $< $(INC_LIB) $(LDLIBS) $(OPENSSL) 
+test/test_fast: test/test.c $(SOURCES_FAST)  $(HEADERS_FAST)
+	$(CC) $(CFLAGS) -o $@ $(SOURCES_FAST) $< $(LDLIBS) $(INC_LIB) $(OPENSSL) 
 
-test/nist_xmss_test: test/nist_test.c nist_params.h api.h $(SOURCES_FAST) $(OBJS) $(HEADERS_FAST)
-	$(CC) $(CFLAGS) -o $@ $(SOURCES_FAST) $< $(INC_LIB) $(LDLIBS) -DXMSSMT=0 -DLEVEL=$(LEVEL) -DRANDOM=0  $(OPENSSL)	
+test/nist_xmss_test: test/nist_test.c nist_params.h api.h $(SOURCES_FAST)  $(HEADERS_FAST)
+	$(CC) $(CFLAGS) -o $@ $(SOURCES_FAST) $<  $(LDLIBS) $(INC_LIB) -DXMSSMT=0 -DLEVEL=$(LEVEL) -DRANDOM=0  $(OPENSSL)	
 	test/nist_xmss_test
 
-test/nist_xmss_test_mp: test/nist_test.c nist_params.h api.h $(SOURCES_FAST) $(OBJS) $(HEADERS_FAST)
-	$(CC) $(CFLAGS) -o $@ $(SOURCES_FAST) $< $(INC_LIB) $(LDLIBS) -DXMSSMT=0 -DLEVEL=$(LEVEL) -DRANDOM=0  -DMP=1 -DPOSIX_THREAD=$(POSIX_THREAD) $(OPENSSL)	 
+test/nist_xmss_test_mp: test/nist_test.c nist_params.h api.h $(SOURCES_FAST)  $(HEADERS_FAST)
+	$(CC) $(CFLAGS) -o $@ $(SOURCES_FAST) $<  $(LDLIBS) $(INC_LIB) -DXMSSMT=0 -DLEVEL=$(LEVEL) -DRANDOM=0  -DMP=1 -DPOSIX_THREAD=$(POSIX_THREAD) $(OPENSSL)	 
 	test/nist_xmss_test_mp
 
-test/nist_xmssmt_test: test/nist_test.c nist_params.h api.h $(SOURCES_FAST) $(OBJS) $(HEADERS_FAST)
-	$(CC) $(CFLAGS) -o $@ $(SOURCES_FAST) $< $(INC_LIB) $(LDLIBS) -DXMSSMT=1 -DLEVEL=$(LEVEL) -DRANDOM=0  $(OPENSSL) 
+test/nist_xmssmt_test: test/nist_test.c nist_params.h api.h $(SOURCES_FAST)  $(HEADERS_FAST)
+	$(CC) $(CFLAGS) -o $@ $(SOURCES_FAST) $< $(LDLIBS) $(INC_LIB)  -DXMSSMT=1 -DLEVEL=$(LEVEL) -DRANDOM=0  $(OPENSSL) 
 	test/nist_xmssmt_test
 
-test/nist_xmssmt_test_mp: test/nist_test.c nist_params.h api.h $(SOURCES_FAST) $(OBJS) $(HEADERS_FAST)
-	$(CC) $(CFLAGS) -o $@ $(SOURCES_FAST) $< $(INC_LIB) $(LDLIBS) -DXMSSMT=1 -DLEVEL=$(LEVEL) -DRANDOM=0  -DMP=1 -DPOSIX_THREAD=$(POSIX_THREAD) $(OPENSSL) 
+test/nist_xmssmt_test_mp: test/nist_test.c nist_params.h api.h $(SOURCES_FAST)  $(HEADERS_FAST)
+	$(CC) $(CFLAGS) -o $@ $(SOURCES_FAST) $<  $(LDLIBS) $(INC_LIB) -DXMSSMT=1 -DLEVEL=$(LEVEL) -DRANDOM=0  -DMP=1 -DPOSIX_THREAD=$(POSIX_THREAD) $(OPENSSL) 
 	test/nist_xmssmt_test_mp
 
 clean:
